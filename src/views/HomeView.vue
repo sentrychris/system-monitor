@@ -1,5 +1,13 @@
 <script setup lang="ts">
+import type { HttpClient } from "@/api/HttpClient";
 import StatCard from "@/components/StatCard.vue";
+import { inject } from "vue";
+
+const http: HttpClient | undefined = inject('http');
+if (http) {
+  http.get('system')
+}
+
 </script>
 
 
@@ -48,6 +56,9 @@ import StatCard from "@/components/StatCard.vue";
         <div class="card">
           <div class="card-header">
             <p>Hello</p>
+          </div>
+          <div class="card-body">
+            
           </div>
         </div>
       </div>
