@@ -1,32 +1,66 @@
 import type { Ref } from "vue";
 import Chart, {
-    type ChartOptions,
-    type ChartConfiguration,
-    type ChartItem,
-    type ChartData
+  type ChartOptions,
+  type ChartConfiguration,
+  type ChartItem,
+  type ChartData
 } from "chart.js/auto";
 
 export interface ChartMaker {
-    line(ctx: Ref<ChartItem | undefined>, data: ChartData, options?: ChartOptions): Chart
-    bar(ctx: Ref<ChartItem | undefined>, data: ChartData, options?: ChartOptions): Chart
-    donut(ctx: Ref<ChartItem | undefined>, data: ChartData, options?: any): Chart
-    make(type: string, ctx: Ref<ChartItem | undefined>, data: ChartData, options?: any): Chart
+  configure({data, labels}: {
+    data: number[] | number;
+    labels: string[] | string;
+  }): Promise<ChartData>;
+
+  bar(ctx: Ref<ChartItem | undefined>, data: ChartData, options?: ChartOptions): Chart;
+
+  line(ctx: Ref<ChartItem | undefined>, data: ChartData, options?: ChartOptions): Chart;
+  
+  donut(ctx: Ref<ChartItem | undefined>, data: ChartData, options?: ChartOptions): Chart;
+  
+  make(type: string, ctx: Ref<ChartItem | undefined>, data: ChartData, options?: ChartOptions): Chart;
 }
 
-export const chart: ChartMaker = {
-    line(ctx: Ref<ChartItem>, data: ChartData, options?: ChartOptions) {
-        return this.make('line', ctx, data, options);
-    },
+export const chart: ChartMaker = {  
+  async configure({data, labels}: {
+    type: string;
+    data: number[] | number;
+    labels: string[] | string;
+  }) {
+    const value = Array.isArray(data)
+      ? data
+      : [data, 100]
 
-    bar(ctx: Ref<ChartItem>, data: ChartData, options?: ChartOptions) {
-        return this.make('bar', ctx, data, options);
-    },
+    const label = Array.isArray(labels)
+      ? labels
+      : [labels]
 
-    donut(ctx: Ref<ChartItem>, data: ChartData, options?: any) {
-        return this.make('doughnut', ctx, data, options);
-    },
-
-    make(type: string, ctx: Ref<ChartItem>, data: ChartData, options?: any) {
-        return new Chart(ctx.value, <ChartConfiguration>{type, data, options});
+    return {
+      labels: label,
+      datasets: [{
+        data: value,
+        backgroundColor: [
+          'rgb(255, 99, 132)',
+          '#e6e6e6',
+        ],
+        hoverOffset: 4
+      }],
     }
+  },
+
+  bar(ctx: Ref<ChartItem>, data: ChartData, options?: ChartOptions) {
+    return this.make('bar', ctx, data, options);
+  },
+
+  line(ctx: Ref<ChartItem>, data: ChartData, options?: ChartOptions) {
+    return this.make('line', ctx, data, options);
+  },
+  
+  donut(ctx: Ref<ChartItem>, data: ChartData, options?: ChartOptions) {
+    return this.make('doughnut', ctx, data, options);
+  },
+  
+  make(type: string, ctx: Ref<ChartItem>, data: ChartData, options?: ChartOptions) {
+    return new Chart(ctx.value, <ChartConfiguration>{type, data, options});
+  }
 }

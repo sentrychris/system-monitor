@@ -16,9 +16,9 @@ describe("UsageDetail", () => {
   });
   
   it("renders properly", () => {
-    const testHtml = `<p><strong>Used</strong> ${testProps.detail.used}</p>\n` +
-      `<p><strong>Free</strong> ${testProps.detail.free}</p>\n` +
-      `<p><strong>Total</strong> ${testProps.detail.total}</p>`;
+    const testHtml = `<p><strong>Used</strong> ${testProps.detail.used} GB</p>\n` +
+      `<p><strong>Free</strong> ${testProps.detail.free} GB</p>\n` +
+      `<p><strong>Total</strong> ${testProps.detail.total} GB</p>`;
     
     const testSubject = getWrapper();
     

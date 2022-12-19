@@ -1,15 +1,21 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, vi, expect } from "vitest";
 import { mount } from "@vue/test-utils";
+import { createTestingPinia } from "@pinia/testing";
 import StatCard from "../../stats/StatCard.vue";
 
 describe("StatCard", () => {
   const testProps = {
     title: 'Lorem Ipsum',
+    icon: 'fa-solid fa-server',
     bg: 'dark',
-    loading: false,
   }
 
   const getWrapper = () => mount(StatCard, {
+    global: {
+      plugins: [createTestingPinia({
+        createSpy: vi.fn
+      })]
+    },
     props: testProps
   });
   

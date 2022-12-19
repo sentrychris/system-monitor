@@ -1,43 +1,34 @@
 <script setup lang="ts">
+import type { SystemResponse } from "@/interfaces/SystemResponse";
 import { inject, ref, onMounted } from "vue";
 import { httpInjectionSymbol, chartInjectionSymbol } from "@/injection";
-import type { SystemResponse } from "@/interfaces/SystemResponse";
-import type { ChartItem } from "chart.js";
+import { useLoadingStore } from "@/stores/loading";
 import StatCard from "@/components/stats/StatCard.vue";
 import PlatformDetail from "@/components/stats/PlatformDetail.vue";
 import CpuDetail from "@/components/stats/CpuDetail.vue";
 import UsageDetail from "@/components/stats/UsageDetail.vue";
 
+const loading = useLoadingStore()
+
 const http = inject(httpInjectionSymbol);
 const chart = inject(chartInjectionSymbol);
 
-const loading = ref(true) // todo move to store
 const system = ref<SystemResponse>()
-const chartCanvas = ref<ChartItem>()
+const chartCanvas = ref<HTMLCanvasElement>()
 
 onMounted(() => {
   http?.get('system').then((response) => {
-    loading.value = false
-    
     const { data }: {data: SystemResponse} = response.data
     system.value = data
-    
-    const config = {
-      labels: ['CPU'],
-      datasets: [{
-        data: [data.cpu.temp, 100],
-        backgroundColor: [
-          'rgb(255, 99, 132)',
-          '#e6e6e6',
-        ],
-        hoverOffset: 4
-      }],
-    }
 
-    chart?.donut(chartCanvas, config, {
-      responsive: true,
-      cutout: 20,
-    });
+    chart?.configure({
+      data: data.cpu.temp,
+      labels: 'CPU'
+    }).then((config) => {
+      chart.donut(chartCanvas, config, { responsive: true });
+    })
+
+    loading.toggle(false)
   });
 });
 </script>
@@ -45,32 +36,32 @@ onMounted(() => {
 <template>
   <main>
     <div class="container-fluid px-5 py-4">
-      <div class="row" v-if="system">
+      <div class="row">
         <div class="col d-flex align-items-stretch">
-          <StatCard title="Platform" bg="dark" :loading="loading">
+          <StatCard title="Platform" bg="dark" icon="fa-solid fa-server">
             <template #detail>
-              <PlatformDetail :detail="system.platform"></PlatformDetail>
+              <PlatformDetail v-if="system" :detail="system.platform" />
             </template>
           </StatCard>
         </div>
         <div class="col d-flex align-items-stretch">
-          <StatCard title="CPU" bg="success" :loading="loading">
+          <StatCard title="CPU" bg="success" icon="fa-solid fa-tachometer-alt">
             <template #detail>
-              <CpuDetail :detail="system.cpu"></CpuDetail>
+              <CpuDetail v-if="system" :detail="system.cpu" />
             </template>
           </StatCard>
         </div>
         <div class="col d-flex align-items-stretch">
-          <StatCard title="Memory" bg="success" :loading="loading">
+          <StatCard title="Memory" bg="success" icon="fa-solid fa-server">
             <template #detail>
-              <UsageDetail :detail="system.mem"></UsageDetail>
+              <UsageDetail v-if="system" :detail="system.mem" />
             </template>
           </StatCard>
         </div>
         <div class="col d-flex align-items-stretch">
-          <StatCard title="Disk" bg="dark" :loading="loading">
+          <StatCard title="Disk" bg="dark" icon="fa-solid fa-hard-drive">
             <template #detail>
-              <UsageDetail :detail="system.disk"></UsageDetail>
+              <UsageDetail v-if="system" :detail="system.disk" />
             </template>
           </StatCard>
         </div>
@@ -82,7 +73,9 @@ onMounted(() => {
               <p>Hello</p>
             </div>
             <div class="card-body">
-              
+              <div z>
+                <canvas ref="chartCanvas"></canvas>
+              </div>
             </div>
           </div>
         </div>

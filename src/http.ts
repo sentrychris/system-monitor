@@ -1,5 +1,8 @@
-import axios from "axios";
-import type { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
+import axios, {
+  type AxiosInstance,
+  type AxiosRequestConfig,
+  type AxiosResponse 
+} from "axios";
 
 enum StatusCode {
   Unauthorized = 401,

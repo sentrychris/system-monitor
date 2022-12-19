@@ -8,14 +8,16 @@ import { httpInjectionSymbol, chartInjectionSymbol } from "./injection";
 import App from "./App.vue";
 import router from "./router";
 
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+
+import "./icons";
 import "bootstrap";
 import "./assets/main.scss";
 
-const app = createApp(App);
-app.provide(httpInjectionSymbol, http)
-app.provide(chartInjectionSymbol, chart)
-
-app.use(createPinia());
-app.use(router);
-
-app.mount("#app");
+createApp(App)
+    .provide(httpInjectionSymbol, http)
+    .provide(chartInjectionSymbol, chart)
+    .use(createPinia())
+    .use(router)
+    .component('font-awesome-icon', FontAwesomeIcon)
+    .mount("#app");
