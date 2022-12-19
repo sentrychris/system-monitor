@@ -30,7 +30,7 @@ const authorize = (config: AxiosRequestConfig): AxiosRequestConfig => {
   }
 };
 
-export class HttpClient {
+export class Http {
   private instance: AxiosInstance | null = null;
   
   private get http(): AxiosInstance {
@@ -106,3 +106,5 @@ export class HttpClient {
     return Promise.reject(error);
   }
 }
+
+export const http = new Http();

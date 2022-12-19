@@ -1,13 +1,10 @@
 <script setup lang="ts">
-import type { HttpClient } from "@/api/HttpClient";
+import { inject } from "vue"
+import { httpInjectionSymbol } from "@/injection";
 import StatCard from "@/components/StatCard.vue";
-import { inject } from "vue";
 
-const http: HttpClient | undefined = inject('http');
-if (http) {
-  http.get('system')
-}
-
+const http = inject(httpInjectionSymbol);
+http?.get('system');
 </script>
 
 

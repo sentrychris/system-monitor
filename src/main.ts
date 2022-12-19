@@ -1,6 +1,8 @@
 import { createApp } from "vue";
 import { createPinia } from "pinia";
-import { HttpClient } from "@/api/HttpClient";
+
+import { http } from "./http";
+import { httpInjectionSymbol } from "./injection";
 
 import App from "./App.vue";
 import router from "./router";
@@ -9,7 +11,7 @@ import "bootstrap";
 import "./assets/main.scss";
 
 const app = createApp(App);
-app.provide('http', new HttpClient)
+app.provide(httpInjectionSymbol, http)
 
 app.use(createPinia());
 app.use(router);
