@@ -7,9 +7,10 @@ import Chart, {
 } from "chart.js/auto";
 
 export interface ChartMaker {
-  configure({data, labels}: {
+  configure({data, labels, colors}: {
     data: number[] | number;
     labels: string[] | string;
+    colors?: string[];
   }): Promise<ChartData>;
 
   bar(ctx: Ref<ChartItem | undefined>, data: ChartData, options?: ChartOptions): Chart;
@@ -22,10 +23,10 @@ export interface ChartMaker {
 }
 
 export const chart: ChartMaker = {  
-  async configure({data, labels}: {
-    type: string;
+  async configure({data, labels, colors}: {
     data: number[] | number;
     labels: string[] | string;
+    colors?: string[]
   }) {
     const value = Array.isArray(data)
       ? data
@@ -35,14 +36,18 @@ export const chart: ChartMaker = {
       ? labels
       : [labels]
 
+    if (!colors) {
+      colors = [  
+        'rgb(255, 99, 132)',
+        '#e6e6e6',
+      ]
+    }
+
     return {
       labels: label,
       datasets: [{
         data: value,
-        backgroundColor: [
-          'rgb(255, 99, 132)',
-          '#e6e6e6',
-        ],
+        backgroundColor: colors,
         hoverOffset: 4
       }],
     }
@@ -57,6 +62,11 @@ export const chart: ChartMaker = {
   },
   
   donut(ctx: Ref<ChartItem>, data: ChartData, options?: ChartOptions) {
+    // options = {
+    //   ...options,
+    //   cutout: 115
+    // };
+
     return this.make('doughnut', ctx, data, options);
   },
   

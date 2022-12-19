@@ -8,7 +8,7 @@ export interface UsageInformation {
     total: number;
     used: number;
     free: number;
-    percent?: number;
+    percent: number; // (total - free) / total * 100
 }
 
 export interface PlatformInformation {
