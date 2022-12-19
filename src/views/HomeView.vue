@@ -69,16 +69,16 @@ onMounted(() => {
             <div class="card-body">
               <div v-if="system" class="row">
                 <div class="col mt-3 mt-md-0">
-                  <DonutChart :data="system.cpu.temp" label="Temp"></DonutChart>
+                  <DonutChart :data="system.cpu.temp" label="Temp" />
                 </div>
                 <div class="col mt-3 mt-md-0">
-                  <DonutChart :data="system.cpu.usage" label="CPU"></DonutChart>
+                  <DonutChart :data="system.cpu.usage" label="CPU" />
                 </div>
                 <div class="col mt-3 mt-md-0">
-                  <DonutChart :data="system.mem.percent" label="Memory"></DonutChart>
+                  <DonutChart :data="system.mem.percent" label="Memory" />
                 </div>
                 <div class="col mt-3 mt-md-0">
-                  <DonutChart :data="system.disk.percent" label="Disk"></DonutChart>
+                  <DonutChart :data="system.disk.percent" label="Disk" />
                 </div>
               </div>
             </div>
@@ -92,7 +92,7 @@ onMounted(() => {
               <h2 class="header">Top Processes</h2>
             </div>
             <div class="card-body">
-              <DataTable v-if="system" type="horizontal" :data="system.processes"></DataTable>
+              <DataTable v-if="system" type="horizontal" :data="system.processes" />
             </div>
           </div>
         </div>

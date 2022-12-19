@@ -4,16 +4,38 @@
 @import url('https://fonts.googleapis.com/css2?family=Lato:wght@200;300;400&family=Noto+Sans:wght@200;300;400&family=Nunito:wght@200;300;400&family=Open+Sans&family=Oxygen&display=swap');
 
 body {
-    font-family: 'Nunito', 'Open Sans', sans-serif;
+  font-family: 'Nunito', 'Open Sans', sans-serif;
 }
 
 p {
-    margin-bottom: 0;
+  margin-bottom: 0;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+
+  .indicators {
+    svg {
+      color: lighten($color: #000000, $amount: 75);
+
+      &.active {
+        color: #000000;
+      }
+    }
+  }
+
+  &:hover {
+    .indicators {
+      svg {
+        color:  #000000
+      }
+    }
+  }
 }
 
 .header {
-    font-weight: 200;
+  font-weight: 200;
 }
 h2.header {
-    font-size: 1.75rem;
+  font-size: 1.75rem;
 }
