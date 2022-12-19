@@ -7,7 +7,8 @@ describe("UsageDetail", () => {
     detail: {
       used: 50,
       free: 50,
-      total: 100
+      total: 100,
+      percent: 50
     }
   }
   

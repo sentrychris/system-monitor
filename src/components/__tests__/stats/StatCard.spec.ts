@@ -14,7 +14,8 @@ describe("StatCard", () => {
     global: {
       plugins: [createTestingPinia({
         createSpy: vi.fn
-      })]
+      })],
+      stubs: ['FontAwesomeIcon']
     },
     props: testProps
   });

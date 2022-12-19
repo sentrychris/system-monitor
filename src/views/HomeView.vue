@@ -12,6 +12,9 @@ import CpuDetail from "@/components/stats/CpuDetail.vue";
 import UsageDetail from "@/components/stats/UsageDetail.vue";
 import DonutChart from "@/components/charts/DonutChart.vue";
 import DataTable from "@/components/DataTable.vue";
+import ResponsiveLineChart from "@/components/charts/ResponsiveLineChart.vue";
+
+
 
 const loading = useLoadingStore()
 const http = inject(httpInjectionSymbol);
@@ -23,6 +26,8 @@ onMounted(() => {
     system.value = data
     loading.toggle(false)
   });
+  
+  
 });
 </script>
 
@@ -30,7 +35,7 @@ onMounted(() => {
   <main>
     <div class="container-fluid px-5 py-4">
       <Header decor-title="Raspbian Monitor" title="Dashboard"></Header>
-      <section class="page-section mt-0">
+      <section id="statistics" class="page-section mt-0">
         <div class="row mt-3">
           <div class="col d-flex align-items-stretch mt-3 mt-md-0">
             <StatCard title="Platform" bg="dark" icon="fa-solid fa-server">
@@ -62,7 +67,20 @@ onMounted(() => {
           </div>
         </div>
       </section>
-      <section class="page-section">
+      
+      <section id="d3">
+        <div class="row">
+          <div class="col">
+            <div class="card">
+              <div class="card-body p-5">
+                <ResponsiveLineChart :data="[20,40,15,25,60,10]"></ResponsiveLineChart>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <section id="usage" class="page-section">
         <div class="row">
           <div class="col">
             <div class="card border-0 shadow-lg">
@@ -89,7 +107,8 @@ onMounted(() => {
           </div>
         </div>
       </section>
-      <section class="page-section">
+      
+      <section id="processes" class="page-section">
         <div class="row">
           <div class="col">
             <div class="card border-0 shadow-lg">
