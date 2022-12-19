@@ -13,6 +13,7 @@ describe("Navbar", () => {
 
   it("renders properly", () => {
     const testSubject = getWrapper();
+    
     expect(testSubject.exists()).toBeTruthy();
     expect(testSubject.text()).toContain("Pi Monitor");
   });

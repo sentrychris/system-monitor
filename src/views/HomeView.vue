@@ -1,61 +1,89 @@
 <script setup lang="ts">
-import { inject } from "vue"
-import { httpInjectionSymbol } from "@/injection";
-import StatCard from "@/components/StatCard.vue";
+import { inject, ref, onMounted } from "vue";
+import { httpInjectionSymbol, chartInjectionSymbol } from "@/injection";
+import type { SystemResponse } from "@/interfaces/SystemResponse";
+import type { ChartItem } from "chart.js";
+import StatCard from "@/components/stats/StatCard.vue";
+import PlatformDetail from "@/components/stats/PlatformDetail.vue";
+import CpuDetail from "@/components/stats/CpuDetail.vue";
+import UsageDetail from "@/components/stats/UsageDetail.vue";
 
 const http = inject(httpInjectionSymbol);
-http?.get('system');
-</script>
+const chart = inject(chartInjectionSymbol);
 
+const loading = ref(true) // todo move to store
+const system = ref<SystemResponse>()
+const chartCanvas = ref<ChartItem>()
+
+onMounted(() => {
+  http?.get('system').then((response) => {
+    loading.value = false
+    
+    const { data }: {data: SystemResponse} = response.data
+    system.value = data
+    
+    const config = {
+      labels: ['CPU'],
+      datasets: [{
+        data: [data.cpu.temp, 100],
+        backgroundColor: [
+          'rgb(255, 99, 132)',
+          '#e6e6e6',
+        ],
+        hoverOffset: 4
+      }],
+    }
+
+    chart?.donut(chartCanvas, config, {
+      responsive: true,
+      cutout: 20,
+    });
+  });
+});
+</script>
 
 <template>
   <main>
-    <div class="container py-4">
-      <div class="row">
-        <div class="col">
-          <StatCard title="Platform" bg="dark">
+    <div class="container-fluid px-5 py-4">
+      <div class="row" v-if="system">
+        <div class="col d-flex align-items-stretch">
+          <StatCard title="Platform" bg="dark" :loading="loading">
             <template #detail>
-              <p><strong>OS</strong> Raspbian GNU/Linux 11 (bullseye)</p>
-              <p><strong>Kernel</strong> 5.15.61-v71+</p>
-              <p><strong>Up</strong> 21 hours, 28 minutes, 19 seconds</p>
+              <PlatformDetail :detail="system.platform"></PlatformDetail>
             </template>
           </StatCard>
         </div>
-        <div class="col">
-          <StatCard title="CPU" bg="success">
+        <div class="col d-flex align-items-stretch">
+          <StatCard title="CPU" bg="success" :loading="loading">
             <template #detail>
-              <p><strong>OS</strong> Raspbian GNU/Linux 11 (bullseye)</p>
-              <p><strong>Kernel</strong> 5.15.61-v71+</p>
-              <p><strong>Up</strong> 21 hours, 28 minutes, 19 seconds</p>
+              <CpuDetail :detail="system.cpu"></CpuDetail>
             </template>
           </StatCard>
         </div>
-        <div class="col">
-          <StatCard title="Memory" bg="success">
+        <div class="col d-flex align-items-stretch">
+          <StatCard title="Memory" bg="success" :loading="loading">
             <template #detail>
-              <p><strong>OS</strong> Raspbian GNU/Linux 11 (bullseye)</p>
-              <p><strong>Kernel</strong> 5.15.61-v71+</p>
-              <p><strong>Up</strong> 21 hours, 28 minutes, 19 seconds</p>
+              <UsageDetail :detail="system.mem"></UsageDetail>
             </template>
           </StatCard>
         </div>
-        <div class="col">
-          <StatCard title="Disk" bg="warning">
+        <div class="col d-flex align-items-stretch">
+          <StatCard title="Disk" bg="dark" :loading="loading">
             <template #detail>
-              <p><strong>OS</strong> Raspbian GNU/Linux 11 (bullseye)</p>
-              <p><strong>Kernel</strong> 5.15.61-v71+</p>
-              <p><strong>Up</strong> 21 hours, 28 minutes, 19 seconds</p>
+              <UsageDetail :detail="system.disk"></UsageDetail>
             </template>
           </StatCard>
         </div>
       </div>
       <div class="row mt-3">
-        <div class="card">
-          <div class="card-header">
-            <p>Hello</p>
-          </div>
-          <div class="card-body">
-            
+        <div class="col">
+          <div class="card">
+            <div class="card-header">
+              <p>Hello</p>
+            </div>
+            <div class="card-body">
+              
+            </div>
           </div>
         </div>
       </div>
