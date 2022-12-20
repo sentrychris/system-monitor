@@ -1,8 +1,10 @@
+import type { App } from "vue";
 import axios, {
   type AxiosInstance,
   type AxiosRequestConfig,
-  type AxiosResponse 
+  type AxiosResponse,
 } from "axios";
+import { httpInjectionSymbol } from "@/injection";
 
 enum StatusCode {
   Unauthorized = 401,
@@ -12,26 +14,7 @@ enum StatusCode {
   InternalServerError = 500,
 }
 
-const headers: Readonly<Record<string, string | boolean>> = {
-  "accept": "application/json",
-  "content-type": "application/json; charset=utf-8",
-}
-
-const authorize = (config: AxiosRequestConfig): AxiosRequestConfig => {
-  try {
-    const token = localStorage.getItem("accessToken");
-    
-    if (token != null && config.headers) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    
-    return config;
-  } catch (error: any) {
-    throw new Error(error);
-  }
-};
-
-export class Http {
+export class HttpMaker {
   private instance: AxiosInstance | null = null;
   
   private get http(): AxiosInstance {
@@ -43,11 +26,29 @@ export class Http {
   init() {
     const http = axios.create({
       baseURL: "http://192.168.1.100:8888",
-      headers,
+      headers: {
+        "accept": "application/json",
+        "content-type": "application/json; charset=utf-8",
+      },
       withCredentials: true,
     });
     
-    http.interceptors.request.use(authorize, (error) => Promise.reject(error));
+    http.interceptors.request.use(
+      (config: AxiosRequestConfig): AxiosRequestConfig => {
+        try {
+          const token = localStorage.getItem("accessToken");
+          
+          if (token != null && config.headers) {
+            config.headers.Authorization = `Bearer ${token}`;
+          }
+          
+          return config;
+        } catch (error: any) {
+          throw new Error(error);
+        }
+      },
+      (error) => Promise.reject(error)
+    );
     
     http.interceptors.response.use(
       (response) => response,
@@ -108,4 +109,10 @@ export class Http {
   }
 }
 
-export const http = new Http();
+const http = new HttpMaker;
+
+export const useHttp = {
+  install(app: App) {
+    app.provide(httpInjectionSymbol, http)
+  }
+}

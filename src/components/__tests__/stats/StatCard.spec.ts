@@ -5,21 +5,24 @@ import StatCard from "../../stats/StatCard.vue";
 
 describe("StatCard", () => {
   const testProps = {
-    title: 'Lorem Ipsum',
-    icon: 'fa-solid fa-server',
-    bg: 'dark',
-  }
+    title: "Lorem Ipsum",
+    icon: "fa-solid fa-server",
+    bg: "dark",
+  };
 
-  const getWrapper = () => mount(StatCard, {
-    global: {
-      plugins: [createTestingPinia({
-        createSpy: vi.fn
-      })],
-      stubs: ['FontAwesomeIcon']
-    },
-    props: testProps
-  });
-  
+  const getWrapper = () =>
+    mount(StatCard, {
+      global: {
+        plugins: [
+          createTestingPinia({
+            createSpy: vi.fn,
+          }),
+        ],
+        stubs: ["FontAwesomeIcon"],
+      },
+      props: testProps,
+    });
+
   it("renders properly", () => {
     const testSubject = getWrapper();
 

@@ -1,6 +1,6 @@
 import type { InjectionKey } from "vue";
-import type { Http } from "./http";
-import type { ChartMaker } from "./chart";
+import type { HttpMaker } from "./plugins/http";
+import type { ChartMaker } from "./plugins/chart";
 
-export const httpInjectionSymbol: InjectionKey<Http> = Symbol('http');
-export const chartInjectionSymbol: InjectionKey<ChartMaker> = Symbol('chart');
+export const httpInjectionSymbol: InjectionKey<HttpMaker> = Symbol("http");
+export const chartInjectionSymbol: InjectionKey<ChartMaker> = Symbol("chart");

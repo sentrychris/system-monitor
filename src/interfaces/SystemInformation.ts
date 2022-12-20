@@ -1,25 +1,25 @@
 export interface CpuInformation {
-    freq: number;
-    temp: number;
-    usage: number;
+  freq: number;
+  temp: number;
+  usage: number;
 }
 
 export interface UsageInformation {
-    total: number;
-    used: number;
-    free: number;
-    percent: number; // (total - free) / total * 100
+  total: number;
+  used: number;
+  free: number;
+  percent: number; // (total - free) / total * 100
 }
 
 export interface PlatformInformation {
-    distro: string;
-    kernel: string;
-    uptime: string;
+  distro: string;
+  kernel: string;
+  uptime: string;
 }
 
 export interface ProcessInformation {
-    pid: number;
-    username: string;
-    name: string;
-    mem: number;
+  pid: number;
+  username: string;
+  name: string;
+  mem: number;
 }

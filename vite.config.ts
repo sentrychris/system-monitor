@@ -12,13 +12,13 @@ export default defineConfig({
   resolve: {
     alias: [
       {
-        find: '@',
+        find: "@",
         replacement: fileURLToPath(new URL("./src", import.meta.url)),
       },
       {
         find: /^~(.*)$/,
-        replacement: '$1',
-      }
-    ]
+        replacement: "$1",
+      },
+    ],
   },
 });

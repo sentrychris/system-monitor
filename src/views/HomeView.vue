@@ -5,7 +5,7 @@ import { useLoadingStore } from "@/stores/loading";
 
 import type { SystemResponse } from "@/interfaces/SystemResponse";
 
-import Header from "@/components/Header.vue";
+import PageHeader from "@/components/PageHeader.vue";
 import StatCard from "@/components/stats/StatCard.vue";
 import PlatformDetail from "@/components/stats/PlatformDetail.vue";
 import CpuDetail from "@/components/stats/CpuDetail.vue";
@@ -14,27 +14,23 @@ import DonutChart from "@/components/charts/DonutChart.vue";
 import DataTable from "@/components/DataTable.vue";
 import ResponsiveLineChart from "@/components/charts/ResponsiveLineChart.vue";
 
-
-
-const loading = useLoadingStore()
+const loading = useLoadingStore();
 const http = inject(httpInjectionSymbol);
-const system = ref<SystemResponse>()
+const system = ref<SystemResponse>();
 
 onMounted(() => {
-  http?.get('system').then((response) => {
-    const { data }: {data: SystemResponse} = response.data
-    system.value = data
-    loading.toggle(false)
+  http?.get("system").then((response) => {
+    const { data }: { data: SystemResponse } = response.data;
+    system.value = data;
+    loading.toggle(false);
   });
-  
-  
 });
 </script>
 
 <template>
   <main>
     <div class="container-fluid px-5 py-4">
-      <Header decor-title="Raspbian Monitor" title="Dashboard"></Header>
+      <PageHeader decor-title="Raspbian Monitor" title="Dashboard" />
       <section id="statistics" class="page-section mt-0">
         <div class="row mt-3">
           <div class="col d-flex align-items-stretch mt-3 mt-md-0">
@@ -67,19 +63,19 @@ onMounted(() => {
           </div>
         </div>
       </section>
-      
+
       <section id="d3">
         <div class="row">
           <div class="col">
             <div class="card">
               <div class="card-body p-5">
-                <ResponsiveLineChart :data="[20,40,15,25,60,10]"></ResponsiveLineChart>
+                <ResponsiveLineChart :data="[20, 40, 15, 25, 60, 10]" />
               </div>
             </div>
           </div>
         </div>
       </section>
-      
+
       <section id="usage" class="page-section">
         <div class="row">
           <div class="col">
@@ -107,7 +103,7 @@ onMounted(() => {
           </div>
         </div>
       </section>
-      
+
       <section id="processes" class="page-section">
         <div class="row">
           <div class="col">
@@ -124,4 +120,4 @@ onMounted(() => {
       </section>
     </div>
   </main>
-</template> 
+</template>

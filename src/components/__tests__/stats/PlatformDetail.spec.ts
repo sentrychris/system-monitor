@@ -7,21 +7,23 @@ describe("PlatformDetail", () => {
     detail: {
       distro: "distribution info",
       kernel: "here is the kernel",
-      uptime: "test the uptime pls"
-    }
-  }
-  
-  const getWrapper = () => mount(PlatformDetail, {
-    props: testProps
-  });
-  
+      uptime: "test the uptime pls",
+    },
+  };
+
+  const getWrapper = () =>
+    mount(PlatformDetail, {
+      props: testProps,
+    });
+
   it("renders properly", () => {
-    const testHtml = `<p><strong>OS</strong> ${testProps.detail.distro}</p>\n` +
+    const testHtml =
+      `<p><strong>OS</strong> ${testProps.detail.distro}</p>\n` +
       `<p><strong>Kernel</strong> ${testProps.detail.kernel}</p>\n` +
       `<p><strong>Uptime</strong> ${testProps.detail.uptime}</p>`;
-    
+
     const testSubject = getWrapper();
-    
+
     expect(testSubject.exists()).toBeTruthy();
     expect(testSubject.props()).toEqual(testProps);
     expect(testSubject.html()).toEqual(testHtml);

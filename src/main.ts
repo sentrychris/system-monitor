@@ -1,23 +1,22 @@
 import { createApp } from "vue";
 import { createPinia } from "pinia";
 
-import { http } from "./http";
-import { chart } from "./chart";
-import { httpInjectionSymbol, chartInjectionSymbol } from "./injection";
+import { useHttp } from "./plugins/http";
+import { useChart } from "./plugins/chart";
 
 import App from "./App.vue";
 import router from "./router";
 
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import "./utilities/icons";
 
-import "./icons";
 import "bootstrap";
 import "./assets/main.scss";
 
 createApp(App)
-    .provide(httpInjectionSymbol, http)
-    .provide(chartInjectionSymbol, chart)
-    .use(createPinia())
-    .use(router)
-    .component('font-awesome-icon', FontAwesomeIcon)
-    .mount("#app");
+  .use(createPinia())
+  .use(router)
+  .use(useHttp)
+  .use(useChart)
+  .component("font-awesome-icon", FontAwesomeIcon)
+  .mount("#app");
