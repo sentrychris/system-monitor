@@ -12,7 +12,7 @@ import CpuDetail from "@/components/stats/CpuDetail.vue";
 import UsageDetail from "@/components/stats/UsageDetail.vue";
 import DonutChart from "@/components/charts/DonutChart.vue";
 import DataTable from "@/components/DataTable.vue";
-import ResponsiveLineChart from "@/components/charts/ResponsiveLineChart.vue";
+import RealtimeLineChart from "@/components/charts/RealtimeLineChart.vue";
 
 const loader = useLoadingStore();
 const http = inject(httpInjectionSymbol);
@@ -67,10 +67,23 @@ onMounted(() => {
       
       <section id="d3">
         <div class="row">
-          <div class="col">
-            <div class="card">
-              <div class="card-body p-5">
-                <ResponsiveLineChart :data="[20, 40, 15, 25, 60, 10]" />
+          <div class="col-6">
+            <div class="card border-0 shadow-lg">
+              <div class="card-header bg-transparent border-0 d-flex justify-content-center pt-4">
+                <h2 class="header mb-0">Network Mb/s</h2>
+              </div>
+              <div class="card-body">
+                <RealtimeLineChart />
+              </div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="card border-0 shadow-lg">
+              <div class="card-header bg-transparent border-0 d-flex justify-content-center pt-4">
+                <h2 class="header mb-0">Disk I/O</h2>
+              </div>
+              <div class="card-body">
+                <RealtimeLineChart />
               </div>
             </div>
           </div>

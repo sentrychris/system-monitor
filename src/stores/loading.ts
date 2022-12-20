@@ -9,6 +9,9 @@ export const useLoadingStore = defineStore("loading", {
   actions: {
     toggle(value: boolean) {
       this.loaded = value;
+      if (this.loaded) {
+        this.setMessage('')
+      }
     },
     setError(message?: string) {
       this.error = true
