@@ -9,7 +9,7 @@ const props = defineProps<{
 }>();
 
 const color = mapTextContrast[props.bg];
-const loading = useLoadingStore();
+const loader = useLoadingStore();
 </script>
 
 <template>
@@ -21,7 +21,7 @@ const loading = useLoadingStore();
       </div>
     </div>
     <div class="card-body">
-      <slot v-if="!loading.status" name="detail"></slot>
+      <slot v-if="loader.loaded" name="detail"></slot>
       <div v-else>Loading...</div>
     </div>
   </div>

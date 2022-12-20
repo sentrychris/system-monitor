@@ -1,10 +1,23 @@
 import { defineStore } from "pinia";
 
 export const useLoadingStore = defineStore("loading", {
-  state: () => ({ status: true }),
+  state: () => ({
+    loaded: false,
+    error: false,
+    message: ''
+  }),
   actions: {
     toggle(value: boolean) {
-      this.status = value;
+      this.loaded = value;
     },
+    setError(message?: string) {
+      this.error = true
+      if (message) {
+        this.setMessage(message)
+      }
+    },
+    setMessage(value: string) {
+      this.message = value;
+    }
   },
 });

@@ -6,6 +6,7 @@ import {
   faCaretDown,
   faCaretUp,
   faDownload,
+  faExclamationTriangle,
   faHardDrive,
   faServer,
   faTachometer,
@@ -21,10 +22,11 @@ library.add(
   faCaretDown,
   faCaretUp,
   faDownload,
+  faExclamationTriangle,
   faHardDrive,
   faServer,
   faTachometer,
   faTachometerAlt,
   faUpload,
-  faWifi
+  faWifi,
 );

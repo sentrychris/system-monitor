@@ -3,8 +3,21 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Lato:wght@200;300;400&family=Noto+Sans:wght@200;300;400&family=Nunito:wght@200;300;400&family=Open+Sans&family=Oxygen&display=swap');
 
+html, body, #app {
+  height: 100%;
+}
+
 body {
   font-family: 'Nunito', 'Open Sans', sans-serif;
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+}
+
+.page-wrapper {
+  flex-grow: 1;
 }
 
 p {
@@ -55,4 +68,15 @@ svg.d3-svg {
   height: 100%;
   overflow: visible;
   background: #eee;
+}
+
+/* we will explain what these classes do next! */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 1s ease-out;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }

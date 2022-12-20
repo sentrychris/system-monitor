@@ -14,22 +14,23 @@ import DonutChart from "@/components/charts/DonutChart.vue";
 import DataTable from "@/components/DataTable.vue";
 import ResponsiveLineChart from "@/components/charts/ResponsiveLineChart.vue";
 
-const loading = useLoadingStore();
+const loader = useLoadingStore();
 const http = inject(httpInjectionSymbol);
 const system = ref<SystemResponse>();
 
 onMounted(() => {
+  loader.setMessage('Loading system data, please wait...')
   http?.get("system").then((response) => {
     const { data }: { data: SystemResponse } = response.data;
     system.value = data;
-    loading.toggle(false);
-  });
+    loader.toggle(true)
+  }).catch(() => loader.setError('An unexpected error has occurred'));
 });
 </script>
 
 <template>
-  <main>
-    <div class="container-fluid px-5 py-4">
+  <Transition name="fade">
+    <div v-if="loader.loaded" class="container-fluid px-5 py-4">
       <PageHeader decor-title="Raspbian Monitor" title="Dashboard" />
       <section id="statistics" class="page-section mt-0">
         <div class="row mt-3">
@@ -63,7 +64,7 @@ onMounted(() => {
           </div>
         </div>
       </section>
-
+      
       <section id="d3">
         <div class="row">
           <div class="col">
@@ -75,7 +76,7 @@ onMounted(() => {
           </div>
         </div>
       </section>
-
+      
       <section id="usage" class="page-section">
         <div class="row">
           <div class="col">
@@ -103,7 +104,7 @@ onMounted(() => {
           </div>
         </div>
       </section>
-
+      
       <section id="processes" class="page-section">
         <div class="row">
           <div class="col">
@@ -119,5 +120,5 @@ onMounted(() => {
         </div>
       </section>
     </div>
-  </main>
+  </Transition>
 </template>

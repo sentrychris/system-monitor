@@ -1,9 +1,15 @@
 <script setup lang="ts">
 import { RouterView } from "vue-router";
-import Navbar from "./components/Navbar.vue";
+import SiteNavbar from "./components/SiteNavbar.vue";
+import SiteFooter from "./components/SiteFooter.vue";
+import PageLoading from "@/components/PageLoading.vue";
 </script>
 
 <template>
-  <Navbar />
-  <RouterView />
+  <SiteNavbar />
+  <PageLoading />
+  <main class="page-wrapper d-flex flex-column position-relative">
+    <RouterView />
+  </main>
+  <SiteFooter />
 </template>

@@ -1,10 +1,10 @@
 import { describe, it, expect } from "vitest";
 import { mount } from "@vue/test-utils";
-import Navbar from "../Navbar.vue";
+import SiteNavbar from "../SiteNavbar.vue";
 
-describe("Navbar", () => {
+describe("SiteNavbar", () => {
   const getWrapper = () =>
-    mount(Navbar, {
+    mount(SiteNavbar, {
       global: {
         stubs: {
           "router-link": { template: "<div/>" },

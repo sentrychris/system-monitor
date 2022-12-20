@@ -10,8 +10,8 @@ describe("Loading Store", () => {
   it("toggles", () => {
     const loading = useLoadingStore();
 
-    expect(loading.status).toBe(true);
-    loading.toggle(false);
-    expect(loading.status).toBe(false);
+    expect(loading.loaded).toBe(false);
+    loading.toggle(true);
+    expect(loading.loaded).toBe(true);
   });
 });
