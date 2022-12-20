@@ -2,54 +2,61 @@
 import * as d3 from "d3";
 import { ref, onMounted, watchEffect } from "vue";
 import { useResizeObserver } from "@/utilities/resize-observer";
+import type { DataPoint } from "@/interfaces/RealtimeChart";
+
+const props = defineProps<{
+  data: any[];
+}>();
 
 const svgRef = ref(null);
+const { resizeRef, resizeState } = useResizeObserver();
 
 onMounted(() => {
   const svg = d3.select(svgRef.value);
 
-  const MARGIN = {
-    TOP: 50,
-    BOTTOM: 50,
-    LEFT: 50,
-    RIGHT: 50
+  const margin = {
+    top: 50,
+    bottom: 50,
+    left: 50,
+    right: 50
   };
 
-  const WIDTH = svg.attr('width') - MARGIN.LEFT - MARGIN.RIGHT;
-  const HEIGHT = svg.attr('height') - MARGIN.TOP - MARGIN.BOTTOM;
+  const width = resizeState.dimensions.width - margin.left - margin.right;
+  const height = resizeState.dimensions.height - margin.top - margin.bottom;
 
   const limit = 60;
   const duration = 500;
-  let dataList = [];
 
-  let g = svg.append('g').attr('transform', `translate( ${MARGIN.LEFT}, ${MARGIN.TOP} )`);
+  let data: DataPoint[] = [];
+
+  let g = svg.append('g').attr('transform', `translate( ${margin.left}, ${margin.top} )`);
 
   g.append('defs').append('clipPath')
     .attr('id', 'clip2')
     .append('rect')
     .attr('x', 0)
     .attr('y', 0)
-    .attr('width', WIDTH)
-    .attr('height', HEIGHT);
+    .attr('width', width)
+    .attr('height', height);
 
   // ParseTime
 
   const timeScale = d3.scaleTime()
-    .range([0, WIDTH]);
+    .range([0, width]);
 
   const valueScale = d3.scaleLinear()
     .domain([0, 10])
-    .range([HEIGHT, 0]);
+    .range([height, 0]);
 
   const line = d3.line()
     .curve(d3.curveBasis)
-    .x((d) => timeScale(d.time))
-    .y((d) => valueScale(d.value));
+    .x((d: any) => timeScale(d.time))
+    .y((d: any) => valueScale(d.value));
 
   const xAxis = d3.axisBottom(timeScale);
 
   const axisCall = g.append('g')
-    .attr('transform', `translate(0, ${HEIGHT})`);
+    .attr('transform', `translate(0, ${height})`);
 
   axisCall.call(xAxis);
 
@@ -61,7 +68,7 @@ onMounted(() => {
 
   function updateChart() {
     let now = Date.now();
-    dataList.push({
+    data.push({
       time: now,
       value: Math.floor(Math.random() * 10)
     });
@@ -69,29 +76,31 @@ onMounted(() => {
     // Shift domain
     timeScale.domain([now - ((limit - 2) * duration), now - duration]);
 
+    // @ts-ignore
     axisCall.transition().duration(duration).ease(d3.easeLinear, 2).call(xAxis);
 
-    let minerG = pathsG.selectAll('.minerLine').data([dataList]);
-    let minerGEnter = minerG.enter()
+    let gline = pathsG.selectAll('.gline').data([data]);
+    let genter = gline.enter()
       .append('g')
-      .attr('class', 'minerLine')
-      .merge(minerG);
+      .attr('class', 'gline')
+      // @ts-ignore
+      .merge(gline);
 
-    let minerSVG = minerGEnter.selectAll('path').data(function(d) {
-      return [d];
-    });
-
-    let minerSVGenter = minerSVG.enter()
+    let gsvg = genter.selectAll('path').data((dp) => [dp]);
+    
+    gsvg.enter()
       .append('path').attr('class', 'line')
       .style('stroke', '#D073BA')
       .style('fill', 'none')
-      .merge(minerSVG)
+      // @ts-ignore
+      .merge(gsvg)
       .transition()
       .duration(duration)
+      // @ts-ignore
       .ease(d3.easeLinear, 2)
-      .attr('d', line(dataList))
+      // @ts-ignore
+      .attr('d', line(data))
       .attr('transform', null);
-
   }
 
   setInterval(function() {
