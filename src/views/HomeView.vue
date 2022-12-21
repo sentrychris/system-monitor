@@ -3,6 +3,7 @@ import { inject, ref, onMounted } from "vue";
 import { useLoadingStore } from "@/stores/loading";
 import { httpInjectionSymbol } from "@/injection";
 import type { SystemResponse } from "@/interfaces/SystemResponse";
+import { SystemMetric, Cpu } from "@/enums/SystemMetrics";
 import PageHeader from "@/components/PageHeader.vue";
 import StatCard from "@/components/stats/StatCard.vue";
 import PlatformDetail from "@/components/stats/PlatformDetail.vue";
@@ -67,11 +68,11 @@ onMounted(() => {
         <div class="row">
           <div class="col-6">
             <div class="card border-0 shadow-lg">
-              <div class="card-header bg-transparent border-0 d-flex justify-content-center pt-4">
-                <h2 class="header mb-0">Network Mb/s</h2>
+              <div class="card-header bg-transparent border-0 d-flex justify-content-center">
+                <h2 class="header mb-0">CPU Usage %</h2>
               </div>
               <div class="card-body">
-                <RealtimeLineChart />
+                <RealtimeLineChart :metric="SystemMetric.cpu" :track="Cpu.usage" />
               </div>
             </div>
           </div>

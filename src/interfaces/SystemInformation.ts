@@ -23,3 +23,8 @@ export interface ProcessInformation {
   name: string;
   mem: number;
 }
+
+export interface SystemMetrics {
+  metric: 'cpu' | 'mem' | 'disk';
+  track: 'temp' | 'usage' | 'percent' | 'used' | 'free' | 'total'; 
+}
