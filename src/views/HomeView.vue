@@ -1,9 +1,7 @@
 <script setup lang="ts">
-import { inject, onMounted } from "vue";
+import { onMounted } from "vue";
 import { useLoadingStore } from "@/stores/loading";
 import { useSystemStore } from "@/stores/system";
-import { httpInjectionSymbol } from "@/injection";
-import type { SystemResponse } from "@/interfaces/SystemResponse";
 import PageHeader from "@/components/PageHeader.vue";
 import StatCard from "@/components/stats/StatCard.vue";
 import PlatformDetail from "@/components/stats/PlatformDetail.vue";
@@ -12,17 +10,15 @@ import UsageDetail from "@/components/stats/UsageDetail.vue";
 import DataTable from "@/components/DataTable.vue";
 import RealtimeLineChart from "@/components/charts/RealtimeLineChart.vue";
 
-const http = inject(httpInjectionSymbol);
 const loader = useLoadingStore();
 const system = useSystemStore();
 
 onMounted(() => {
-  loader.setMessage('Loading system data, please wait...')
-  http?.get("system").then((response) => {
-    const { data }: { data: SystemResponse } = response.data;
-    system.staticUpdate(data)
-    system.connect()
-  }).catch(() => loader.setError('An unexpected error has occurred'));
+  system.connect({
+    // set this to true if you would like realtime data
+    // obtained through a websocket connection
+    websocket: true
+  })
 });
 </script>
 

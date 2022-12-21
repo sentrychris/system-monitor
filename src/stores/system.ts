@@ -1,5 +1,8 @@
-import type { SystemResponse, RealtimeSystemResponse } from "@/interfaces/SystemResponse";
 import { defineStore } from "pinia";
+import { inject } from "vue";
+import { HttpMaker } from "@/plugins/http";
+import type { SystemResponse, RealtimeSystemResponse } from "@/interfaces/SystemResponse";
+import { httpInjectionSymbol } from "@/injection";
 import { useLoadingStore } from "./loading";
 
 export const useSystemStore = defineStore("system", {
@@ -10,9 +13,23 @@ export const useSystemStore = defineStore("system", {
     ready: false,
   }),
   actions: {
-    async connect() {
-      const loader = useLoadingStore()
+    async connect({websocket = false}: {websocket: boolean}) {
+      const loader = useLoadingStore();
+      const http = inject(httpInjectionSymbol, new HttpMaker);
 
+      loader.setMessage('Connecting to monitor, please wait...')
+      http.get("system").then((response) => {
+        const { data }: { data: SystemResponse } = response.data;
+        this.staticUpdate(data)
+        if (websocket) {
+          this.websocket()
+        }
+        loader.toggle(true)
+      }).catch(() => {
+        loader.setError('An unexpected error has occurred')
+      });
+    },
+    async websocket() {
       const client = await fetch('http://192.168.1.100:4200', {
         method: 'POST',
         body: JSON.stringify({ connection: 'monitor' })
@@ -25,7 +42,6 @@ export const useSystemStore = defineStore("system", {
       this.connection.onopen = () => {
         console.log('Connected to websocket')
         this.ready = true
-        loader.toggle(true)
       }
       this.connection.onmessage = (response) => {
         try {

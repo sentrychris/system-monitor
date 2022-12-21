@@ -3,12 +3,12 @@ import type { PlatformInformation } from "@/interfaces/SystemInformation";
 
 defineProps<{
   detail: PlatformInformation;
-  uptime: string;
+  uptime?: string;
 }>();
 </script>
 
 <template>
   <p><strong>OS</strong> {{ detail.distro }}</p>
   <p><strong>Kernel</strong> {{ detail.kernel }}</p>
-  <p><strong>Uptime</strong> {{ uptime }}</p>
+  <p><strong>Uptime</strong> {{ uptime ?? detail.uptime }}</p>
 </template>
