@@ -95,7 +95,7 @@ onMounted(() => {
           <div class="col-6">
             <div class="card border-0 shadow-lg">
               <div class="card-header bg-transparent border-0 d-flex justify-content-center">
-                <h2 class="header mb-0">CPU Usage %</h2>
+                <h2 class="lead header mb-0">CPU Usage %</h2>
               </div>
               <div class="card-body">
                 <RealtimeLineChart :data-point="system.realtime.cpu.usage" :y-range="[0, 100]" />
@@ -105,7 +105,7 @@ onMounted(() => {
           <div class="col-6">
             <div class="card border-0 shadow-lg">
               <div class="card-header bg-transparent border-0 d-flex justify-content-center">
-                <h2 class="header mb-0">Memory Usage</h2>
+                <h2 class="lead header mb-0">Memory Usage</h2>
               </div>
               <div class="card-body">
                 <RealtimeLineChart :data-point="system.realtime.mem.used" :y-range="[0, 4]" />

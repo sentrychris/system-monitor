@@ -1,10 +1,8 @@
 import * as Highcharts from 'highcharts';
-import * as HighchartsMore from 'highcharts/highcharts-more';
-import * as HighchartsSolidGauge from 'highcharts/modules/solid-gauge';
+import HighchartsMore from 'highcharts/highcharts-more';
+import HighchartsSolidGauge from 'highcharts/modules/solid-gauge';
 
-//@ts-ignore
 HighchartsMore(Highcharts);
-//@ts-ignore
 HighchartsSolidGauge(Highcharts);
 
 interface GaugeMaker {

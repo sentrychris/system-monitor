@@ -18,7 +18,7 @@ export class HttpMaker {
   
   init() {
     const http = axios.create({
-      baseURL: "http://192.168.1.100:8888",
+      baseURL: "http://192.168.1.100",
       headers: {
         "accept": "application/json",
         "content-type": "application/json; charset=utf-8",
