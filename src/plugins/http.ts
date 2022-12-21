@@ -23,7 +23,6 @@ export class HttpMaker {
         "accept": "application/json",
         "content-type": "application/json; charset=utf-8",
       },
-      withCredentials: true,
     });
     
     http.interceptors.request.use(
