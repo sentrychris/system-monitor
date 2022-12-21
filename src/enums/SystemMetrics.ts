@@ -1,6 +1,6 @@
 export enum SystemMetric {
   cpu = "cpu",
-  mem = "mem",
+  mem = "memory",
   disk = "disk"
 }
 

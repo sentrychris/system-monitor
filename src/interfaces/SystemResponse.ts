@@ -7,9 +7,16 @@ import type {
 
 export interface SystemResponse {
   cpu: CpuInformation;
-  disk: UsageInformation;
   mem: UsageInformation;
+  disk: UsageInformation;
   platform: PlatformInformation;
   processes: ProcessInformation[];
   user: string;
+}
+
+export interface RealtimeSystemResponse {
+  uptime: string;
+  cpu: CpuInformation;
+  mem: UsageInformation;
+  disk: UsageInformation;
 }

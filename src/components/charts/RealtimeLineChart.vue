@@ -5,8 +5,9 @@ import { useResizeObserver } from "@/utilities/resize-observer";
 import type { DataPoint } from "@/interfaces/RealtimeChart";
 
 const props = defineProps<{
-  metric: 'cpu' | 'mem' | 'disk';
-  track: 'temp' | 'usage' | 'percent' | 'used' | 'free' | 'total'; 
+  metric: 'cpu' | 'memory' | 'disk';
+  track: 'temp' | 'usage' | 'percent' | 'used' | 'free' | 'total';
+  yRange: number[]
 }>()
 
 const svgRef = ref(null);
@@ -68,9 +69,9 @@ const draw = () => {
   const timeScale = d3.scaleTime()
   .range([0, width])
   
-  // Linear scale (0 to 100)
+  // Linear scale
   const valueScale = d3.scaleLinear()
-  .domain([0, 100])
+  .domain(props.yRange)
   .range([height, 0]);
   
   // Construct line generator
@@ -148,7 +149,7 @@ onMounted(() => {
 
 <template>
   <div ref="resizeRef">
-    <svg width="800" height="300" ref="svgRef">
+    <svg width="800" height="150" ref="svgRef">
     </svg>
   </div>
 </template>
