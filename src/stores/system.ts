@@ -1,9 +1,9 @@
 import { defineStore } from "pinia";
 import { inject } from "vue";
-import { HttpMaker } from "@/plugins/http";
-import type { SystemResponse, RealtimeSystemResponse } from "@/interfaces/SystemResponse";
-import { httpInjectionSymbol } from "@/injection";
 import { useLoadingStore } from "./loading";
+import { HttpMaker } from "@/plugins/http";
+import { httpInjectionSymbol } from "@/injection";
+import type { SystemResponse, RealtimeSystemResponse } from "@/interfaces/SystemResponse";
 
 export const useSystemStore = defineStore("system", {
   state: () => ({
