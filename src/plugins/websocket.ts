@@ -1,17 +1,11 @@
 import type { App } from "vue";
 import { websocketInjectionSymbol } from "@/injection";
-
-enum StatusCode {
-  ClosedNormal = 1000,
-  ClosedProtocolError = 1002,
-  ClosedNoStatus = 1005,
-  ServerError = 1011,
-  BadGateway = 1014,
-  HandshakeFailed = 1015,
-}
+import { WebsocketStatus } from "@/enums/StatusCodes";
 
 export class WebsocketMaker {
   private instance: WebSocket | null = null;
+
+  private data: any;
   
   private get websocket(): WebSocket {
     return this.instance != null
@@ -21,12 +15,38 @@ export class WebsocketMaker {
   
   init() {
     const websocket = new WebSocket('ws://192.168.1.100:4200/ws');
+    
+    websocket.onopen = () => {
+      console.log('websocket is connected!')
+    }
 
-    // Logic
+    websocket.onmessage = (value) => {
+      this.data = value
+    }
 
     this.instance = websocket;
      
     return websocket;
+  }
+
+  private handleError(error: Response) {
+    const { status } = error;
+    
+    switch (status) {
+      case WebsocketStatus.InternalServerError: {
+        break;
+      }
+      case WebsocketStatus.ClosedProtocolError: {
+        // Handle closed with protocol error
+        break;
+      }
+      case WebsocketStatus.ClosedNoStatus: {
+        // Handle closed with no status
+        break;
+      }
+    }
+    
+    return Promise.reject(error);
   }
 }
 

@@ -5,14 +5,7 @@ import axios, {
   type AxiosResponse,
 } from "axios";
 import { httpInjectionSymbol } from "@/injection";
-
-enum StatusCode {
-  Unauthorized = 401,
-  Forbidden = 403,
-  NotFound = 404,
-  TooManyRequests = 429,
-  InternalServerError = 500,
-}
+import { HttpStatus } from "@/enums/StatusCodes";
 
 export class HttpMaker {
   private instance: AxiosInstance | null = null;
@@ -87,19 +80,19 @@ export class HttpMaker {
     const { status } = error;
     
     switch (status) {
-      case StatusCode.InternalServerError: {
+      case HttpStatus.InternalServerError: {
         // Handle InternalServerError
         break;
       }
-      case StatusCode.Forbidden: {
+      case HttpStatus.Forbidden: {
         // Handle Forbidden
         break;
       }
-      case StatusCode.Unauthorized: {
+      case HttpStatus.Unauthorized: {
         // Handle Unauthorized
         break;
       }
-      case StatusCode.TooManyRequests: {
+      case HttpStatus.TooManyRequests: {
         // Handle TooManyRequests
         break;
       }

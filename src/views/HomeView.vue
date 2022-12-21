@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import { inject, ref, onMounted } from "vue";
-import { httpInjectionSymbol } from "@/injection";
 import { useLoadingStore } from "@/stores/loading";
-
+import { httpInjectionSymbol } from "@/injection";
 import type { SystemResponse } from "@/interfaces/SystemResponse";
-
 import PageHeader from "@/components/PageHeader.vue";
 import StatCard from "@/components/stats/StatCard.vue";
 import PlatformDetail from "@/components/stats/PlatformDetail.vue";
@@ -71,16 +69,6 @@ onMounted(() => {
             <div class="card border-0 shadow-lg">
               <div class="card-header bg-transparent border-0 d-flex justify-content-center pt-4">
                 <h2 class="header mb-0">Network Mb/s</h2>
-              </div>
-              <div class="card-body">
-                <RealtimeLineChart />
-              </div>
-            </div>
-          </div>
-          <div class="col-6">
-            <div class="card border-0 shadow-lg">
-              <div class="card-header bg-transparent border-0 d-flex justify-content-center pt-4">
-                <h2 class="header mb-0">Disk I/O</h2>
               </div>
               <div class="card-body">
                 <RealtimeLineChart />
