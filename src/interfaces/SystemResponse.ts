@@ -15,8 +15,8 @@ export interface SystemResponse {
 }
 
 export interface RealtimeSystemResponse {
-  uptime: string;
   cpu: CpuInformation;
   mem: UsageInformation;
   disk: UsageInformation;
+  uptime?: string | null;
 }

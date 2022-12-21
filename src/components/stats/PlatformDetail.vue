@@ -3,7 +3,7 @@ import type { PlatformInformation } from "@/interfaces/SystemInformation";
 
 defineProps<{
   detail: PlatformInformation;
-  uptime?: string;
+  uptime?: string | null;
 }>();
 </script>
 

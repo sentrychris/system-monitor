@@ -5,42 +5,12 @@ import { useResizeObserver } from "@/utilities/resize-observer";
 import type { DataPoint } from "@/interfaces/RealtimeChart";
 
 const props = defineProps<{
-  metric: 'cpu' | 'memory' | 'disk';
-  track: 'temp' | 'usage' | 'percent' | 'used' | 'free' | 'total';
+  dataPoint: number;
   yRange: number[]
 }>()
 
 const svgRef = ref(null);
-const currentDataPoint = ref(0);
 const { resizeRef, resizeState } = useResizeObserver();
-
-let connection: WebSocket | null = null;
-const connect = async () => {
-  const client = await fetch('http://192.168.1.100:4200', {
-    method: 'POST',
-    //@ts-ignore
-    body:  { connection: 'monitor' }
-  })
-
-  const worker = await client.json()
-  const url = `ws://192.168.1.100:4200/ws?id=${worker.id}`
-  
-  connection = connection ?? new WebSocket(url)
-  connection.onopen = () => {
-    draw()
-  }
-  connection.onmessage = (response) => {
-    try {
-      const data: any = JSON.parse(response.data)
-      if (data[props.metric] && Object.prototype.hasOwnProperty.call(data[props.metric], props.track)) {
-        currentDataPoint.value = data[props.metric][props.track]
-      }
-    } catch (error) {}
-  }
-  connection.onclose = () => {
-    connection = null
-  }
-}
 
 const draw = () => {
   const svg = d3.select(svgRef.value);
@@ -101,7 +71,7 @@ const draw = () => {
     let now = Date.now();
     data.push({
       time: now,
-      value: currentDataPoint.value
+      value: props.dataPoint
     });
     
     // Shift domain
@@ -143,13 +113,19 @@ const draw = () => {
 }
 
 onMounted(() => {
-  connect()
+  draw()
 })
 </script>
 
 <template>
-  <div ref="resizeRef">
-    <svg width="800" height="150" ref="svgRef">
-    </svg>
+  <div class="realtime-line-wrapper" ref="resizeRef">
+    <svg ref="svgRef"></svg>
   </div>
 </template>
+
+<style scoped>
+.realtime-line-wrapper svg {
+  height: 200px;
+  width: 100%;
+}
+</style>

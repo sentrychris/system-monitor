@@ -8,28 +8,51 @@ import type { SystemResponse, RealtimeSystemResponse } from "@/interfaces/System
 export const useSystemStore = defineStore("system", {
   state: () => ({
     data: <SystemResponse>{},
-    realtime: <RealtimeSystemResponse>{},
+    realtime: <RealtimeSystemResponse>{
+      cpu: {
+        freq: 0,
+        temp: 0,
+        usage: 0,
+      },
+      mem: {
+        total: 0,
+        used: 0,
+        free: 0,
+        percent: 0
+      },
+      disk: {
+        total: 0,
+        used: 0,
+        free: 0,
+        percent: 0
+      },
+      uptime: null
+    },
     connection: <WebSocket | null> null,
-    ready: false,
+    live: false,
   }),
   actions: {
     async connect({websocket = false}: {websocket: boolean}) {
       const loader = useLoadingStore();
       const http = inject(httpInjectionSymbol, new HttpMaker);
 
-      loader.setMessage('Connecting to monitor, please wait...')
+      loader.setMessage('Requesting new monitor connection...')
       http.get("system").then((response) => {
         const { data }: { data: SystemResponse } = response.data;
         this.staticUpdate(data)
         if (websocket) {
           this.websocket()
+        } else {
+          loader.toggle(true)
         }
-        loader.toggle(true)
       }).catch(() => {
         loader.setError('An unexpected error has occurred')
       });
     },
     async websocket() {
+      const loader = useLoadingStore();
+      loader.setMessage('Connecting to websocket...')
+
       const client = await fetch('http://192.168.1.100:4200', {
         method: 'POST',
         body: JSON.stringify({ connection: 'monitor' })
@@ -40,8 +63,13 @@ export const useSystemStore = defineStore("system", {
       
       this.connection = this.connection ?? new WebSocket(url)
       this.connection.onopen = () => {
-        console.log('Connected to websocket')
-        this.ready = true
+        loader.setMessage('Websocket connected, loading dashboard...')
+        loader.toggle(true)
+        this.live = true
+      }
+      this.connection.onerror = () => {
+        loader.toggle(false)
+        loader.setMessage('Error! Unable to connect to websocket...')
       }
       this.connection.onmessage = (response) => {
         try {
@@ -52,8 +80,20 @@ export const useSystemStore = defineStore("system", {
         }
       }
       this.connection.onclose = () => {
-        this.ready = false
+        this.live = false
         this.connection = null
+      }
+    },
+    async close() {
+      if (this.connection instanceof WebSocket) {
+        this.connection.close()
+        this.connect({ websocket: false })
+      }
+    },
+    async reconnect() {
+      if (this.connection instanceof WebSocket) {
+        this.connection.close()
+        this.connect({ websocket: true })
       }
     },
     staticUpdate(data: SystemResponse) {
