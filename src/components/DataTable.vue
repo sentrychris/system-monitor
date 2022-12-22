@@ -3,11 +3,11 @@ import { ref, computed, type Ref } from "vue";
 import _ from "lodash";
 
 const props = defineProps<{
-  type: "horizontal" | "vertical";
+  type: string;
   data: any; // TODO change
   nested?: boolean;
   sortKey?: string;
-  sortOrder?: "asc" | "desc";
+  sortOrder?: string;
 }>();
 
 const tableData = ref(props.data);
@@ -46,7 +46,7 @@ const transpose = () => {
 
 const verticalData = computed(() => {
   const data = transpose();
-  return _.orderBy(data, props.sortKey, props.sortOrder);
+  return _.orderBy(data, props.sortKey, tableSortOrder.value);
 });
 </script>
 
