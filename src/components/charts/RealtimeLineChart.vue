@@ -2,7 +2,7 @@
 import * as d3 from "d3";
 import { ref, onMounted } from "vue";
 import { useResizeObserver } from "@/utilities/resize-observer";
-import type { DataPoint } from "@/interfaces/RealtimeChart";
+import type { RealtimeDataPoint } from "@/interfaces/ChartRegistry";
 
 const props = defineProps<{
   dataPoint: number;
@@ -22,7 +22,7 @@ const draw = () => {
   const limit = 60;
   const duration = 500;
 
-  let data: DataPoint[] = [];
+  const data: Array<RealtimeDataPoint> = [];
 
   let g = svg
     .append("g")

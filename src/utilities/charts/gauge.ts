@@ -1,24 +1,10 @@
 import * as Highcharts from "highcharts";
 import HighchartsMore from "highcharts/highcharts-more";
 import HighchartsSolidGauge from "highcharts/modules/solid-gauge";
+import type { Gauge } from "@/interfaces/ChartRegistry";
 
 HighchartsMore(Highcharts);
 HighchartsSolidGauge(Highcharts);
-
-interface Gauge {
-  registry: { [key: string]: Highcharts.Chart };
-  create({
-    id,
-    value,
-    format,
-  }: {
-    id: string;
-    value: number;
-    format: string;
-  }): Highcharts.Chart;
-  updatePoint(id: string, value: number): void;
-  addToRegistry(id: string, chart: Highcharts.Chart): void;
-}
 
 const gauge: Gauge = {
   registry: {},
