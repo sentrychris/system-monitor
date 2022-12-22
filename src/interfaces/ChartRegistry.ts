@@ -16,6 +16,6 @@ export interface Gauge {
     value: number;
     format: string;
   }): Chart;
-  updatePoint(id: string, value: number): void;
+  updateDataPoint(id: string, value: number): void;
   addToRegistry(id: string, chart: Chart): void;
 }

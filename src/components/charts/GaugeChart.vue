@@ -19,7 +19,7 @@ onMounted(() => {
   watch(
     () => props.metric,
     (next) => {
-      gauge.updatePoint(props.id, next);
+      gauge.updateDataPoint(props.id, next);
     }
   );
 });

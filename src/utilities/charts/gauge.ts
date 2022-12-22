@@ -81,7 +81,7 @@ const gauge: Gauge = {
 
     return chart;
   },
-  updatePoint(id, value) {
+  updateDataPoint(id, value) {
     const dataPoint = this.registry[id].series[0].points[0];
     dataPoint.update(Math.round(value));
   },
