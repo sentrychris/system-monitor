@@ -3,7 +3,9 @@
     <div class="container-fluid px-5 pb-3 pt-4 d-flex justify-content-between">
       <span class="lead babel text-warning">Pi Monitor</span>
       <div class="footer-links">
-        <span class="text-white small">Copyright © Chris Rowles 2022. All Rights Reserved.</span>
+        <span class="text-white small"
+          >Copyright © Chris Rowles 2022. All Rights Reserved.</span
+        >
       </div>
     </div>
   </footer>

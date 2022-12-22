@@ -1,5 +1,3 @@
 import { gauge } from "./gauge";
 
-export {
-  gauge
-}
+export { gauge };

@@ -1,25 +1,28 @@
 <script setup lang="ts">
-import { onMounted, watch } from 'vue';
-import { gauge } from '@/utilities/charts';
+import { onMounted, watch } from "vue";
+import { gauge } from "@/utilities/charts";
 
 const props = defineProps<{
   id: string;
   title: string;
   metric: number;
   format: string;
-}>()
+}>();
 
 onMounted(() => {
   gauge.create({
     id: props.id,
     value: props.metric,
-    format: props.format
-  })
+    format: props.format,
+  });
 
-  watch(() => props.metric, (next) => {
-    gauge.updatePoint(props.id, next)
-  })
-})
+  watch(
+    () => props.metric,
+    (next) => {
+      gauge.updatePoint(props.id, next);
+    }
+  );
+});
 </script>
 
 <template>

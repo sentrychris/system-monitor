@@ -10,26 +10,28 @@ const props = defineProps<{
   sortOrder?: "asc" | "desc";
 }>();
 
+const tableData = ref(props.data);
+const tableSortKey = ref("mem");
+const tableOrder: Ref<"asc" | "desc"> = ref("desc");
+
 const vertical = computed(() => {
   const response: Array<{ header: string; value: string }> = [];
 
   for (const key in tableData) {
-    if (Number.isInteger(tableData[key])) {
-      tableData[key] = parseFloat(tableData[key]).toFixed(2);
+    let value = tableData[key];
+
+    if (Number.isInteger(value)) {
+      value = parseFloat(tableData[key]).toFixed(2);
     }
 
     response.push({
       header: formatHeader(key),
-      value: tableData[key],
+      value,
     });
   }
 
   return _.orderBy(response, props.sortKey, props.sortOrder);
 });
-
-const tableData = ref(props.data);
-const tableSortKey = ref("mem");
-const tableOrder: Ref<"asc" | "desc"> = ref("desc");
 
 const changeOrder = (key: string) => {
   tableSortKey.value = key;

@@ -25,6 +25,6 @@ export interface ProcessInformation {
 }
 
 export interface SystemMetrics {
-  metric: 'cpu' | 'mem' | 'disk';
-  track: 'temp' | 'usage' | 'percent' | 'used' | 'free' | 'total'; 
+  metric: "cpu" | "mem" | "disk";
+  track: "temp" | "usage" | "percent" | "used" | "free" | "total";
 }

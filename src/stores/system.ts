@@ -3,7 +3,10 @@ import { inject } from "vue";
 import { useLoadingStore } from "./loading";
 import { HttpMaker } from "@/plugins/http";
 import { httpInjectionSymbol } from "@/injection";
-import type { SystemResponse, RealtimeSystemResponse } from "@/interfaces/SystemResponse";
+import type {
+  SystemResponse,
+  RealtimeSystemResponse,
+} from "@/interfaces/SystemResponse";
 
 export const useSystemStore = defineStore("system", {
   state: () => ({
@@ -18,89 +21,92 @@ export const useSystemStore = defineStore("system", {
         total: 0,
         used: 0,
         free: 0,
-        percent: 0
+        percent: 0,
       },
       disk: {
         total: 0,
         used: 0,
         free: 0,
-        percent: 0
+        percent: 0,
       },
-      uptime: null
+      uptime: null,
     },
-    connection: <WebSocket | null> null,
+    connection: <WebSocket | null>null,
     live: false,
   }),
   actions: {
-    async connect({websocket = false}: {websocket: boolean}) {
+    async connect({ websocket = false }: { websocket: boolean }) {
       const loader = useLoadingStore();
-      const http = inject(httpInjectionSymbol, new HttpMaker);
+      const http = inject(httpInjectionSymbol, new HttpMaker());
 
-      loader.setMessage('Requesting new monitor connection...')
-      http.get("system").then((response) => {
-        const { data }: { data: SystemResponse } = response.data;
-        this.staticUpdate(data)
-        if (websocket) {
-          this.websocket()
-        } else {
-          loader.toggle(true)
-        }
-      }).catch(() => {
-        loader.setError('An unexpected error has occurred')
-      });
+      loader.setMessage("Requesting new monitor connection...");
+      http
+        .get("system")
+        .then((response) => {
+          const { data }: { data: SystemResponse } = response.data;
+          this.staticUpdate(data);
+          if (websocket) {
+            this.websocket();
+          } else {
+            loader.toggle(true);
+          }
+        })
+        .catch(() => {
+          loader.setError("An unexpected error has occurred");
+        });
     },
     async websocket() {
       const loader = useLoadingStore();
-      loader.setMessage('Connecting to websocket...')
+      loader.setMessage("Connecting to websocket...");
 
-      const client = await fetch('http://192.168.1.100:4200', {
-        method: 'POST',
-        body: JSON.stringify({ connection: 'monitor' })
-      })
-    
-      const worker = await client.json()
-      const url = `ws://192.168.1.100:4200/ws?id=${worker.id}`
-      
-      this.connection = this.connection ?? new WebSocket(url)
+      const client = await fetch("http://192.168.1.100:4200", {
+        method: "POST",
+        body: JSON.stringify({ connection: "monitor" }),
+      });
+
+      const worker = await client.json();
+      const url = `ws://192.168.1.100:4200/ws?id=${worker.id}`;
+
+      this.connection = this.connection ?? new WebSocket(url);
       this.connection.onopen = () => {
-        loader.setMessage('Websocket connected, loading dashboard...')
-        loader.toggle(true)
-        this.live = true
-      }
+        loader.setMessage("Websocket connected, loading dashboard...");
+        loader.toggle(true);
+        this.live = true;
+      };
       this.connection.onerror = () => {
-        loader.toggle(false)
-        loader.setMessage('Error! Unable to connect to websocket...')
-      }
+        loader.toggle(false);
+        loader.setMessage("Error! Unable to connect to websocket...");
+      };
       this.connection.onmessage = (response) => {
         try {
-          const data = (JSON.parse(response.data) as RealtimeSystemResponse)
-          this.liveUpdate(data)
+          const data = JSON.parse(response.data) as RealtimeSystemResponse;
+          this.liveUpdate(data);
         } catch (error) {
-          console.log({error})
+          console.log({ error });
         }
-      }
+      };
       this.connection.onclose = () => {
-        this.live = false
-        this.connection = null
-      }
+        this.live = false;
+        this.connection = null;
+      };
     },
     async close() {
       if (this.connection instanceof WebSocket) {
-        this.connection.close()
-        this.connect({ websocket: false })
+        this.connection.close();
+        this.connect({ websocket: false });
       }
     },
     async reconnect() {
       if (this.connection instanceof WebSocket) {
-        this.connection.close()
-        this.connect({ websocket: true })
+        this.connection.close();
+        this.connect({ websocket: true });
       }
     },
     staticUpdate(data: SystemResponse) {
-      this.$patch({data})
+      this.$patch({ data });
     },
     liveUpdate(realtime: RealtimeSystemResponse) {
-      this.$patch({realtime})
-    }
+      this.$patch({ realtime });
+    },
   },
 });

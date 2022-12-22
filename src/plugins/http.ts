@@ -9,31 +9,29 @@ import { HttpStatus } from "@/enums/StatusCodes";
 
 export class HttpMaker {
   private instance: AxiosInstance | null = null;
-  
+
   private get http(): AxiosInstance {
-    return this.instance != null
-      ? this.instance
-      : this.init();
+    return this.instance != null ? this.instance : this.init();
   }
-  
+
   init() {
     const http = axios.create({
       baseURL: import.meta.env.VITE_API_URL,
       headers: {
-        "accept": "application/json",
+        accept: "application/json",
         "content-type": "application/json; charset=utf-8",
       },
     });
-    
+
     http.interceptors.request.use(
       (config: AxiosRequestConfig): AxiosRequestConfig => {
         try {
           const token = localStorage.getItem("accessToken");
-          
+
           if (token != null && config.headers) {
             config.headers.Authorization = `Bearer ${token}`;
           }
-          
+
           return config;
         } catch (error: any) {
           throw new Error(error);
@@ -41,7 +39,7 @@ export class HttpMaker {
       },
       (error) => Promise.reject(error)
     );
-    
+
     http.interceptors.response.use(
       (response) => response,
       (error) => {
@@ -49,35 +47,51 @@ export class HttpMaker {
         return this.handleError(response);
       }
     );
-      
+
     this.instance = http;
-     
+
     return http;
   }
-    
-  request<T = any, R = AxiosResponse<T>>(config: AxiosRequestConfig): Promise<R> {
+
+  request<T = any, R = AxiosResponse<T>>(
+    config: AxiosRequestConfig
+  ): Promise<R> {
     return this.http.request(config);
   }
-  
-  get<T = any, R = AxiosResponse<T>>(url: string, config?: AxiosRequestConfig): Promise<R> {
+
+  get<T = any, R = AxiosResponse<T>>(
+    url: string,
+    config?: AxiosRequestConfig
+  ): Promise<R> {
     return this.http.get<T, R>(url, config);
   }
-  
-  post<T = any, R = AxiosResponse<T>>(url: string, data?: T, config?: AxiosRequestConfig): Promise<R> {
+
+  post<T = any, R = AxiosResponse<T>>(
+    url: string,
+    data?: T,
+    config?: AxiosRequestConfig
+  ): Promise<R> {
     return this.http.post<T, R>(url, data, config);
   }
-  
-  put<T = any, R = AxiosResponse<T>>(url: string, data?: T, config?: AxiosRequestConfig): Promise<R> {
+
+  put<T = any, R = AxiosResponse<T>>(
+    url: string,
+    data?: T,
+    config?: AxiosRequestConfig
+  ): Promise<R> {
     return this.http.put<T, R>(url, data, config);
   }
-    
-  delete<T = any, R = AxiosResponse<T>>(url: string, config?: AxiosRequestConfig): Promise<R> {
+
+  delete<T = any, R = AxiosResponse<T>>(
+    url: string,
+    config?: AxiosRequestConfig
+  ): Promise<R> {
     return this.http.delete<T, R>(url, config);
   }
 
   private handleError(error: Response) {
     const { status } = error;
-    
+
     switch (status) {
       case HttpStatus.InternalServerError: {
         // Handle InternalServerError
@@ -96,15 +110,15 @@ export class HttpMaker {
         break;
       }
     }
-    
+
     return Promise.reject(error);
   }
 }
 
-const http = new HttpMaker;
+const http = new HttpMaker();
 
 export const useHttp = {
   install(app: App) {
-    app.provide(httpInjectionSymbol, http)
-  }
-}
+    app.provide(httpInjectionSymbol, http);
+  },
+};
