@@ -10,6 +10,7 @@ import UsageDetail from "@/components/stats/UsageDetail.vue";
 import DataTable from "@/components/DataTable.vue";
 import RealtimeLineChart from "@/components/charts/RealtimeLineChart.vue";
 import GaugeChart from "@/components/charts/GaugeChart.vue";
+import BarChart from "@/components/charts/BarChart.vue";
 
 const loader = useLoadingStore();
 const system = useSystemStore();
@@ -73,9 +74,7 @@ onMounted(() => {
         <div class="row">
           <div class="col">
             <div class="card border-0 shadow-lg">
-              <div
-                class="card-header bg-transparent border-0 d-flex justify-content-center py-4"
-              >
+              <div class="card-header bg-transparent border-0 d-flex justify-content-center py-4">
                 <h2 class="header">Usage Overview</h2>
               </div>
               <div class="card-body">
@@ -123,9 +122,7 @@ onMounted(() => {
         <div class="row">
           <div class="col-6">
             <div class="card border-0 shadow-lg">
-              <div
-                class="card-header bg-transparent border-0 d-flex justify-content-center"
-              >
+              <div class="card-header bg-transparent border-0 d-flex justify-content-center">
                 <h2 class="lead header mb-0">CPU Usage %</h2>
               </div>
               <div class="card-body">
@@ -138,9 +135,7 @@ onMounted(() => {
           </div>
           <div class="col-6">
             <div class="card border-0 shadow-lg">
-              <div
-                class="card-header bg-transparent border-0 d-flex justify-content-center"
-              >
+              <div class="card-header bg-transparent border-0 d-flex justify-content-center">
                 <h2 class="lead header mb-0">Memory Usage</h2>
               </div>
               <div class="card-body">
@@ -154,16 +149,19 @@ onMounted(() => {
         </div>
       </section>
 
-      <section id="processes" class="page-section">
+      <section id="processes-information" class="page-section">
         <div class="row">
           <div class="col">
             <div class="card border-0 shadow-lg">
-              <div
-                class="card-header bg-transparent border-0 d-flex justify-content-center py-4"
-              >
+              <div class="card-header bg-transparent border-0 d-flex justify-content-center py-4">
                 <h2 class="header">Top Processes</h2>
               </div>
               <div class="card-body">
+                <BarChart
+                  id="processes"
+                  title="Top Processes"
+                  :series="system.data.processes"
+                  y-axis-text="Memory Used" />
                 <DataTable type="horizontal" :data="system.data.processes" />
               </div>
             </div>

@@ -6,7 +6,7 @@ import type { Gauge } from "@/interfaces/ChartRegistry";
 HighchartsMore(Highcharts);
 HighchartsSolidGauge(Highcharts);
 
-const gauge: Gauge = {
+export const gauge: Gauge = {
   registry: {},
   create({ id, value, format }) {
     // @ts-ignore
@@ -89,5 +89,3 @@ const gauge: Gauge = {
     this.registry[id] = chart;
   },
 };
-
-export { gauge };

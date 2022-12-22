@@ -1,12 +1,11 @@
 import type { Chart } from "highcharts";
 
-export interface RealtimeDataPoint {
-  time: number;
-  value: number;
+interface ChartRegistry {
+  registry: { [key: string]: Chart };
+  addToRegistry(id: string, chart: Chart): void;
 }
 
-export interface Gauge {
-  registry: { [key: string]: Chart };
+export interface Gauge extends ChartRegistry {
   create({
     id,
     value,
@@ -17,5 +16,21 @@ export interface Gauge {
     format: string;
   }): Chart;
   updateDataPoint(id: string, value: number): void;
-  addToRegistry(id: string, chart: Chart): void;
+}
+
+export interface Bar extends ChartRegistry {
+  create({
+    id,
+    series
+  }: {
+    id: string;
+    series: Array<any>; // TODO change
+    yAxisText?: string;
+    xAxisText?: string;
+  }): Chart;
+}
+
+export interface RealtimeDataPoint {
+  time: number;
+  value: number;
 }
