@@ -14,7 +14,7 @@ interface Gauge {
 
 const gauge: Gauge = {
   registry: {},
-  create({id, value, format}: {id: string, value: number, format: string}) {
+  create({id, value, format}) {
     // @ts-ignore
     const chart = Highcharts.chart(id, {
       chart: {
@@ -87,11 +87,11 @@ const gauge: Gauge = {
 
     return chart;
   },
-  updatePoint(id: string, value: number) {
+  updatePoint(id, value) {
     const dataPoint = this.registry[id].series[0].points[0];
     dataPoint.update(Math.round(value));
   },
-  addToRegistry(id: string, chart: Highcharts.Chart) {
+  addToRegistry(id, chart) {
     this.registry[id] = chart
   }
 };

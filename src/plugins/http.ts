@@ -12,8 +12,8 @@ export class HttpMaker {
   
   private get http(): AxiosInstance {
     return this.instance != null
-    ? this.instance
-    : this.init();
+      ? this.instance
+      : this.init();
   }
   
   init() {
