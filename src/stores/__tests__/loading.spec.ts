@@ -7,7 +7,7 @@ describe("Loading Store", () => {
     setActivePinia(createPinia());
   });
 
-  it("toggles", () => {
+  it("loads", () => {
     const loading = useLoadingStore();
 
     expect(loading.loaded).toBe(false);

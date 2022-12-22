@@ -8,7 +8,7 @@ describe("System Store", () => {
     setActivePinia(createPinia());
   });
 
-  it("toggles", () => {
+  it("patches", () => {
     const system = useSystemStore();
 
     expect(system.live).toBe(false);
