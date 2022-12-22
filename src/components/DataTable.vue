@@ -3,8 +3,8 @@ import { ref, computed, type Ref } from "vue";
 import _ from "lodash";
 
 const props = defineProps<{
-  type: string;
-  data: any; // change
+  type: "horizontal" | "vertical";
+  data: any; // TODO change
   nested?: boolean;
   sortKey?: string;
   sortOrder?: "asc" | "desc";
@@ -12,9 +12,20 @@ const props = defineProps<{
 
 const tableData = ref(props.data);
 const tableSortKey = ref("mem");
-const tableOrder: Ref<"asc" | "desc"> = ref("desc");
+const tableSortOrder: Ref<"asc" | "desc"> = ref("desc");
 
-const vertical = computed(() => {
+const formatHeader = (header: string) => {
+  header = header.charAt(0).toUpperCase() + header.slice(1);
+  return header.replace("_", " ");
+};
+
+const changeOrder = (key: string) => {
+  tableSortKey.value = key;
+  tableSortOrder.value = tableSortOrder.value === "asc" ? "desc" : "asc";
+  tableData.value = _.orderBy(tableData.value, key, tableSortOrder.value);
+};
+
+const transpose = () => {
   const response: Array<{ header: string; value: string }> = [];
 
   for (const key in tableData) {
@@ -28,21 +39,15 @@ const vertical = computed(() => {
       header: formatHeader(key),
       value,
     });
+
+    return response;
   }
+};
 
-  return _.orderBy(response, props.sortKey, props.sortOrder);
+const verticalData = computed(() => {
+  const data = transpose();
+  return _.orderBy(data, props.sortKey, props.sortOrder);
 });
-
-const changeOrder = (key: string) => {
-  tableSortKey.value = key;
-  tableOrder.value = tableOrder.value === "asc" ? "desc" : "asc";
-  tableData.value = _.orderBy(tableData.value, key, tableOrder.value);
-};
-
-const formatHeader = (header: string) => {
-  header = header.charAt(0).toUpperCase() + header.slice(1);
-  return header.replace("_", " ");
-};
 </script>
 
 <template>
@@ -50,7 +55,7 @@ const formatHeader = (header: string) => {
     v-if="type === 'vertical'"
     class="table table-sm table-borderless table-responsive"
   >
-    <tr v-for="(content, key) in vertical" :key="key">
+    <tr v-for="(content, key) in verticalData" :key="key">
       <th>{{ content.header }}</th>
       <td>{{ content.value }}</td>
     </tr>
@@ -67,7 +72,7 @@ const formatHeader = (header: string) => {
         >
           <span class="me-1">
             <font-awesome-icon
-              v-if="tableOrder === 'asc' && tableSortKey === header"
+              v-if="tableSortOrder === 'asc' && tableSortKey === header"
               icon="fa-solid fa-caret-up"
             />
             <font-awesome-icon v-else icon="fa-solid fa-caret-down" />
@@ -84,7 +89,7 @@ const formatHeader = (header: string) => {
         >
           <span class="me-1 indicators">
             <font-awesome-icon
-              v-if="tableOrder === 'asc' && tableSortKey === header"
+              v-if="tableSortOrder === 'asc' && tableSortKey === header"
               :class="{ active: tableSortKey === header }"
               icon="fa-solid fa-caret-up"
             />
