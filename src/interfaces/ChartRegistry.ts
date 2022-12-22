@@ -21,7 +21,7 @@ export interface Gauge extends ChartRegistry {
 export interface Bar extends ChartRegistry {
   create({
     id,
-    series
+    series,
   }: {
     id: string;
     series: Array<any>; // TODO change

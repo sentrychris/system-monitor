@@ -47,16 +47,18 @@ onMounted(() => {
               icon="fa-solid fa-tachometer-alt"
             >
               <template #detail>
-                <CpuDetail v-if="system.live" :detail="system.realtime.cpu" />
-                <CpuDetail v-else :detail="system.data.cpu" />
+                <CpuDetail
+                  :detail="system.live ? system.realtime.cpu : system.data.cpu"
+                />
               </template>
             </StatCard>
           </div>
           <div class="col d-flex align-items-stretch mt-3 mt-md-0">
             <StatCard title="Memory" bg="success" icon="fa-solid fa-server">
               <template #detail>
-                <UsageDetail v-if="system.live" :detail="system.realtime.mem" />
-                <UsageDetail v-else :detail="system.data.mem" />
+                <UsageDetail
+                  :detail="system.live ? system.realtime.mem : system.data.mem"
+                />
               </template>
             </StatCard>
           </div>
@@ -74,16 +76,22 @@ onMounted(() => {
         <div class="row">
           <div class="col">
             <div class="card border-0 shadow-lg">
-              <div class="card-header bg-transparent border-0 d-flex justify-content-center py-4">
-                <h2 class="header">Usage Overview</h2>
+              <div
+                class="card-header bg-transparent border-0 d-flex justify-content-center py-4"
+              >
+                <h2 class="lead header">System Overview</h2>
               </div>
-              <div class="card-body">
+              <div class="card-body p-0">
                 <div class="row">
                   <div class="col mt-3 mt-md-0">
                     <GaugeChart
                       title="Temperature"
                       id="temp"
-                      :metric="system.realtime.cpu.temp"
+                      :metric="
+                        system.live
+                          ? system.realtime.cpu.temp
+                          : system.data.cpu.temp
+                      "
                       format="{y}°C"
                     />
                   </div>
@@ -91,7 +99,11 @@ onMounted(() => {
                     <GaugeChart
                       title="CPU Usage"
                       id="cpu"
-                      :metric="system.realtime.cpu.usage"
+                      :metric="
+                        system.live
+                          ? system.realtime.cpu.usage
+                          : system.data.cpu.usage
+                      "
                       format="{y}%"
                     />
                   </div>
@@ -122,8 +134,10 @@ onMounted(() => {
         <div class="row">
           <div class="col-6">
             <div class="card border-0 shadow-lg">
-              <div class="card-header bg-transparent border-0 d-flex justify-content-center">
-                <h2 class="lead header mb-0">CPU Usage %</h2>
+              <div
+                class="card-header bg-transparent border-0 d-flex justify-content-center py-4"
+              >
+                <h2 class="lead header">CPU Usage %</h2>
               </div>
               <div class="card-body">
                 <RealtimeLineChart
@@ -135,8 +149,10 @@ onMounted(() => {
           </div>
           <div class="col-6">
             <div class="card border-0 shadow-lg">
-              <div class="card-header bg-transparent border-0 d-flex justify-content-center">
-                <h2 class="lead header mb-0">Memory Usage</h2>
+              <div
+                class="card-header bg-transparent border-0 d-flex justify-content-center py-4"
+              >
+                <h2 class="lead header">Memory Usage GB</h2>
               </div>
               <div class="card-body">
                 <RealtimeLineChart
@@ -153,15 +169,18 @@ onMounted(() => {
         <div class="row">
           <div class="col">
             <div class="card border-0 shadow-lg">
-              <div class="card-header bg-transparent border-0 d-flex justify-content-center py-4">
-                <h2 class="header">Top Processes</h2>
+              <div
+                class="card-header bg-transparent border-0 d-flex justify-content-center py-4"
+              >
+                <h2 class="lead header">Process Information</h2>
               </div>
               <div class="card-body">
                 <BarChart
                   id="processes"
                   title="Top Processes"
                   :series="system.data.processes"
-                  y-axis-text="Memory Used" />
+                  y-axis-text="Memory Used"
+                />
                 <DataTable type="horizontal" :data="system.data.processes" />
               </div>
             </div>

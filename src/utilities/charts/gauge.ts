@@ -43,7 +43,11 @@ export const gauge: Gauge = {
       yAxis: {
         min: 0,
         max: 100,
-        stops: [[0, "#41B883"]],
+        stops: [
+          [0, "#41B883"],
+          [0.8, "#ffc107"],
+          [0.9, "#dc3545"],
+        ],
         lineWidth: 0,
         minorTickInterval: null,
         tickPixelInterval: 400,

@@ -35,8 +35,8 @@ export const bar: Bar = {
       xAxis: {
         categories: [id],
         title: {
-          text: xAxisText
-        }
+          text: xAxisText,
+        },
       },
       yAxis: {
         min: 0,
