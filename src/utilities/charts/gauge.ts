@@ -5,19 +5,18 @@ import HighchartsSolidGauge from 'highcharts/modules/solid-gauge';
 HighchartsMore(Highcharts);
 HighchartsSolidGauge(Highcharts);
 
-interface GaugeMaker {
-  registry: any[]
-  create({id, data, format}: {id: any, data: any, format: string}): Highcharts.Chart
-  updatePoint(id: any, value: number): void
-  addToRegistry(id: any, chart: any): void
+interface Gauge {
+  registry: { [key: string]: Highcharts.Chart }
+  create({id, value, format}: {id: string, value: number, format: string}): Highcharts.Chart
+  updatePoint(id: string, value: number): void
+  addToRegistry(id: string, chart: Highcharts.Chart): void
 }
 
-/** Gauge chart maker **/
-const gauge: GaugeMaker = {
-  registry: [],
-  create({id, data, format}: {id: any, data: any, format: string}) {
+const gauge: Gauge = {
+  registry: {},
+  create({id, value, format}: {id: string, value: number, format: string}) {
+    // @ts-ignore
     const chart = Highcharts.chart(id, {
-      //@ts-ignore
       chart: {
         type: 'solidgauge'
       },
@@ -80,7 +79,7 @@ const gauge: GaugeMaker = {
       },
       series: [{
         innerRadius: '90%',
-        data: [Math.round(data)]
+        data: [Math.round(value)]
       }]
     });
 
@@ -88,11 +87,11 @@ const gauge: GaugeMaker = {
 
     return chart;
   },
-  updatePoint(id, value) {
+  updatePoint(id: string, value: number) {
     const dataPoint = this.registry[id].series[0].points[0];
     dataPoint.update(Math.round(value));
   },
-  addToRegistry(id, chart) {
+  addToRegistry(id: string, chart: Highcharts.Chart) {
     this.registry[id] = chart
   }
 };

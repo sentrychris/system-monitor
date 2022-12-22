@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { gauge } from '@/utilities/charts';
 import { onMounted, watch } from 'vue';
+import { gauge } from '@/utilities/charts';
 
 const props = defineProps<{
   id: string;
@@ -12,7 +12,7 @@ const props = defineProps<{
 onMounted(() => {
   gauge.create({
     id: props.id,
-    data: props.metric,
+    value: props.metric,
     format: props.format
   })
 

@@ -14,7 +14,7 @@ export class WebsocketMaker {
   }
   
   init() {
-    const websocket = new WebSocket('ws://192.168.1.100:4200/ws');
+    const websocket = new WebSocket(import.meta.env.VITE_WS_URL);
     
     websocket.onopen = () => {
       console.log('websocket is connected!')

@@ -18,7 +18,7 @@ export class HttpMaker {
   
   init() {
     const http = axios.create({
-      baseURL: "http://192.168.1.100",
+      baseURL: import.meta.env.VITE_API_URL,
       headers: {
         "accept": "application/json",
         "content-type": "application/json; charset=utf-8",
