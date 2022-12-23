@@ -176,6 +176,7 @@ onMounted(() => {
               </div>
               <div class="card-body">
                 <BarChart
+                  metric="system"
                   id="processes"
                   title="Top Processes"
                   :series="system.data.processes"
