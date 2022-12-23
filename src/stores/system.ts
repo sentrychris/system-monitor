@@ -88,6 +88,7 @@ export const useSystemStore = defineStore("system", {
       this.connection.onclose = () => {
         this.live = false;
         this.connection = null;
+        console.log('websocket connection closed');
       };
     },
     async close() {

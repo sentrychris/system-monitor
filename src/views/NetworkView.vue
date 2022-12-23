@@ -1,13 +1,28 @@
 <script setup lang="ts">
-import { onMounted } from "vue";
+import { computed, onMounted } from "vue";
 import { useLoadingStore } from "@/stores/loading";
 import { useNetworkStore } from "@/stores/network";
+import { mapSpeedtestColor } from "@/utilities/color-map";
 import PageHeader from "@/components/PageHeader.vue";
 import StatCard from "@/components/stats/StatCard.vue";
 import BarChart from "@/components/charts/BarChart.vue";
 
 const loader = useLoadingStore();
 const network = useNetworkStore();
+
+const downloadBg = computed(() => {
+  return mapSpeedtestColor(network.speed.download, {
+    min: 10,
+    max: 20
+  });
+})
+
+const uploadBg = computed(() => {
+  return mapSpeedtestColor(network.speed.upload, {
+    min: 5,
+    max: 10
+  });
+})
 
 onMounted(() => {
   network.get({
@@ -32,14 +47,14 @@ onMounted(() => {
             </StatCard>
           </div>
           <div class="col d-flex align-items-stretch mt-3 mt-md-0">
-            <StatCard title="Download Speed" bg="dark" icon="fa-solid fa-arrow-circle-down">
+            <StatCard title="Download Speed" :bg="downloadBg" icon="fa-solid fa-arrow-circle-down">
               <template #detail>
                 <strong>{{ network.speed.download }}</strong>
               </template>
             </StatCard>
           </div>
           <div class="col d-flex align-items-stretch mt-3 mt-md-0">
-            <StatCard title="Upload Speed" bg="dark" icon="fa-solid fa-arrow-circle-up">
+            <StatCard title="Upload Speed" :bg="uploadBg" icon="fa-solid fa-arrow-circle-up">
               <template #detail>
                 <strong>{{ network.speed.upload }}</strong>
               </template>
@@ -47,8 +62,8 @@ onMounted(() => {
           </div>
         </div>
       </section>
-
-
+      
+      
       <section v-for="(idx, inet) in network.data.interfaces" :key="inet">
         <div v-if="(typeof network.data.interfaces[inet] !== undefined && network.data.interfaces[inet].mb_received > 0)">
           <div class="row mt-3">
@@ -59,17 +74,17 @@ onMounted(() => {
                 </div>
                 <div class="card-body">
                   <BarChart 
-                    metric="network"
-                    :id="(inet as string)"
-                    :title="`Interface ${inet}`"
-                    :series="[network.data.interfaces[inet].mb_sent, network.data.interfaces[inet].mb_received]">
-                  </BarChart>
-                </div>
+                  metric="network"
+                  :id="(inet as string)"
+                  :title="`Interface ${inet}`"
+                  :series="[network.data.interfaces[inet].mb_sent, network.data.interfaces[inet].mb_received]">
+                </BarChart>
               </div>
             </div>
           </div>
         </div>
-      </section>
-    </div>
-  </Transition>
+      </div>
+    </section>
+  </div>
+</Transition>
 </template>

@@ -17,9 +17,9 @@ export const useNetworkStore = defineStore("network", {
     data: <NetworkResponse>{},
     wifi: <WifiResponse>{},
     speed: <WifiSpeedtestResponse>{
-      ping: "0",
-      download: "0",
-      upload: "0"
+      ping: "",
+      download: "",
+      upload: ""
     }
   }),
   actions: {
