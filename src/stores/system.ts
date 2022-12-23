@@ -40,7 +40,8 @@ export const useSystemStore = defineStore("system", {
       const loader = useLoadingStore();
       const http = inject(httpInjectionSymbol, new HttpMaker());
 
-      loader.setMessage("Requesting new monitor connection...");
+      loader.toggle(false)
+      loader.setMessage("Loading monitor data...");
       http
         .get("system")
         .then((response) => {
