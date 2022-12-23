@@ -41,7 +41,7 @@ export const useSystemStore = defineStore("system", {
       const http = inject(httpInjectionSymbol, new HttpMaker());
 
       loader.toggle(false);
-      loader.setMessage("Loading monitor data...");
+      loader.setMessage("Connecting to system monitor...");
       http
         .get("system")
         .then((response) => {
@@ -60,7 +60,7 @@ export const useSystemStore = defineStore("system", {
     },
     async websocket() {
       const loader = useLoadingStore();
-      loader.setMessage("Connecting to websocket...");
+      loader.setMessage("Opening websocket connection...");
 
       const client = await fetch("http://192.168.1.100:4200", {
         method: "POST",
@@ -73,8 +73,10 @@ export const useSystemStore = defineStore("system", {
       this.connection = this.connection ?? new WebSocket(url);
       this.connection.onopen = () => {
         loader.setMessage("Websocket connected, loading dashboard...");
-        loader.toggle(true);
-        this.live = true;
+        setTimeout(() => {
+          loader.toggle(true)
+          this.live = true;
+        }, 1000);
       };
       this.connection.onerror = () => {
         loader.toggle(false);

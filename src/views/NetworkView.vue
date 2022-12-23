@@ -31,7 +31,7 @@ onMounted(() => {
     })
     .then(() => {
       if (!network.speedtestInProgress) {
-        network.speedtest();
+        network.speedtest({ timeout: true });
       }
     });
 });

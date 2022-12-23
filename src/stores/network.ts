@@ -8,7 +8,7 @@ import type {
   WifiResponse,
   WifiSpeedtestResponse,
 } from "@/interfaces/NetworkResponse";
-import type { WifiMetric } from "@/interfaces/NetworkInformation";
+import type { WifiMetric } from "@/interfaces/types/NetworkTypes";
 
 export const useNetworkStore = defineStore("network", {
   state: () => ({
@@ -26,75 +26,83 @@ export const useNetworkStore = defineStore("network", {
       const loader = useLoadingStore();
       const http = inject(httpInjectionSymbol, new HttpMaker());
 
-      loader.setMessage("Requesting new monitor connection...");
+      loader.setMessage("Retrieving network information...");
       http
         .get("network")
         .then(async (response) => {
           const { data }: { data: NetworkResponse } = response.data;
           this.updateNetwork(data);
+          setTimeout(() => {
+            loader.toggle(true);
+          }, 1000);
 
           if (wifi) {
             const response = await http.get("network/wifi");
             const { data }: { data: WifiResponse } = response.data;
             this.updateWifi(data);
           }
-
-          loader.toggle(true);
         })
         .catch(() => {
           loader.setError("An unexpected error has occurred");
         });
     },
-    async speedtest() {
-      const waiting = (metric: WifiMetric) => {
-        let up = true;
-        return setInterval(() => {
-          if (up) {
-            this.speed[metric] += ".";
-          } else {
-            this.speed[metric] = this.speed[metric].substring(
-              1,
-              this.speed[metric].length
-            );
-            if (this.speed[metric] === ".") {
-              up = true;
-            }
-          }
-          if (this.speed[metric].length > 6) {
-            up = false;
-          }
-        }, 100);
-      };
-
+    async speedtest({timeout = false}: {timeout: boolean}) {
       this.speedtestInProgress = true;
 
-      const progress: {
-        [key in WifiMetric]: ReturnType<typeof setInterval> | null;
-      } = {
-        ping: null,
-        download: null,
-        upload: null,
-      };
+      const http = new HttpMaker(); // TODO figure out why injection is undefined here
+      const request = () => {
+        const waiting = (metric: WifiMetric) => {
+          let up = true;
+          return setInterval(() => {
+            if (up) {
+              this.speed[metric] += ".";
+            } else {
+              this.speed[metric] = this.speed[metric].substring(
+                1,
+                this.speed[metric].length
+              );
+              if (this.speed[metric] === ".") {
+                up = true;
+              }
+            }
+            if (this.speed[metric].length > 6) {
+              up = false;
+            }
+          }, 100);
+        };
 
-      for (const key in this.speed) {
-        const metric = <WifiMetric>key;
-        progress[metric] = waiting(metric);
-      }
-
-      const http = new HttpMaker(); // TODO figure out why inject does not work here... it works above...
-      http.get("network/wifi/speed").then((response) => {
-        const { data }: { data: WifiSpeedtestResponse } = response.data;
+        const progress: {
+          [key in WifiMetric]: ReturnType<typeof setInterval> | null;
+        } = {
+          ping: null,
+          download: null,
+          upload: null,
+        };
+  
         for (const key in this.speed) {
           const metric = <WifiMetric>key;
-          if (progress[metric]) {
-            //@ts-ignore the frustration is so damn real
-            clearInterval(progress[metric]);
-          }
-          this.speed[metric] = data[metric];
+          progress[metric] = waiting(metric);
         }
 
-        this.speedtestInProgress = false;
-      });
+        http.get("network/wifi/speed").then((response) => {
+          const { data }: { data: WifiSpeedtestResponse } = response.data;
+          for (const key in this.speed) {
+            const metric = <WifiMetric>key;
+            if (progress[metric]) {
+              clearInterval((<ReturnType<typeof setInterval>>progress[metric]));
+            }
+            this.speed[metric] = data[metric];
+          }
+  
+          this.speedtestInProgress = false;
+        });
+      }
+
+      if (timeout) {
+        setTimeout(() => request(), 5000)
+      } else {
+        request()
+      }
     },
     updateNetwork(data: NetworkResponse) {
       this.$patch({ data });
