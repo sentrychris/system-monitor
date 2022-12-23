@@ -1,11 +1,13 @@
 import * as Highcharts from "highcharts";
 import type { Bar } from "@/interfaces/ChartRegistry";
 import type { ProcessInformation } from "@/interfaces/SystemInformation";
+import type { ProcessMetric } from "@/interfaces/types/SystemTypes";
 import type { NetworkTrafficInformation } from "@/interfaces/NetworkInformation";
+import type { NetworkTrafficMetric } from "@/interfaces/types/NetworkTypes";
 
 export function formatBarChartDataForSystem(
   series: Array<ProcessInformation>,
-  key: "pid" | "name" | "username" | "mem"
+  key: ProcessMetric
 ) {
   const response: Array<{ name: string; data: Array<number> }> = [];
 
@@ -19,16 +21,15 @@ export function formatBarChartDataForSystem(
   return response;
 }
 
-export function formatBarChartDataForNetwork(
+export function formatBarChartDataForNetworkTraffic(
   series: Array<NetworkTrafficInformation>,
-  key: "mb_sent" | "mb_received"
+  key: Array<NetworkTrafficMetric>
 ) {
   const response: Array<{ name: string; data: Array<number> }> = [];
 
-  const keys = ["mb_sent", "mb_received"]; // TODO fix this dirty hack to get the correct series labels
   series.forEach((point, idx) => {
     response.push({
-      name: keys[idx],
+      name: key[idx],
       data: [(<unknown>point) as number],
     });
   });

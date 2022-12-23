@@ -12,5 +12,3 @@ export interface NetworkConnectionsInformation {
   local_port: number;
   remote_ip: string;
 }
-
-export type WifiMetric = "ping" | "upload" | "download";

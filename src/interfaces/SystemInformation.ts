@@ -1,3 +1,5 @@
+import type { SystemMetric, SystemMetricTrack } from "./types/SystemTypes";
+
 export interface CpuInformation {
   freq: number;
   temp: number;
@@ -25,6 +27,6 @@ export interface ProcessInformation {
 }
 
 export interface SystemMetrics {
-  metric: "cpu" | "mem" | "disk";
-  track: "temp" | "usage" | "percent" | "used" | "free" | "total";
+  metric: SystemMetric;
+  track: SystemMetricTrack;
 }
