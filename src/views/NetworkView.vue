@@ -12,6 +12,8 @@ const network = useNetworkStore();
 onMounted(() => {
   network.get({
     wifi: true
+  }).then(() => {
+    network.speedtest()
   })
 });
 </script>
@@ -29,20 +31,20 @@ onMounted(() => {
               </template>
             </StatCard>
           </div>
-          <!-- <div class="col d-flex align-items-stretch mt-3 mt-md-0">
-            <StatCard title="Wireless Network" bg="dark" icon="fa-solid fa-wifi">
+          <div class="col d-flex align-items-stretch mt-3 mt-md-0">
+            <StatCard title="Download Speed" bg="dark" icon="fa-solid fa-arrow-circle-down">
               <template #detail>
-                <strong>{{ network.wifi.name }}</strong>
+                <strong>{{ network.speed.download }}</strong>
               </template>
             </StatCard>
           </div>
           <div class="col d-flex align-items-stretch mt-3 mt-md-0">
-            <StatCard title="Wireless Network" bg="dark" icon="fa-solid fa-wifi">
+            <StatCard title="Upload Speed" bg="dark" icon="fa-solid fa-arrow-circle-up">
               <template #detail>
-                <strong>{{ network.wifi.name }}</strong>
+                <strong>{{ network.speed.upload }}</strong>
               </template>
             </StatCard>
-          </div> -->
+          </div>
         </div>
       </section>
 

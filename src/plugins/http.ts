@@ -53,20 +53,20 @@ export class HttpMaker {
     return http;
   }
 
-  request<T = any, R = AxiosResponse<T>>(
+  async request<T = any, R = AxiosResponse<T>>(
     config: AxiosRequestConfig
   ): Promise<R> {
     return this.http.request(config);
   }
 
-  get<T = any, R = AxiosResponse<T>>(
+  async get<T = any, R = AxiosResponse<T>>(
     url: string,
     config?: AxiosRequestConfig
   ): Promise<R> {
     return this.http.get<T, R>(url, config);
   }
 
-  post<T = any, R = AxiosResponse<T>>(
+  async post<T = any, R = AxiosResponse<T>>(
     url: string,
     data?: T,
     config?: AxiosRequestConfig
@@ -74,7 +74,7 @@ export class HttpMaker {
     return this.http.post<T, R>(url, data, config);
   }
 
-  put<T = any, R = AxiosResponse<T>>(
+  async put<T = any, R = AxiosResponse<T>>(
     url: string,
     data?: T,
     config?: AxiosRequestConfig
@@ -82,7 +82,7 @@ export class HttpMaker {
     return this.http.put<T, R>(url, data, config);
   }
 
-  delete<T = any, R = AxiosResponse<T>>(
+  async delete<T = any, R = AxiosResponse<T>>(
     url: string,
     config?: AxiosRequestConfig
   ): Promise<R> {

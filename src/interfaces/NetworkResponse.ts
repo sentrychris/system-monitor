@@ -22,7 +22,7 @@ export interface WifiResponse {
 }
 
 export interface WifiSpeedtestResponse {
-  ping: number;
+  ping: string;
   download: string;
   upload: string;
 }
