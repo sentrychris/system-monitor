@@ -115,7 +115,7 @@ export class HttpMaker {
   }
 }
 
-const http = new HttpMaker();
+export const http = new HttpMaker();
 
 export const useHttp = {
   install(app: App) {

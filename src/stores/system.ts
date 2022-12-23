@@ -1,8 +1,6 @@
 import { defineStore } from "pinia";
-import { inject } from "vue";
 import { useLoadingStore } from "./loading";
-import { HttpMaker } from "@/plugins/http";
-import { httpInjectionSymbol } from "@/injection";
+import { http } from "@/plugins/http";
 import type {
   SystemResponse,
   RealtimeSystemResponse,
@@ -38,7 +36,6 @@ export const useSystemStore = defineStore("system", {
   actions: {
     async connect({ websocket = false }: { websocket: boolean }) {
       const loader = useLoadingStore();
-      const http = inject(httpInjectionSymbol, new HttpMaker());
 
       loader.toggle(false);
       loader.setMessage("Connecting to system monitor...");

@@ -1,8 +1,7 @@
 import { defineStore } from "pinia";
 import { inject } from "vue";
 import { useLoadingStore } from "./loading";
-import { HttpMaker } from "@/plugins/http";
-import { httpInjectionSymbol } from "@/injection";
+import { http } from "@/plugins/http";
 import type {
   NetworkResponse,
   WifiResponse,
@@ -24,9 +23,8 @@ export const useNetworkStore = defineStore("network", {
   actions: {
     async get({ wifi = false }: { wifi: boolean }) {
       const loader = useLoadingStore();
-      const http = inject(httpInjectionSymbol, new HttpMaker());
-
       loader.setMessage("Retrieving network information...");
+
       http
         .get("network")
         .then(async (response) => {
@@ -48,8 +46,7 @@ export const useNetworkStore = defineStore("network", {
     },
     async speedtest({timeout = false}: {timeout: boolean}) {
       this.speedtestInProgress = true;
-
-      const http = new HttpMaker(); // TODO figure out why injection is undefined here
+      
       const request = () => {
         const waiting = (metric: WifiMetric) => {
           let up = true;
