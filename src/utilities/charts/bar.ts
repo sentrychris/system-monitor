@@ -1,8 +1,9 @@
 import * as Highcharts from "highcharts";
 import type { Bar } from "@/interfaces/ChartRegistry";
 import type { ProcessInformation } from "@/interfaces/SystemInformation";
+import type { NetworkTrafficInformation } from "@/interfaces/NetworkInformation";
 
-export function formatBarChartData(
+export function formatBarChartDataForSystem(
   series: Array<ProcessInformation>,
   key: "pid" | "name" | "username" | "mem"
 ) {
@@ -12,6 +13,23 @@ export function formatBarChartData(
     response.push({
       name: point.name,
       data: [(<unknown>point[key]) as number],
+    });
+  });
+
+  return response;
+}
+
+export function formatBarChartDataForNetwork(
+  series: Array<NetworkTrafficInformation>,
+  key: "mb_sent" | "mb_received"
+) {
+  const response: Array<{ name: string; data: Array<number> }> = [];
+
+  const keys = ["mb_sent", "mb_received"]; // TODO fix this dirty hack to get the correct series labels
+  series.forEach((point, idx) => {
+    response.push({
+      name: keys[idx],
+      data: [(<unknown>point) as number],
     });
   });
 

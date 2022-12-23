@@ -2,7 +2,9 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 
 import {
   faArrowDown,
+  faArrowCircleDown,
   faArrowUp,
+  faArrowCircleUp,
   faCaretDown,
   faCaretUp,
   faDownload,
@@ -18,7 +20,9 @@ import {
 library.add(
   // Solid
   faArrowDown,
+  faArrowCircleDown,
   faArrowUp,
+  faArrowCircleUp,
   faCaretDown,
   faCaretUp,
   faDownload,

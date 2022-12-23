@@ -33,18 +33,21 @@ export const useSystemStore = defineStore("system", {
     },
     connection: <WebSocket | null>null,
     live: false,
+    ready: false,
   }),
   actions: {
     async connect({ websocket = false }: { websocket: boolean }) {
       const loader = useLoadingStore();
       const http = inject(httpInjectionSymbol, new HttpMaker());
 
-      loader.setMessage("Requesting new monitor connection...");
+      loader.toggle(false)
+      loader.setMessage("Loading monitor data...");
       http
         .get("system")
         .then((response) => {
           const { data }: { data: SystemResponse } = response.data;
           this.staticUpdate(data);
+          this.ready = true;
           if (websocket) {
             this.websocket();
           } else {
@@ -88,6 +91,7 @@ export const useSystemStore = defineStore("system", {
       this.connection.onclose = () => {
         this.live = false;
         this.connection = null;
+        console.log("websocket connection closed");
       };
     },
     async close() {
