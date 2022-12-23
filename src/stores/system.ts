@@ -40,7 +40,7 @@ export const useSystemStore = defineStore("system", {
       const loader = useLoadingStore();
       const http = inject(httpInjectionSymbol, new HttpMaker());
 
-      loader.toggle(false)
+      loader.toggle(false);
       loader.setMessage("Loading monitor data...");
       http
         .get("system")
