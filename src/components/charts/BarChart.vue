@@ -3,7 +3,7 @@ import { onMounted } from "vue";
 import {
   bar,
   formatBarChartDataForSystem,
-  formatBarChartDataForNetwork
+  formatBarChartDataForNetwork,
 } from "@/utilities/charts/bar";
 
 const props = defineProps<{
@@ -18,9 +18,10 @@ const props = defineProps<{
 }>();
 
 onMounted(() => {
-  const series = props.metric === 'system'
-    ? formatBarChartDataForSystem(props.series, 'mem')
-    : formatBarChartDataForNetwork(props.series, 'mb_received')
+  const series =
+    props.metric === "system"
+      ? formatBarChartDataForSystem(props.series, "mem")
+      : formatBarChartDataForNetwork(props.series, "mb_received");
 
   bar.create({
     id: props.id,

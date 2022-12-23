@@ -1,19 +1,19 @@
 import type {
   NetworkTrafficInformation,
-  NetworkConnectionsInformation
-} from "./NetworkInformation"
+  NetworkConnectionsInformation,
+} from "./NetworkInformation";
 
 export interface NetworkResponse {
   interfaces: {
-    [key: string]: NetworkTrafficInformation
-  },
+    [key: string]: NetworkTrafficInformation;
+  };
   connections: {
-    [key: string]: Array<NetworkConnectionsInformation>
-  },
+    [key: string]: Array<NetworkConnectionsInformation>;
+  };
 }
 
 export interface WifiResponse {
-  name: string,
+  name: string;
   quality: string;
   channel: string;
   encryption: string;

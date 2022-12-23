@@ -33,6 +33,7 @@ export const useSystemStore = defineStore("system", {
     },
     connection: <WebSocket | null>null,
     live: false,
+    ready: false,
   }),
   actions: {
     async connect({ websocket = false }: { websocket: boolean }) {
@@ -45,6 +46,7 @@ export const useSystemStore = defineStore("system", {
         .then((response) => {
           const { data }: { data: SystemResponse } = response.data;
           this.staticUpdate(data);
+          this.ready = true;
           if (websocket) {
             this.websocket();
           } else {
@@ -88,7 +90,7 @@ export const useSystemStore = defineStore("system", {
       this.connection.onclose = () => {
         this.live = false;
         this.connection = null;
-        console.log('websocket connection closed');
+        console.log("websocket connection closed");
       };
     },
     async close() {

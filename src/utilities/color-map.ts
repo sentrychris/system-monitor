@@ -31,18 +31,21 @@ export const mapUsageColor = (value: number) => {
   return color;
 };
 
-export const mapSpeedtestColor = (metric: string, {min, max}: {min: number, max: number}) => {
+export const mapSpeedtestColor = (
+  metric: string,
+  { min, max }: { min: number; max: number }
+) => {
   const value = parseInt(metric);
-  let color = 'dark'
+  let color = "dark";
   if (!isNaN(value)) {
     if (value > 0 && value <= min) {
-      color = 'danger'
+      color = "danger";
     } else if (value > min && value < max) {
-      color = 'warning'
+      color = "warning";
     } else if (value > max) {
-      color = 'success'
+      color = "success";
     }
   }
-  
+
   return color;
 };

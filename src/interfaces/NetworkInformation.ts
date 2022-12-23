@@ -9,8 +9,8 @@ export interface NetworkTrafficInformation {
 }
 
 export interface NetworkConnectionsInformation {
-  local_port: number,
+  local_port: number;
   remote_ip: string;
 }
 
-export type WifiMetric = 'ping' | 'upload' | 'download';
+export type WifiMetric = "ping" | "upload" | "download";

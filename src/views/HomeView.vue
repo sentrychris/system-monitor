@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { onBeforeMount } from "vue";
-import { onBeforeRouteLeave } from "vue-router";
 import { useLoadingStore } from "@/stores/loading";
 import { useSystemStore } from "@/stores/system";
 import PageHeader from "@/components/PageHeader.vue";
@@ -17,18 +16,23 @@ const loader = useLoadingStore();
 const system = useSystemStore();
 
 onBeforeMount(() => {
-  system.connect({
-    // set this to true if you would like realtime data
-    // obtained through a websocket connection
-    websocket: true,
-  });
-})
+  if (!system.ready) {
+    system.connect({
+      // set this to true if you would like realtime data
+      // obtained through a websocket connection
+      websocket: true,
+    });
+  }
+});
 </script>
 
 <template>
   <Transition name="fade">
     <div v-if="loader.loaded" class="container-fluid px-5 py-4">
-      <PageHeader decor-title="Raspberry Pi Monitor" title="System Monitoring" />
+      <PageHeader
+        decor-title="Raspberry Pi Monitor"
+        title="System Monitoring"
+      />
       <section id="statistics" class="page-section mt-0">
         <div class="row mt-3">
           <div class="col d-flex align-items-stretch mt-3 mt-md-0">

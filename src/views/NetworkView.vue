@@ -13,23 +13,27 @@ const network = useNetworkStore();
 const downloadBg = computed(() => {
   return mapSpeedtestColor(network.speed.download, {
     min: 10,
-    max: 20
+    max: 20,
   });
-})
+});
 
 const uploadBg = computed(() => {
   return mapSpeedtestColor(network.speed.upload, {
     min: 5,
-    max: 10
+    max: 10,
   });
-})
+});
 
 onMounted(() => {
-  network.get({
-    wifi: true
-  }).then(() => {
-    network.speedtest()
-  })
+  network
+    .get({
+      wifi: true,
+    })
+    .then(() => {
+      if (!network.speedtestInProgress) {
+        network.speedtest();
+      }
+    });
 });
 </script>
 
@@ -40,21 +44,33 @@ onMounted(() => {
       <section id="statistics" class="page-section mt-0">
         <div class="row mt-3">
           <div class="col d-flex align-items-stretch mt-3 mt-md-0">
-            <StatCard title="Wireless Network" bg="dark" icon="fa-solid fa-wifi">
+            <StatCard
+              title="Wireless Network"
+              bg="dark"
+              icon="fa-solid fa-wifi"
+            >
               <template #detail>
                 <strong>{{ network.wifi.name }}</strong>
               </template>
             </StatCard>
           </div>
           <div class="col d-flex align-items-stretch mt-3 mt-md-0">
-            <StatCard title="Download Speed" :bg="downloadBg" icon="fa-solid fa-arrow-circle-down">
+            <StatCard
+              title="Download Speed"
+              :bg="downloadBg"
+              icon="fa-solid fa-arrow-circle-down"
+            >
               <template #detail>
                 <strong>{{ network.speed.download }}</strong>
               </template>
             </StatCard>
           </div>
           <div class="col d-flex align-items-stretch mt-3 mt-md-0">
-            <StatCard title="Upload Speed" :bg="uploadBg" icon="fa-solid fa-arrow-circle-up">
+            <StatCard
+              title="Upload Speed"
+              :bg="uploadBg"
+              icon="fa-solid fa-arrow-circle-up"
+            >
               <template #detail>
                 <strong>{{ network.speed.upload }}</strong>
               </template>
@@ -62,29 +78,39 @@ onMounted(() => {
           </div>
         </div>
       </section>
-      
-      
+
       <section v-for="(idx, inet) in network.data.interfaces" :key="inet">
-        <div v-if="(typeof network.data.interfaces[inet] !== undefined && network.data.interfaces[inet].mb_received > 0)">
+        <div
+          v-if="
+            typeof network.data.interfaces[inet] !== undefined &&
+            network.data.interfaces[inet].mb_received > 0
+          "
+        >
           <div class="row mt-3">
             <div class="col">
               <div class="card border-0 shadow-lg">
-                <div class="card-header bg-transparent border-0 d-flex justify-content-center py-4">
+                <div
+                  class="card-header bg-transparent border-0 d-flex justify-content-center py-4"
+                >
                   <h2 class="lead header">Interface {{ inet }}</h2>
                 </div>
                 <div class="card-body">
-                  <BarChart 
-                  metric="network"
-                  :id="(inet as string)"
-                  :title="`Interface ${inet}`"
-                  :series="[network.data.interfaces[inet].mb_sent, network.data.interfaces[inet].mb_received]">
-                </BarChart>
+                  <BarChart
+                    metric="network"
+                    :id="(inet as string)"
+                    :title="`Interface ${inet}`"
+                    :series="[
+                      network.data.interfaces[inet].mb_sent,
+                      network.data.interfaces[inet].mb_received,
+                    ]"
+                  >
+                  </BarChart>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </section>
-  </div>
-</Transition>
+      </section>
+    </div>
+  </Transition>
 </template>

@@ -25,7 +25,7 @@ export function formatBarChartDataForNetwork(
 ) {
   const response: Array<{ name: string; data: Array<number> }> = [];
 
-  const keys = ["mb_sent",  "mb_received"] // TODO fix this dirty hack to get the correct series labels
+  const keys = ["mb_sent", "mb_received"]; // TODO fix this dirty hack to get the correct series labels
   series.forEach((point, idx) => {
     response.push({
       name: keys[idx],

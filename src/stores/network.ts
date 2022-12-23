@@ -6,11 +6,9 @@ import { httpInjectionSymbol } from "@/injection";
 import type {
   NetworkResponse,
   WifiResponse,
-  WifiSpeedtestResponse
+  WifiSpeedtestResponse,
 } from "@/interfaces/NetworkResponse";
-import type {
-  WifiMetric
-} from "@/interfaces/NetworkInformation"
+import type { WifiMetric } from "@/interfaces/NetworkInformation";
 
 export const useNetworkStore = defineStore("network", {
   state: () => ({
@@ -19,8 +17,9 @@ export const useNetworkStore = defineStore("network", {
     speed: <WifiSpeedtestResponse>{
       ping: "",
       download: "",
-      upload: ""
-    }
+      upload: "",
+    },
+    speedtestInProgress: false,
   }),
   actions: {
     async get({ wifi = false }: { wifi: boolean }) {
@@ -35,9 +34,9 @@ export const useNetworkStore = defineStore("network", {
           this.updateNetwork(data);
 
           if (wifi) {
-            const response = await http.get("network/wifi")
-            const { data }: { data: WifiResponse } = response.data
-            this.updateWifi(data)
+            const response = await http.get("network/wifi");
+            const { data }: { data: WifiResponse } = response.data;
+            this.updateWifi(data);
           }
 
           loader.toggle(true);
@@ -53,7 +52,10 @@ export const useNetworkStore = defineStore("network", {
           if (up) {
             this.speed[metric] += ".";
           } else {
-            this.speed[metric] = this.speed[metric].substring(1, this.speed[metric].length);
+            this.speed[metric] = this.speed[metric].substring(
+              1,
+              this.speed[metric].length
+            );
             if (this.speed[metric] === ".") {
               up = true;
             }
@@ -61,31 +63,38 @@ export const useNetworkStore = defineStore("network", {
           if (this.speed[metric].length > 6) {
             up = false;
           }
-        }, 100)
-      }
+        }, 100);
+      };
 
-      let progress: {[key in WifiMetric]: ReturnType<typeof setInterval> | null} = {
+      this.speedtestInProgress = true;
+
+      const progress: {
+        [key in WifiMetric]: ReturnType<typeof setInterval> | null;
+      } = {
         ping: null,
         download: null,
-        upload: null
-      }
+        upload: null,
+      };
 
       for (const key in this.speed) {
-        const metric = <WifiMetric>key
-        progress[metric] = waiting(metric)
+        const metric = <WifiMetric>key;
+        progress[metric] = waiting(metric);
       }
 
-      const http = new HttpMaker() // TODO figure out why inject does not work here... it works above...
-      const response = await http.get("network/wifi/speed");
-      const { data }: { data: WifiSpeedtestResponse } = response.data
-      for (const key in this.speed) {
-        const metric = <WifiMetric>key
-        if (progress[metric]) {
-          //@ts-ignore the frustration is so damn real
-          clearInterval(progress[metric])
+      const http = new HttpMaker(); // TODO figure out why inject does not work here... it works above...
+      http.get("network/wifi/speed").then((response) => {
+        const { data }: { data: WifiSpeedtestResponse } = response.data;
+        for (const key in this.speed) {
+          const metric = <WifiMetric>key;
+          if (progress[metric]) {
+            //@ts-ignore the frustration is so damn real
+            clearInterval(progress[metric]);
+          }
+          this.speed[metric] = data[metric];
         }
-        this.speed[metric] = data[metric]
-      }
+
+        this.speedtestInProgress = false;
+      });
     },
     updateNetwork(data: NetworkResponse) {
       this.$patch({ data });
@@ -94,7 +103,7 @@ export const useNetworkStore = defineStore("network", {
       this.$patch({ wifi });
     },
     updateSpeedTest(speed: WifiSpeedtestResponse) {
-      this.$patch({ speed })
-    }
+      this.$patch({ speed });
+    },
   },
 });
