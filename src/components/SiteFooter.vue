@@ -1,10 +1,14 @@
 <template>
-  <footer class="bg-black text-white" id="site-footer">
+  <footer class="bg-dark text-white" id="site-footer">
     <div class="container-fluid px-5 pb-3 pt-4 d-flex justify-content-between">
-      <span class="lead babel text-warning">Pi Monitor</span>
+      <div class="d-flex align-items-center gap-2">
+        <span class="lead">Pi Monitor</span>
+        <small class="text-muted">v1.0.0-crimson-paper-8093</small>
+      </div>
       <div class="footer-links">
         <span class="text-white small"
-          >Copyright © Chris Rowles 2022. All Rights Reserved.</span
+          >Copyright © Chris Rowles {{ new Date().getFullYear() }}. All Rights
+          Reserved.</span
         >
       </div>
     </div>

@@ -1,5 +1,4 @@
 import { defineStore } from "pinia";
-import { inject } from "vue";
 import { useLoadingStore } from "./loading";
 import { http } from "@/plugins/http";
 import type {
@@ -44,9 +43,9 @@ export const useNetworkStore = defineStore("network", {
           loader.setError("An unexpected error has occurred");
         });
     },
-    async speedtest({timeout = false}: {timeout: boolean}) {
+    async speedtest({ timeout = false }: { timeout: boolean }) {
       this.speedtestInProgress = true;
-      
+
       const request = () => {
         const waiting = (metric: WifiMetric) => {
           let up = true;
@@ -75,7 +74,7 @@ export const useNetworkStore = defineStore("network", {
           download: null,
           upload: null,
         };
-  
+
         for (const key in this.speed) {
           const metric = <WifiMetric>key;
           progress[metric] = waiting(metric);
@@ -86,19 +85,19 @@ export const useNetworkStore = defineStore("network", {
           for (const key in this.speed) {
             const metric = <WifiMetric>key;
             if (progress[metric]) {
-              clearInterval((<ReturnType<typeof setInterval>>progress[metric]));
+              clearInterval(<ReturnType<typeof setInterval>>progress[metric]);
             }
             this.speed[metric] = data[metric];
           }
-  
+
           this.speedtestInProgress = false;
         });
-      }
+      };
 
       if (timeout) {
-        setTimeout(() => request(), 5000)
+        setTimeout(() => request(), 5000);
       } else {
-        request()
+        request();
       }
     },
     updateNetwork(data: NetworkResponse) {

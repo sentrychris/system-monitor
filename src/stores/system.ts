@@ -59,19 +59,19 @@ export const useSystemStore = defineStore("system", {
       const loader = useLoadingStore();
       loader.setMessage("Opening websocket connection...");
 
-      const client = await fetch("http://192.168.1.100:4200", {
+      const response = await fetch(import.meta.env.VITE_WORKER_URL, {
         method: "POST",
         body: JSON.stringify({ connection: "monitor" }),
       });
 
-      const worker = await client.json();
-      const url = `ws://192.168.1.100:4200/ws?id=${worker.id}`;
+      const worker = await response.json();
+      const url = `${import.meta.env.VITE_WEBSOCKET_URL}?id=${worker.id}`;
 
       this.connection = this.connection ?? new WebSocket(url);
       this.connection.onopen = () => {
         loader.setMessage("Websocket connected, loading dashboard...");
         setTimeout(() => {
-          loader.toggle(true)
+          loader.toggle(true);
           this.live = true;
         }, 1000);
       };
