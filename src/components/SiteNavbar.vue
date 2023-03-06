@@ -3,7 +3,7 @@ import { RouterLink } from "vue-router";
 </script>
 
 <template>
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-lg">
     <div class="container-fluid px-5 py-2">
       <a class="navbar-brand" href="#">Pi Monitor</a>
       <button
