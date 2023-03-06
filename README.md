@@ -33,6 +33,12 @@ VITE_CONNECTION_TYPE="websocket"
 - `VITE_WS_URL`: The URL to the websocket server
 - `VITE_CONNECTION_TYPE`: If you set this to `http`, the websocket server will not be used, instead the dashboard will be displayed with "static" data from the API. If you set this to `websocket`, then the websocket server will be used and you will see live data updating in realtime. In any case the API is always used, if you are using the websocket server for realtime data, then the API will act as an initialiser/fallback.
 
+## Contributing
+
+Feel free to contribute to this project, or the [Pi Monitor Websocket Server](https://github.com/chrisrowles/pi-monitor-wss), or the [Pi Monitor API](https://github.com/chrisrowles/pi-monitor-api).
+
+I'm alaways looking for help and new ideas, this is a fun personal project and so if you're a bit new of a bit anxious about contributing to projects, then please feel free to get in tocuh with me and we'll find a way to get you started, we all start somewhere! :)
+
 
 ## License
 This software is open-sourced software licensed under the MIT license.
