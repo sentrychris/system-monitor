@@ -5,12 +5,16 @@ const body = <HTMLBodyElement>document.querySelector("body");
 export const useThemeStore = defineStore("theme", {
   state: () => ({
     body,
-    theme: "",
+    theme: <string | null>null,
     active: body.dataset.theme,
   }),
   actions: {
     load() {
-      this.body.dataset.theme = this.theme;
+      const theme = this.theme ?? "light";
+      this.body.dataset.theme = theme;
+
+      this.theme = theme;
+      this.active = this.getActiveTheme();
     },
     toggle() {
       this.theme = this.theme === "light" ? "dark" : "light";
@@ -18,7 +22,7 @@ export const useThemeStore = defineStore("theme", {
       this.active = this.getActiveTheme();
     },
     getActiveTheme() {
-      return body.dataset.theme;
+      return this.body.dataset.theme;
     },
   },
   persist: {

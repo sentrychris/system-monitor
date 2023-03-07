@@ -31,6 +31,7 @@ export const useSystemStore = defineStore("system", {
       uptime: null,
     },
     connection: <WebSocket | null>null,
+    type: <string | null>null,
     live: false,
     connected: false,
   }),
@@ -42,6 +43,7 @@ export const useSystemStore = defineStore("system", {
       websocket: boolean;
       refresh?: boolean;
     }) {
+      this.type = websocket ? "websocket" : "http";
       if (!this.connected) {
         const loader = useLoadingStore();
 
@@ -110,9 +112,7 @@ export const useSystemStore = defineStore("system", {
       };
     },
     async refresh(websocket: boolean) {
-      console.log(websocket);
       if (this.connection instanceof WebSocket) {
-        console.log("is websocket");
         this.connection.close();
       }
 
@@ -131,5 +131,12 @@ export const useSystemStore = defineStore("system", {
     liveUpdate(realtime: RealtimeSystemResponse) {
       this.$patch({ realtime });
     },
+    setConnectionType(type: string) {
+      this.type = type;
+    },
+  },
+  persist: {
+    storage: localStorage,
+    paths: ["type"],
   },
 });
