@@ -1,15 +1,8 @@
 <script setup lang="ts">
-import { ref } from "vue";
 import { RouterLink } from "vue-router";
+import { useThemeStore } from "@/stores/theme";
 
-const body = <HTMLBodyElement>document.querySelector('body');
-const theme = ref(body.dataset.theme);
-
-const toggleTheme = () => {
-  const mode = body.dataset.theme === "light" ? "dark": "light";
-  body.dataset.theme = mode;
-  theme.value = mode;
-}
+const theme = useThemeStore();
 </script>
 
 <template>
@@ -42,8 +35,8 @@ const toggleTheme = () => {
         </ul>
         <div class="form-check form-switch">
           <input
-            @change="toggleTheme"
-            :checked="theme === 'dark'"
+            @change="theme.toggle"
+            :checked="theme.active === 'dark'"
             class="form-check-input"
             type="checkbox"
             role="switch"
@@ -53,8 +46,8 @@ const toggleTheme = () => {
             <font-awesome-icon
               icon="fa-solid fa-moon"
               :class="{
-                'text-warning': theme === 'dark',
-                'text-muted': theme === 'light',
+                'text-warning': theme.active === 'dark',
+                'text-muted': theme.active === 'light',
               }"
             />
           </label>
