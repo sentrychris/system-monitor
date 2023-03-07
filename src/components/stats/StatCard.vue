@@ -22,7 +22,7 @@ const loader = useLoadingStore();
         <p class="lead">{{ title }}</p>
       </div>
     </div>
-    <div class="card-body">
+    <div class="card-body pt-0">
       <slot v-if="loader.loaded" name="detail"></slot>
       <div v-else>Loading...</div>
     </div>

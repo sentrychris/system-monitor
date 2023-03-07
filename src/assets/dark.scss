@@ -73,6 +73,10 @@ body[data-theme="dark"] {
   .text-dark {
     color: #f5f5f5 !important;
   }
+
+  .text-white {
+    color: #cccccc !important;
+  }
   
   .text-muted {
     color: #8b8d8f !important;
@@ -84,6 +88,10 @@ body[data-theme="dark"] {
   
   rect.highcharts-legend-box {
     fill:#323232;
+  }
+
+  g.highcharts-grid.highcharts-yaxis-grid path {
+    stroke-width: 0.3
   }
 
   div.highcharts-label span {

@@ -7,7 +7,7 @@ defineProps<{
 </script>
 
 <template>
-  <p><strong>Temp</strong> {{ detail.temp }} °C</p>
-  <p><strong>Usage</strong> {{ detail.usage }} %</p>
-  <p><strong>Frequency</strong> {{ detail.freq }} MHz</p>
+  <p class="small"><strong>Temp</strong> {{ detail.temp }} °C</p>
+  <p class="small"><strong>Usage</strong> {{ detail.usage }} %</p>
+  <p class="small"><strong>Frequency</strong> {{ detail.freq }} MHz</p>
 </template>

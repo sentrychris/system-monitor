@@ -24,7 +24,7 @@ onBeforeMount(() => {
 
 <template>
   <Transition name="fade">
-    <div v-if="loader.loaded" class="container-fluid px-5 py-4">
+    <div v-if="loader.loaded" class="container py-4">
       <PageHeader decor-title="Raspberry Pi Monitor" title="System Dashboard" />
       <section id="statistics" class="page-section mt-0">
         <div class="row mt-3">
@@ -39,11 +39,7 @@ onBeforeMount(() => {
             </StatCard>
           </div>
           <div class="col d-flex align-items-stretch mt-3 mt-md-0">
-            <StatCard
-              title="CPU"
-              bg="success"
-              icon="fa-solid fa-tachometer-alt"
-            >
+            <StatCard title="CPU" bg="dark" icon="fa-solid fa-tachometer-alt">
               <template #detail>
                 <CpuDetail
                   :detail="system.live ? system.realtime.cpu : system.data.cpu"
@@ -52,7 +48,7 @@ onBeforeMount(() => {
             </StatCard>
           </div>
           <div class="col d-flex align-items-stretch mt-3 mt-md-0">
-            <StatCard title="Memory" bg="success" icon="fa-solid fa-server">
+            <StatCard title="Memory" bg="dark" icon="fa-solid fa-server">
               <template #detail>
                 <UsageDetail
                   :detail="system.live ? system.realtime.mem : system.data.mem"
@@ -184,7 +180,7 @@ onBeforeMount(() => {
               >
                 <h2 class="lead header">Process Information</h2>
               </div>
-              <div class="card-body">
+              <div class="card-body pt-0">
                 <BarChart
                   metric="system"
                   id="processes"

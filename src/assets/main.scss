@@ -83,3 +83,8 @@ svg.d3-svg {
 .fade-leave-to {
   opacity: 0;
 }
+
+.form-check-input:checked {
+  background-color: #595a5c;
+  border-color: #707172;
+}

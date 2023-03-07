@@ -2,6 +2,8 @@ import type { Configuration } from "./interfaces/Configuration";
 
 export const config: Configuration = {
   app: {
+    name: import.meta.env.VITE_APP_NAME,
+    version: import.meta.env.VITE_APP_VERSION,
     base_url: import.meta.env.BASE_URL,
   },
   api: {

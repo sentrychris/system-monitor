@@ -7,7 +7,7 @@ defineProps<{
 </script>
 
 <template>
-  <p><strong>Used</strong> {{ detail.used }} GB</p>
-  <p><strong>Free</strong> {{ detail.free }} GB</p>
-  <p><strong>Total</strong> {{ detail.total }} GB</p>
+  <p class="small"><strong>Used</strong> {{ detail.used }} GB</p>
+  <p class="small"><strong>Free</strong> {{ detail.free }} GB</p>
+  <p class="small"><strong>Total</strong> {{ detail.total }} GB</p>
 </template>

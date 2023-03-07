@@ -1,6 +1,8 @@
 import type { ConnectionTypes } from "./types/ConnectionTypes";
 
 interface BaseConfiguration {
+  name: string;
+  version: string;
   base_url: string;
 }
 

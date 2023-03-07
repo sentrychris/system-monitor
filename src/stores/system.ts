@@ -111,6 +111,11 @@ export const useSystemStore = defineStore("system", {
         console.log("websocket connection closed");
       };
     },
+    async toggle() {
+      const type = this.type === "websocket" ? "http" : "websocket";
+      this.setConnectionType(type);
+      this.refresh(this.type === "websocket");
+    },
     async refresh(websocket: boolean) {
       if (this.connection instanceof WebSocket) {
         this.connection.close();
