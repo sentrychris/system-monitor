@@ -32,29 +32,31 @@ export const useSystemStore = defineStore("system", {
     },
     connection: <WebSocket | null>null,
     live: false,
-    ready: false,
+    connected: false,
   }),
   actions: {
     async connect({ websocket = false }: { websocket: boolean }) {
-      const loader = useLoadingStore();
+      if (!this.connected) {
+        const loader = useLoadingStore();
 
-      loader.toggle(false);
-      loader.setMessage("Connecting to system monitor...");
-      http
-        .get("system")
-        .then((response) => {
-          const { data }: { data: SystemResponse } = response.data;
-          this.staticUpdate(data);
-          this.ready = true;
-          if (websocket) {
-            this.websocket();
-          } else {
-            loader.toggle(true);
-          }
-        })
-        .catch(() => {
-          loader.setError("An unexpected error has occurred");
-        });
+        loader.toggle(false);
+        loader.setMessage("Connecting to system monitor...");
+        http
+          .get("system")
+          .then((response) => {
+            const { data }: { data: SystemResponse } = response.data;
+            this.staticUpdate(data);
+            this.connected = true;
+            if (websocket) {
+              this.websocket();
+            } else {
+              loader.toggle(true);
+            }
+          })
+          .catch(() => {
+            loader.setError("An unexpected error has occurred");
+          });
+      }
     },
     async websocket() {
       const loader = useLoadingStore();

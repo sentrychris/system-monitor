@@ -13,27 +13,12 @@ import RealtimeLineChart from "@/components/charts/RealtimeLineChart.vue";
 import GaugeChart from "@/components/charts/GaugeChart.vue";
 import BarChart from "@/components/charts/BarChart.vue";
 
-const connection = config.api.connection;
-
-console.log({ config });
-
 const loader = useLoadingStore();
 const system = useSystemStore();
 
 onBeforeMount(() => {
-  if (connection === "http") {
-    // When using http connection, there is
-    // no system.ready check, static data
-    // reloads each time instead
-    system.connect({ websocket: false });
-  } else {
-    // When using websocket connection,
-    // system will only reload if the existing
-    // connection is closed
-    if (!system.ready) {
-      system.connect({ websocket: true });
-    }
-  }
+  const websocket = config.api.connection === "websocket";
+  system.connect({ websocket });
 });
 </script>
 
