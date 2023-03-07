@@ -16,6 +16,11 @@ onMounted(() => {
     format: props.format,
   });
 
+  const body = document.querySelector("body");
+  if (body?.dataset.theme === "dark") {
+    gauge.updateTheme(props.id, "#535455");
+  }
+
   watch(
     () => props.metric,
     (next) => {

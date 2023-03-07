@@ -17,7 +17,7 @@ const loader = useLoadingStore();
 const system = useSystemStore();
 
 onBeforeMount(() => {
-  const websocket = config.api.connection === "websocket";
+  const websocket = config.api.connection === "http";
   system.connect({ websocket });
 });
 </script>

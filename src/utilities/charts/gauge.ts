@@ -32,7 +32,7 @@ export const gauge: Gauge = {
             radialGradient: { cx: 0.5, cy: 0.5, r: 0.46 },
             stops: [
               [0, "#000"],
-              [1, "#D6DADC"],
+              [1, "#D6DADC"], // #535455 for dark
             ],
           },
           innerRadius: "90%",
@@ -84,6 +84,11 @@ export const gauge: Gauge = {
     this.addToRegistry(id, chart);
 
     return chart;
+  },
+  updateTheme(id, color) {
+    console.log(this.registry[id].yAxis[0]);
+    //@ts-ignore
+    this.registry[id].pane[0].background[0].element.style.fill = color;
   },
   updateDataPoint(id, value) {
     const dataPoint = this.registry[id].series[0].points[0];
