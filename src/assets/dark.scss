@@ -15,6 +15,11 @@ body[data-theme="dark"] {
       color: white !important;
     }
 
+    table {
+      --bs-table-color: #f5f5f5;
+      --bs-table-striped-color: #f5f5f5;
+    }
+
     .pagination {
         --bs-pagination-bg: rgb(45, 45, 45);
         --bs-pagination-border-color: #4f4f54;
@@ -50,13 +55,18 @@ body[data-theme="dark"] {
         color: white !important;
     }
 
+    rect.highcharts-legend-box {
+      fill:#323232;
+      stroke: #f5f5f5 !important;
+    }
+
+    .highcharts-legend-item text {
+      fill: #f5f5f5 !important;
+    }
+
     .swal2-modal {
         background: rgb(61, 61, 61);
         color: white;
-    }
-
-    table {
-        color: #f5f5f5 !important;
     }
 
     .form-check-input {
@@ -91,9 +101,11 @@ body[data-theme="dark"] {
         color: #f5f5f5 !important;
         border-color: #4f4f54 !important;
     }
+
     .border-top {
         border-color: #4f4f54 !important;
     }
+
     span.input-group-text {
         background: #222222 !important;
         border-color: #4f4f54 !important;
@@ -102,19 +114,8 @@ body[data-theme="dark"] {
     .text-dark {
         color: #f5f5f5 !important;
     }
+
     .text-muted {
         color: #8b8d8f !important;
-    }
-    //.border-bottom {
-    //    border-color: #4f4f54 !important;
-    //}
-    .processing-task {
-        border-color: #4f4f54 !important;
-    }
-    .processing-task:hover {
-        background: #4f4f54 !important;
-    }
-    .processing-task a {
-        color: #f5f5f5 !important;
     }
 }

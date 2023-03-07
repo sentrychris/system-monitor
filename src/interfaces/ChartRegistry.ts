@@ -15,6 +15,7 @@ export interface Gauge extends ChartRegistry {
     value: number;
     format: string;
   }): Chart;
+  registerObserver(id: string): void;
   updateTheme(id: string, color: string): void;
   updateDataPoint(id: string, value: number): void;
 }

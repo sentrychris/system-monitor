@@ -85,8 +85,30 @@ export const gauge: Gauge = {
 
     return chart;
   },
+  registerObserver(id) {
+    const body = <HTMLBodyElement>document.querySelector("body");
+    if (body.dataset.theme === "dark") {
+      this.updateTheme(id, "#535455");
+    }
+
+    const observer = new MutationObserver((mutations) => {
+      const record = (<unknown>mutations[0].target) as HTMLElement;
+      const { theme } = record.dataset;
+
+      if (theme === "dark") {
+        this.updateTheme(id, "#535455");
+      } else {
+        this.updateTheme(id, "#D6DADC");
+      }
+    });
+
+    observer.observe(body, {
+      attributes: true,
+      childList: false,
+      subtree: false,
+    });
+  },
   updateTheme(id, color) {
-    console.log(this.registry[id].yAxis[0]);
     //@ts-ignore
     this.registry[id].pane[0].background[0].element.style.fill = color;
   },

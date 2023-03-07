@@ -71,7 +71,12 @@ export const bar: Bar = {
         bar: {
           dataLabels: {
             enabled: true,
+            // style: {
+            //   color: '#ffffff',
+            //   textOutline: false
+            // }
           },
+          borderColor: "transparent",
         },
       },
       legend: {
@@ -79,9 +84,10 @@ export const bar: Bar = {
         align: "right",
         verticalAlign: "top",
         x: -40,
-        y: 80,
+        y: 140,
         floating: true,
-        borderWidth: 1,
+        borderWidth: 0,
+        borderRadius: 5,
         backgroundColor: "#FFFFFF",
         shadow: true,
       },

@@ -1,5 +1,15 @@
 <script setup lang="ts">
+import { ref } from "vue";
 import { RouterLink } from "vue-router";
+
+const body = <HTMLBodyElement>document.querySelector('body');
+const theme = ref(body.dataset.theme);
+
+const toggleTheme = () => {
+  const mode = body.dataset.theme === "light" ? "dark": "light";
+  body.dataset.theme = mode;
+  theme.value = mode;
+}
 </script>
 
 <template>
@@ -30,6 +40,25 @@ import { RouterLink } from "vue-router";
             >
           </li>
         </ul>
+        <div class="form-check form-switch">
+          <input
+            @change="toggleTheme"
+            :checked="theme === 'dark'"
+            class="form-check-input"
+            type="checkbox"
+            role="switch"
+            id="flexSwitchCheckDefault"
+          />
+          <label class="form-check-label" for="flexSwitchCheckDefault">
+            <font-awesome-icon
+              icon="fa-solid fa-moon"
+              :class="{
+                'text-warning': theme === 'dark',
+                'text-muted': theme === 'light',
+              }"
+            />
+          </label>
+        </div>
       </div>
     </div>
   </nav>
