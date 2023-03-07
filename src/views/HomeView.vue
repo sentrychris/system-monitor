@@ -17,8 +17,8 @@ const loader = useLoadingStore();
 const system = useSystemStore();
 
 onBeforeMount(() => {
-  const websocket = config.api.connection === "http";
-  system.connect({ websocket });
+  const websocket = config.api.connection === "websocket";
+  system.connect({ websocket, refresh: false });
 });
 </script>
 
@@ -145,11 +145,11 @@ onBeforeMount(() => {
           <div class="col-6">
             <div class="card border-0 shadow-lg">
               <div
-                class="card-header bg-transparent border-0 d-flex justify-content-center py-4"
+                class="card-header pb-0 bg-transparent border-0 d-flex justify-content-center py-4"
               >
                 <h2 class="lead header">CPU Usage %</h2>
               </div>
-              <div class="card-body">
+              <div class="card-body pt-0">
                 <RealtimeLineChart
                   :data-point="system.realtime.cpu.usage"
                   :y-range="[0, 100]"
@@ -160,11 +160,11 @@ onBeforeMount(() => {
           <div class="col-6">
             <div class="card border-0 shadow-lg">
               <div
-                class="card-header bg-transparent border-0 d-flex justify-content-center py-4"
+                class="card-header pb-0 bg-transparent border-0 d-flex justify-content-center py-4"
               >
                 <h2 class="lead header">Memory Usage GB</h2>
               </div>
-              <div class="card-body">
+              <div class="card-body pt-0">
                 <RealtimeLineChart
                   :data-point="system.realtime.mem.used"
                   :y-range="[0, 4]"

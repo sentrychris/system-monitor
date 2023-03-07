@@ -122,7 +122,7 @@ onMounted(() => {
 
 <style scoped>
 .realtime-line-wrapper svg {
-  height: 200px;
+  height: 300px;
   width: 100%;
 }
 </style>

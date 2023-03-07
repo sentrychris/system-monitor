@@ -35,12 +35,21 @@ export const useSystemStore = defineStore("system", {
     connected: false,
   }),
   actions: {
-    async connect({ websocket = false }: { websocket: boolean }) {
+    async connect({
+      websocket = false,
+      refresh = false,
+    }: {
+      websocket: boolean;
+      refresh?: boolean;
+    }) {
       if (!this.connected) {
         const loader = useLoadingStore();
 
-        loader.toggle(false);
-        loader.setMessage("Connecting to system monitor...");
+        if (!refresh) {
+          loader.toggle(false);
+          loader.setMessage("Connecting to system monitor...");
+        }
+
         http
           .get("system")
           .then((response) => {
@@ -49,12 +58,14 @@ export const useSystemStore = defineStore("system", {
             this.connected = true;
             if (websocket) {
               this.websocket();
-            } else {
+            } else if (!refresh) {
               loader.toggle(true);
             }
           })
           .catch(() => {
-            loader.setError("An unexpected error has occurred");
+            if (!refresh) {
+              loader.setError("An unexpected error has occurred");
+            }
           });
       }
     },
@@ -98,11 +109,15 @@ export const useSystemStore = defineStore("system", {
         console.log("websocket connection closed");
       };
     },
-    async close() {
+    async refresh(websocket: boolean) {
+      console.log(websocket);
       if (this.connection instanceof WebSocket) {
+        console.log("is websocket");
         this.connection.close();
-        this.connect({ websocket: false });
       }
+
+      this.connected = false;
+      this.connect({ websocket, refresh: true });
     },
     async reconnect() {
       if (this.connection instanceof WebSocket) {
