@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { RouterLink } from "vue-router";
 import { useThemeStore } from "@/stores/theme";
+import SiteLogo from "./SiteLogo.vue";
 
 const theme = useThemeStore();
 </script>
@@ -8,7 +9,9 @@ const theme = useThemeStore();
 <template>
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-lg">
     <div class="container-fluid px-5 py-2">
-      <a class="navbar-brand" href="#">Pi Monitor</a>
+      <a class="navbar-brand" href="#">
+        <SiteLogo />
+      </a>
       <button
         class="navbar-toggler"
         type="button"

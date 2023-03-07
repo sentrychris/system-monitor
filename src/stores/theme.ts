@@ -1,22 +1,22 @@
 import { defineStore } from "pinia";
 
-const body = <HTMLBodyElement>document.querySelector('body');
-
-const getActiveTheme = () => {
-  return body.dataset.theme;
-}
+const body = <HTMLBodyElement>document.querySelector("body");
 
 export const useThemeStore = defineStore("theme", {
   state: () => ({
-    theme: '',
-    active: getActiveTheme(),
+    body,
+    theme: "",
+    active: body.dataset.theme,
   }),
   actions: {
     toggle() {
-      this.theme = this.theme === 'light' ? 'dark' : 'light';
+      this.theme = this.theme === "light" ? "dark" : "light";
       body.dataset.theme = this.theme;
-      
-      this.active = getActiveTheme();
+
+      this.active = this.getActiveTheme();
+    },
+    getActiveTheme() {
+      return body.dataset.theme;
     },
   },
 });

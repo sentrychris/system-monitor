@@ -2,6 +2,7 @@ import * as Highcharts from "highcharts";
 import HighchartsMore from "highcharts/highcharts-more";
 import HighchartsSolidGauge from "highcharts/modules/solid-gauge";
 import type { Gauge } from "@/interfaces/ChartRegistry";
+import { useThemeStore } from "@/stores/theme";
 
 HighchartsMore(Highcharts);
 HighchartsSolidGauge(Highcharts);
@@ -86,23 +87,16 @@ export const gauge: Gauge = {
     return chart;
   },
   registerObserver(id) {
-    const body = <HTMLBodyElement>document.querySelector("body");
-    if (body.dataset.theme === "dark") {
-      this.updateTheme(id, "#535455");
-    }
+    const theme = useThemeStore();
+    const color = () => (theme.active === "dark" ? "#535455" : "#D6DADC");
 
-    const observer = new MutationObserver((mutations) => {
-      const record = (<unknown>mutations[0].target) as HTMLElement;
-      const { theme } = record.dataset;
+    this.updateTheme(id, color());
 
-      if (theme === "dark") {
-        this.updateTheme(id, "#535455");
-      } else {
-        this.updateTheme(id, "#D6DADC");
-      }
+    const observer = new MutationObserver(() => {
+      this.updateTheme(id, color());
     });
 
-    observer.observe(body, {
+    observer.observe(theme.body, {
       attributes: true,
       childList: false,
       subtree: false,
