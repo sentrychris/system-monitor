@@ -9,14 +9,20 @@ export const useThemeStore = defineStore("theme", {
     active: body.dataset.theme,
   }),
   actions: {
+    load() {
+      this.body.dataset.theme = this.theme;
+    },
     toggle() {
       this.theme = this.theme === "light" ? "dark" : "light";
-      body.dataset.theme = this.theme;
-
+      this.body.dataset.theme = this.theme;
       this.active = this.getActiveTheme();
     },
     getActiveTheme() {
       return body.dataset.theme;
     },
+  },
+  persist: {
+    storage: localStorage,
+    paths: ["theme", "active"],
   },
 });

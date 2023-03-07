@@ -1,5 +1,6 @@
 import { createApp } from "vue";
 import { createPinia } from "pinia";
+import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
 
 import { useHttp } from "./plugins/http";
 import { useWebsocket } from "./plugins/websocket";
@@ -13,8 +14,11 @@ import "./utilities/icons";
 import "bootstrap";
 import "./assets/main.scss";
 
+const pinia = createPinia();
+pinia.use(piniaPluginPersistedstate);
+
 createApp(App)
-  .use(createPinia())
+  .use(pinia)
   .use(router)
   .use(useHttp)
   .use(useWebsocket)

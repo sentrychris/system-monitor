@@ -25,6 +25,7 @@
     "highcharts": "^10.3",
     "lodash": "^4.17",
     "pinia": "^2.0",
+    "pinia-plugin-persistedstate": "^3.1.0",
     "vue": "^3.2",
     "vue-router": "^4.1"
   },

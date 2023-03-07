@@ -17,7 +17,7 @@ const loader = useLoadingStore();
 const system = useSystemStore();
 
 onBeforeMount(() => {
-  const websocket = config.api.connection === "websocket";
+  const websocket = config.api.connection === "http";
   system.connect({ websocket });
 });
 </script>
@@ -25,10 +25,7 @@ onBeforeMount(() => {
 <template>
   <Transition name="fade">
     <div v-if="loader.loaded" class="container-fluid px-5 py-4">
-      <PageHeader
-        decor-title="Raspberry Pi Monitor"
-        title="System Monitoring"
-      />
+      <PageHeader decor-title="Raspberry Pi Monitor" title="System Dashboard" />
       <section id="statistics" class="page-section mt-0">
         <div class="row mt-3">
           <div class="col d-flex align-items-stretch mt-3 mt-md-0">
