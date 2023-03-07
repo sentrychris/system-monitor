@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onBeforeMount } from "vue";
+import { config } from "@/config";
 import { useLoadingStore } from "@/stores/loading";
 import { useSystemStore } from "@/stores/system";
 import PageHeader from "@/components/PageHeader.vue";
@@ -12,7 +13,9 @@ import RealtimeLineChart from "@/components/charts/RealtimeLineChart.vue";
 import GaugeChart from "@/components/charts/GaugeChart.vue";
 import BarChart from "@/components/charts/BarChart.vue";
 
-const connection = import.meta.env.VITE_CONNECTION_TYPE;
+const connection = config.api.connection;
+
+console.log({ config });
 
 const loader = useLoadingStore();
 const system = useSystemStore();

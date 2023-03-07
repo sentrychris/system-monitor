@@ -4,6 +4,7 @@ import axios, {
   type AxiosRequestConfig,
   type AxiosResponse,
 } from "axios";
+import { config } from "@/config";
 import { httpInjectionSymbol } from "@/injection";
 import { HttpStatus } from "@/enums/StatusCodes";
 
@@ -16,7 +17,7 @@ export class HttpMaker {
 
   init() {
     const http = axios.create({
-      baseURL: import.meta.env.VITE_API_URL,
+      baseURL: config.api.urls.http,
       headers: {
         accept: "application/json",
         "content-type": "application/json; charset=utf-8",

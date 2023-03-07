@@ -1,4 +1,5 @@
 import type { App } from "vue";
+import { config } from "@/config";
 import { websocketInjectionSymbol } from "@/injection";
 import { WebsocketStatus } from "@/enums/StatusCodes";
 
@@ -12,7 +13,7 @@ export class WebsocketMaker {
   }
 
   init() {
-    const websocket = new WebSocket(import.meta.env.VITE_WS_URL);
+    const websocket = new WebSocket(config.api.urls.websocket);
 
     websocket.onopen = () => {
       console.log("websocket is connected!");

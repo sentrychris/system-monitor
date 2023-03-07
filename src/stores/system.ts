@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { useLoadingStore } from "./loading";
+import { config } from "@/config";
 import { http } from "@/plugins/http";
 import type {
   SystemResponse,
@@ -59,15 +60,17 @@ export const useSystemStore = defineStore("system", {
       const loader = useLoadingStore();
       loader.setMessage("Opening websocket connection...");
 
-      const response = await fetch(import.meta.env.VITE_WORKER_URL, {
+      const response = await fetch(config.api.urls.worker, {
         method: "POST",
         body: JSON.stringify({ connection: "monitor" }),
       });
 
       const worker = await response.json();
-      const url = `${import.meta.env.VITE_WEBSOCKET_URL}?id=${worker.id}`;
+
+      const url = `${config.api.urls.websocket}?id=${worker.id}`;
 
       this.connection = this.connection ?? new WebSocket(url);
+
       this.connection.onopen = () => {
         loader.setMessage("Websocket connected, loading dashboard...");
         setTimeout(() => {

@@ -17,7 +17,7 @@ describe("SiteFooter", () => {
 
     expect(testSubject.exists()).toBeTruthy();
     expect(testSubject.text()).toContain(
-      "Copyright © Chris Rowles 2022. All Rights Reserved."
+      `Copyright © Chris Rowles ${new Date().getFullYear()}. All Rights Reserved.`
     );
   });
 });
