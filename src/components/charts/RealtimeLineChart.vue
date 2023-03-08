@@ -6,7 +6,7 @@ import type { RealtimeDataPoint } from "@/interfaces/ChartRegistry";
 
 const props = defineProps<{
   dataPoint: number;
-  yRange: number[];
+  yAxisRange: number[];
 }>();
 
 const svgRef = ref(null);
@@ -41,7 +41,7 @@ const draw = () => {
   const timeScale = d3.scaleTime().range([0, width]);
 
   // Linear (y-axis) scale
-  const valueScale = d3.scaleLinear().domain(props.yRange).range([height, 0]);
+  const valueScale = d3.scaleLinear().domain(props.yAxisRange).range([height, 0]);
 
   // Construct line generator
   const line = d3

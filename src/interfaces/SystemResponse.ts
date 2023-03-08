@@ -19,4 +19,5 @@ export interface RealtimeSystemResponse {
   mem: UsageInformation;
   disk: UsageInformation;
   uptime?: string | null;
+  processes: ProcessInformation[];
 }

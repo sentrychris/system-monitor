@@ -25,6 +25,7 @@ export const pie: Pie = {
       },
       plotOptions: {
         pie: {
+          size: '160',
           allowPointSelect: true,
           cursor: "pointer",
           dataLabels: {
@@ -52,14 +53,9 @@ export const pie: Pie = {
 
     return chart;
   },
-  // updateTheme(id, color) {
-  //   //@ts-ignore
-  //   this.registry[id].pane[0].background[0].element.style.fill = color;
-  // },
-  // updateDataPoint(id, value) {
-  //   const dataPoint = this.registry[id].series[0].points[0];
-  //   dataPoint.update(Math.round(value));
-  // },
+  updateDataSeries(id, series) {
+    this.registry[id].series[0].setData(series);
+  },
   addToRegistry(id: string, chart: any) {
     this.registry[id] = chart;
   },

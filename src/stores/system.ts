@@ -31,6 +31,7 @@ export const useSystemStore = defineStore("system", {
         percent: 0,
       },
       uptime: null,
+      processes: [],
     },
     connection: <WebSocket | null>null,
     type: <string | null>null,
@@ -151,6 +152,7 @@ export const useSystemStore = defineStore("system", {
     },
     liveUpdate(realtime: RealtimeSystemResponse) {
       this.$patch({ realtime });
+      this.realtime.processes = realtime.processes;
     },
     setConnectionType(type: string) {
       this.type = type;

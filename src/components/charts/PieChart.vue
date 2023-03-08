@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted } from "vue";
+import { watch, onMounted } from "vue";
 import { pie } from "@/utilities/charts/pie";
 
 const props = defineProps<{
@@ -14,6 +14,13 @@ onMounted(() => {
     title: props.title,
     series: props.series,
   });
+
+  watch(
+    () => props.series,
+    (next) => {
+      pie.updateDataSeries(props.id, next);
+    }
+  );
 });
 </script>
 

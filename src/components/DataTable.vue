@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, type Ref } from "vue";
+import { ref, watch, computed, onMounted, type Ref } from "vue";
 import _ from "lodash";
 
 const props = defineProps<{
@@ -48,6 +48,14 @@ const verticalData = computed(() => {
   const data = transpose();
   return _.orderBy(data, props.sortKey, tableSortOrder.value);
 });
+
+onMounted(() => {
+  watch(() => props.data,
+    () => {
+      tableData.value = props.data
+    }
+  );
+})
 </script>
 
 <template>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted } from "vue";
+import { watch, onMounted } from "vue";
 import { bar } from "@/utilities/charts/bar";
 
 const props = defineProps<{
@@ -21,6 +21,13 @@ onMounted(() => {
     yAxisText: props.yAxisText,
     xAxisText: props.xAxisText,
   });
+
+  // watch(
+  //   () => props.series,
+  //   (next) => {
+  //     bar.updateDataSeries(props.id, next);
+  //   }
+  // );
 });
 </script>
 

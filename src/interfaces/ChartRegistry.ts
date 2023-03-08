@@ -1,4 +1,4 @@
-import type { Chart } from "highcharts";
+import type { Chart, Series } from "highcharts";
 
 interface ChartRegistry {
   registry: { [key: string]: Chart };
@@ -32,6 +32,7 @@ export interface Bar extends ChartRegistry {
     yAxisText?: string;
     xAxisText?: string;
   }): Chart;
+  updateDataSeries(id: string, series: Series[]): void;
 }
 
 export interface Pie extends ChartRegistry {
@@ -44,6 +45,7 @@ export interface Pie extends ChartRegistry {
     title?: string;
     series: Array<any>;
   }): Chart;
+  updateDataSeries(id: string, series: Series[]): void;
 }
 
 export interface RealtimeDataPoint {

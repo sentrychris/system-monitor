@@ -67,6 +67,9 @@ export const bar: Bar = {
 
     return chart;
   },
+  updateDataSeries(id, series) {
+    console.log(this.registry[id].series);
+  },
   addToRegistry(id, chart) {
     this.registry[id] = chart;
   },

@@ -8,23 +8,18 @@ import StatCard from "@/components/stats/StatCard.vue";
 import PlatformDetail from "@/components/stats/PlatformDetail.vue";
 import CpuDetail from "@/components/stats/CpuDetail.vue";
 import UsageDetail from "@/components/stats/UsageDetail.vue";
-import DataTable from "@/components/DataTable.vue";
-import RealtimeLineChart from "@/components/charts/RealtimeLineChart.vue";
 import GaugeChart from "@/components/charts/GaugeChart.vue";
+import RealtimeLineChart from "@/components/charts/RealtimeLineChart.vue";
 import BarChart from "@/components/charts/BarChart.vue";
 import PieChart from "@/components/charts/PieChart.vue";
+import DataTable from "@/components/DataTable.vue";
 
 const loader = useLoadingStore();
 const system = useSystemStore();
 
 onBeforeMount(() => {
   const connection = system.type ?? config.api.connection;
-
   system.connect({ websocket: connection === "websocket", refresh: false });
-
-  if (connection === "http") {
-    system.startPollingApi(1000 * 60 * 2);
-  }
 });
 </script>
 
@@ -48,31 +43,31 @@ onBeforeMount(() => {
             <StatCard title="CPU" bg="dark" icon="fa-solid fa-tachometer-alt">
               <template #detail>
                 <CpuDetail
-                  :detail="system.live ? system.realtime.cpu : system.data.cpu"
+                  :detail="system.live
+                    ? system.realtime.cpu
+                    : system.data.cpu"
                 />
               </template>
             </StatCard>
           </div>
-          <div
-            class="col-sm-12 col-md-6 col-lg-3 d-flex align-items-stretch mt-4 mt-lg-0"
-          >
+          <div class="col-sm-12 col-md-6 col-lg-3 d-flex align-items-stretch mt-4 mt-lg-0">
             <StatCard title="Memory" bg="dark" icon="fa-solid fa-server">
               <template #detail>
                 <UsageDetail
-                  :detail="system.live ? system.realtime.mem : system.data.mem"
+                  :detail="system.live
+                    ? system.realtime.mem
+                    : system.data.mem"
                 />
               </template>
             </StatCard>
           </div>
-          <div
-            class="col-sm-12 col-md-6 col-lg-3 d-flex align-items-stretch mt-4 mt-lg-0"
-          >
+          <div class="col-sm-12 col-md-6 col-lg-3 d-flex align-items-stretch mt-4 mt-lg-0">
             <StatCard title="Disk" bg="dark" icon="fa-solid fa-hard-drive">
               <template #detail>
                 <UsageDetail
-                  :detail="
-                    system.live ? system.realtime.disk : system.data.disk
-                  "
+                  :detail="system.live
+                    ? system.realtime.disk
+                    : system.data.disk"
                 />
               </template>
             </StatCard>
@@ -84,9 +79,7 @@ onBeforeMount(() => {
         <div class="row">
           <div class="col">
             <div class="card border-0 shadow-lg">
-              <div
-                class="card-header bg-transparent border-0 d-flex justify-content-center py-4"
-              >
+              <div class="card-header bg-transparent border-0 d-flex justify-content-center py-4">
                 <h2 class="lead header">System Overview</h2>
               </div>
               <div class="card-body p-0">
@@ -95,11 +88,9 @@ onBeforeMount(() => {
                     <GaugeChart
                       title="Temperature"
                       id="temp"
-                      :metric="
-                        system.live
-                          ? system.realtime.cpu.temp
-                          : system.data.cpu.temp
-                      "
+                      :metric="system.live
+                        ? system.realtime.cpu.temp
+                        : system.data.cpu.temp"
                       format="{y}°C"
                     />
                   </div>
@@ -107,11 +98,9 @@ onBeforeMount(() => {
                     <GaugeChart
                       title="CPU Usage"
                       id="cpu"
-                      :metric="
-                        system.live
-                          ? system.realtime.cpu.usage
-                          : system.data.cpu.usage
-                      "
+                      :metric="system.live
+                        ? system.realtime.cpu.usage
+                        : system.data.cpu.usage"
                       format="{y}%"
                     />
                   </div>
@@ -119,11 +108,9 @@ onBeforeMount(() => {
                     <GaugeChart
                       title="Memory Usage"
                       id="mem"
-                      :metric="
-                        system.live
-                          ? system.realtime.mem.percent
-                          : system.data.mem.percent
-                      "
+                      :metric="system.live
+                        ? system.realtime.mem.percent
+                        : system.data.mem.percent"
                       format="{y}%"
                     />
                   </div>
@@ -131,11 +118,9 @@ onBeforeMount(() => {
                     <GaugeChart
                       title="Disk Usage"
                       id="disk"
-                      :metric="
-                        system.live
-                          ? system.realtime.disk.percent
-                          : system.data.disk.percent
-                      "
+                      :metric="system.live
+                        ? system.realtime.disk.percent
+                        : system.data.disk.percent"
                       format="{y}%"
                     />
                   </div>
@@ -150,30 +135,26 @@ onBeforeMount(() => {
         <div class="row">
           <div class="col-sm-12 col-md-6">
             <div class="card border-0 shadow-lg">
-              <div
-                class="card-header pb-0 bg-transparent border-0 d-flex justify-content-center py-4"
-              >
+              <div class="card-header pb-0 bg-transparent border-0 d-flex justify-content-center py-4">
                 <h2 class="lead header">CPU Usage %</h2>
               </div>
               <div class="card-body pt-0">
                 <RealtimeLineChart
                   :data-point="system.realtime.cpu.usage"
-                  :y-range="[0, 100]"
+                  :y-axis-range="[0, 100]"
                 />
               </div>
             </div>
           </div>
           <div class="col-sm-12 col-md-6 mt-4 mt-md-0">
             <div class="card border-0 shadow-lg">
-              <div
-                class="card-header pb-0 bg-transparent border-0 d-flex justify-content-center py-4"
-              >
+              <div class="card-header pb-0 bg-transparent border-0 d-flex justify-content-center py-4">
                 <h2 class="lead header">Memory Usage GB</h2>
               </div>
               <div class="card-body pt-0">
                 <RealtimeLineChart
                   :data-point="system.realtime.mem.used"
-                  :y-range="[0, 4]"
+                  :y-axis-range="[0, 4]"
                 />
               </div>
             </div>
@@ -185,9 +166,7 @@ onBeforeMount(() => {
         <div class="row">
           <div class="col">
             <div class="card border-0 shadow-lg">
-              <div
-                class="card-header bg-transparent border-0 d-flex justify-content-center py-4"
-              >
+              <div class="card-header bg-transparent border-0 d-flex justify-content-center py-4">
                 <h2 class="lead header">Process Information</h2>
               </div>
               <div class="card-body pt-0">
@@ -197,7 +176,10 @@ onBeforeMount(() => {
                       metric="system"
                       id="processes"
                       title="Grouped Processes"
-                      :series="system.formatBarChartDataForSystem(system.data.processes, 'mem')"
+                      :series="
+                        (system.live && system.realtime.processes.length > 0)
+                          ? system.formatBarChartDataForSystem(system.realtime.processes, 'mem')
+                          : system.formatBarChartDataForSystem(system.data.processes, 'mem')"
                       y-axis-text="Memory Used"
                       x-axis-text="Process Group"
                     />
@@ -206,11 +188,18 @@ onBeforeMount(() => {
                     <PieChart
                       id="system-processes"
                       title="Grouped Memory Usage"
-                      :series="system.formatPieChartDataForProcesses(system.data.processes)"
+                      :series="
+                      (system.live && system.realtime.processes.length > 0)
+                        ? system.formatPieChartDataForProcesses(system.realtime.processes)
+                        : system.formatPieChartDataForProcesses(system.data.processes)"
                     />
                   </div>
                 </div>
-                <DataTable type="horizontal" :data="system.data.processes" />
+                <DataTable type="horizontal"
+                  :data="(system.live && system.realtime.processes.length > 0)
+                    ? system.realtime.processes
+                    : system.data.processes"
+                />
               </div>
             </div>
           </div>
