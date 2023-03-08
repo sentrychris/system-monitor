@@ -88,3 +88,18 @@ svg.d3-svg {
   background-color: #595a5c;
   border-color: #707172;
 }
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: grey;
+  stroke-width: 1;
+  shape-rendering: crispEdges;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: black;
+  opacity: 0.2;
+}

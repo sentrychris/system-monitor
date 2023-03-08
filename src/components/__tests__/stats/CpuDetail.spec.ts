@@ -18,9 +18,9 @@ describe("CpuDetail", () => {
 
   it("renders properly", () => {
     const testHtml =
-      `<p><strong>Temp</strong> ${testProps.detail.temp} °C</p>\n` +
-      `<p><strong>Usage</strong> ${testProps.detail.usage} %</p>\n` +
-      `<p><strong>Frequency</strong> ${testProps.detail.freq} MHz</p>`;
+      `<p class="small"><strong>Temp</strong> ${testProps.detail.temp} °C</p>\n` +
+      `<p class="small"><strong>Usage</strong> ${testProps.detail.usage} %</p>\n` +
+      `<p class="small"><strong>Frequency</strong> ${testProps.detail.freq} MHz</p>`;
 
     const testSubject = getWrapper();
 
