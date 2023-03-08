@@ -1,12 +1,15 @@
-import { defineStore } from "pinia";
-import { useLoadingStore } from "./loading";
-import { http } from "@/plugins/http";
 import type {
   NetworkResponse,
   WifiResponse,
   WifiSpeedtestResponse,
 } from "@/interfaces/NetworkResponse";
-import type { WifiMetric } from "@/interfaces/types/NetworkTypes";
+import type {
+  NetworkTrafficMetric,
+  WifiMetric
+} from "@/interfaces/types/NetworkTypes";
+import { defineStore } from "pinia";
+import { useLoadingStore } from "./loading";
+import { http } from "@/plugins/http";
 
 export const useNetworkStore = defineStore("network", {
   state: () => ({
@@ -109,5 +112,20 @@ export const useNetworkStore = defineStore("network", {
     updateSpeedTest(speed: WifiSpeedtestResponse) {
       this.$patch({ speed });
     },
+    formatBarChartDataForNetwork(
+      series: Array<number>,
+      key: Array<NetworkTrafficMetric>
+    ) {
+      const response: Array<{ name: string; data: Array<number> }> = [];
+    
+      series.forEach((point, idx) => {
+        response.push({
+          name: key[idx],
+          data: [(<unknown>point) as number],
+        });
+      });
+    
+      return response;
+    }
   },
 });

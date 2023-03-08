@@ -24,7 +24,8 @@ const draw = () => {
 
   let data: Array<RealtimeDataPoint> = [];
 
-  const g = svg.append("g")
+  const g = svg
+    .append("g")
     .attr("transform", `translate( ${margin.left}, ${margin.top} )`);
 
   g.append("defs")
@@ -37,13 +38,10 @@ const draw = () => {
     .attr("height", height);
 
   // Time (x-axis) scale
-  const timeScale = d3.scaleTime()
-    .range([0, width]);
+  const timeScale = d3.scaleTime().range([0, width]);
 
   // Linear (y-axis) scale
-  const valueScale = d3.scaleLinear()
-    .domain(props.yRange)
-    .range([height, 0]);
+  const valueScale = d3.scaleLinear().domain(props.yRange).range([height, 0]);
 
   // Construct line generator
   const line = d3
@@ -53,25 +51,30 @@ const draw = () => {
     .y((d: any) => valueScale(d.value));
 
   // Time scale along x-axis
-  const xAxis = d3.axisBottom(timeScale)
+  const xAxis = d3
+    .axisBottom(timeScale)
     .tickSizeInner(-height)
     .tickSizeOuter(0)
     .tickPadding(10);
 
-  // x-axis call for later update  
-  const axisCall = g.append("g")
+  // x-axis call for later update
+  const axisCall = g
+    .append("g")
     .attr("transform", `translate(0, ${height})`)
     .attr("class", "x axis");
 
   axisCall.call(xAxis);
 
   // Linear scale along y-axis
-  g.append("g").attr("class", "y axis axis--y").call(
-    d3.axisLeft(valueScale)
-      .tickSizeInner(-width)
-      .tickSizeOuter(0)
-      .tickPadding(10)
-  );
+  g.append("g")
+    .attr("class", "y axis axis--y")
+    .call(
+      d3
+        .axisLeft(valueScale)
+        .tickSizeInner(-width)
+        .tickSizeOuter(0)
+        .tickPadding(10)
+    );
 
   // Append paths
   const gpaths = g
@@ -88,43 +91,42 @@ const draw = () => {
       value: props.dataPoint,
     });
 
+    if (data.length > 200) {
+      console.log("graph data cleared");
+      data = data.slice(1).slice(-100);
+    }
+
     // Shift domain
     timeScale.domain([now - (limit - 2) * duration, now - duration]);
 
-    axisCall.transition()
-      .duration(duration)
-      .ease(d3.easeLinear)
-      .call(xAxis);
+    axisCall.transition().duration(duration).ease(d3.easeLinear).call(xAxis);
 
-    const gline = gpaths.selectAll<SVGGElement, RealtimeDataPoint>(".gline")
+    const gline = gpaths
+      .selectAll<SVGGElement, RealtimeDataPoint>(".gline")
       .data([data]);
-    
+
     const genter = gline
       .enter()
       .append("g")
       .attr("class", "gline")
       .merge(gline);
 
-    const gsvg = genter.selectAll<SVGPathElement, RealtimeDataPoint>("path")
+    const gsvg = genter
+      .selectAll<SVGPathElement, RealtimeDataPoint>("path")
       .data((dp) => [dp]);
-
-    if (data.length > 200) {
-      console.log('graph data cleared')
-      data = data.slice(1).slice(-100)
-    }
 
     gsvg
       .enter()
       .append("path")
       .attr("class", "line")
-      .style("stroke", '#ff906b')
+      .style("stroke", "#ff906b")
       .style("stroke-width", "2")
       .style("fill", "none")
       .merge(gsvg)
       .transition()
       .duration(duration)
       .ease(d3.easeLinear)
-      .attr("d", line(<unknown>data as Iterable<[number, number]>))
+      .attr("d", line(<Iterable<[number, number]>>data))
       .attr("transform", null);
   };
 

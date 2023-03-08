@@ -1,31 +1,24 @@
 <script setup lang="ts">
 import { onMounted } from "vue";
-import { bar } from "@/utilities/charts/bar";
+import { pie } from "@/utilities/charts/pie";
 
 const props = defineProps<{
-  metric: string;
   id: string;
   title?: string;
   series: Array<any>;
-  legend?: boolean;
-  yAxisText?: string;
-  xAxisText?: string;
-  sortKey?: string;
 }>();
 
 onMounted(() => {
-  bar.create({
+  pie.create({
     id: props.id,
     title: props.title,
     series: props.series,
-    yAxisText: props.yAxisText,
-    xAxisText: props.xAxisText,
   });
 });
 </script>
 
 <template>
-  <div class="highcharts-bar">
+  <div class="highcharts-pie">
     <div :id="id"></div>
   </div>
 </template>

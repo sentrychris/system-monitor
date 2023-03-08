@@ -1,52 +1,16 @@
-import * as Highcharts from "highcharts";
 import type { Bar } from "@/interfaces/ChartRegistry";
-import type { ProcessInformation } from "@/interfaces/SystemInformation";
-import type { ProcessMetric } from "@/interfaces/types/SystemTypes";
-import type { NetworkTrafficInformation } from "@/interfaces/NetworkInformation";
-import type { NetworkTrafficMetric } from "@/interfaces/types/NetworkTypes";
-
-export function formatBarChartDataForSystem(
-  series: Array<ProcessInformation>,
-  key: ProcessMetric
-) {
-  const response: Array<{ name: string; data: Array<number> }> = [];
-
-  series.forEach((point) => {
-    response.push({
-      name: point.name,
-      data: [(<unknown>point[key]) as number],
-    });
-  });
-
-  return response;
-}
-
-export function formatBarChartDataForNetworkTraffic(
-  series: Array<NetworkTrafficInformation>,
-  key: Array<NetworkTrafficMetric>
-) {
-  const response: Array<{ name: string; data: Array<number> }> = [];
-
-  series.forEach((point, idx) => {
-    response.push({
-      name: key[idx],
-      data: [(<unknown>point) as number],
-    });
-  });
-
-  return response;
-}
+import * as Highcharts from "highcharts";
 
 export const bar: Bar = {
   registry: {},
-  create({ id, series, yAxisText = null, xAxisText = null }) {
+  create({ id, title, series, yAxisText = null, xAxisText = null }) {
     // @ts-ignore
     const chart = Highcharts.chart(id, {
       chart: {
         type: "bar",
       },
       title: {
-        text: null,
+        text: title,
       },
       subtitle: {
         text: null,
@@ -55,6 +19,9 @@ export const bar: Bar = {
         categories: [id],
         title: {
           text: xAxisText,
+        },
+        labels: {
+          enabled: false,
         },
       },
       yAxis: {
@@ -71,10 +38,9 @@ export const bar: Bar = {
         bar: {
           dataLabels: {
             enabled: true,
-            // style: {
-            //   color: '#ffffff',
-            //   textOutline: false
-            // }
+            style: {
+              textOutline: false,
+            },
           },
           borderColor: "transparent",
         },

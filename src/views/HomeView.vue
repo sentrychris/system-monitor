@@ -12,6 +12,7 @@ import DataTable from "@/components/DataTable.vue";
 import RealtimeLineChart from "@/components/charts/RealtimeLineChart.vue";
 import GaugeChart from "@/components/charts/GaugeChart.vue";
 import BarChart from "@/components/charts/BarChart.vue";
+import PieChart from "@/components/charts/PieChart.vue";
 
 const loader = useLoadingStore();
 const system = useSystemStore();
@@ -33,7 +34,7 @@ onBeforeMount(() => {
       <PageHeader decor-title="Raspberry Pi Monitor" title="System Dashboard" />
       <section id="statistics" class="page-section mt-0">
         <div class="row mt-3">
-          <div class="col d-flex align-items-stretch mt-3 mt-md-0">
+          <div class="col-sm-12 col-md-6 col-lg-3 d-flex align-items-stretch">
             <StatCard title="Platform" bg="dark" icon="fa-solid fa-server">
               <template #detail>
                 <PlatformDetail
@@ -43,7 +44,7 @@ onBeforeMount(() => {
               </template>
             </StatCard>
           </div>
-          <div class="col d-flex align-items-stretch mt-3 mt-md-0">
+          <div class="col-sm-12 col-md-6 col-lg-3 d-flex align-items-stretch">
             <StatCard title="CPU" bg="dark" icon="fa-solid fa-tachometer-alt">
               <template #detail>
                 <CpuDetail
@@ -52,7 +53,9 @@ onBeforeMount(() => {
               </template>
             </StatCard>
           </div>
-          <div class="col d-flex align-items-stretch mt-3 mt-md-0">
+          <div
+            class="col-sm-12 col-md-6 col-lg-3 d-flex align-items-stretch mt-4 mt-lg-0"
+          >
             <StatCard title="Memory" bg="dark" icon="fa-solid fa-server">
               <template #detail>
                 <UsageDetail
@@ -61,7 +64,9 @@ onBeforeMount(() => {
               </template>
             </StatCard>
           </div>
-          <div class="col d-flex align-items-stretch mt-3 mt-md-0">
+          <div
+            class="col-sm-12 col-md-6 col-lg-3 d-flex align-items-stretch mt-4 mt-lg-0"
+          >
             <StatCard title="Disk" bg="dark" icon="fa-solid fa-hard-drive">
               <template #detail>
                 <UsageDetail
@@ -86,7 +91,7 @@ onBeforeMount(() => {
               </div>
               <div class="card-body p-0">
                 <div class="row">
-                  <div class="col mt-3 mt-md-0">
+                  <div class="col-sm-12 col-md-6 col-lg-3 mt-3 mt-md-0">
                     <GaugeChart
                       title="Temperature"
                       id="temp"
@@ -98,7 +103,7 @@ onBeforeMount(() => {
                       format="{y}°C"
                     />
                   </div>
-                  <div class="col mt-3 mt-md-0">
+                  <div class="col-sm-12 col-md-6 col-lg-3 mt-3 mt-md-0">
                     <GaugeChart
                       title="CPU Usage"
                       id="cpu"
@@ -110,7 +115,7 @@ onBeforeMount(() => {
                       format="{y}%"
                     />
                   </div>
-                  <div class="col mt-3 mt-md-0">
+                  <div class="col-sm-12 col-md-6 col-lg-3 mt-3 mt-md-0">
                     <GaugeChart
                       title="Memory Usage"
                       id="mem"
@@ -122,7 +127,7 @@ onBeforeMount(() => {
                       format="{y}%"
                     />
                   </div>
-                  <div class="col mt-3 mt-md-0">
+                  <div class="col-sm-12 col-md-6 col-lg-3 mt-3 mt-md-0">
                     <GaugeChart
                       title="Disk Usage"
                       id="disk"
@@ -143,7 +148,7 @@ onBeforeMount(() => {
 
       <section id="d3-line-charts" v-if="system.live">
         <div class="row">
-          <div class="col-6">
+          <div class="col-sm-12 col-md-6">
             <div class="card border-0 shadow-lg">
               <div
                 class="card-header pb-0 bg-transparent border-0 d-flex justify-content-center py-4"
@@ -158,7 +163,7 @@ onBeforeMount(() => {
               </div>
             </div>
           </div>
-          <div class="col-6">
+          <div class="col-sm-12 col-md-6 mt-4 mt-md-0">
             <div class="card border-0 shadow-lg">
               <div
                 class="card-header pb-0 bg-transparent border-0 d-flex justify-content-center py-4"
@@ -186,13 +191,25 @@ onBeforeMount(() => {
                 <h2 class="lead header">Process Information</h2>
               </div>
               <div class="card-body pt-0">
-                <BarChart
-                  metric="system"
-                  id="processes"
-                  title="Top Processes"
-                  :series="system.data.processes"
-                  y-axis-text="Memory Used"
-                />
+                <div class="row">
+                  <div class="col-sm-12 col-md-6 col-lg-8">
+                    <BarChart
+                      metric="system"
+                      id="processes"
+                      title="Grouped Processes"
+                      :series="system.formatBarChartDataForSystem(system.data.processes, 'mem')"
+                      y-axis-text="Memory Used"
+                      x-axis-text="Process Group"
+                    />
+                  </div>
+                  <div class="col-sm-12 col-md-6 col-lg-4">
+                    <PieChart
+                      id="system-processes"
+                      title="Grouped Memory Usage"
+                      :series="system.formatPieChartDataForProcesses(system.data.processes)"
+                    />
+                  </div>
+                </div>
                 <DataTable type="horizontal" :data="system.data.processes" />
               </div>
             </div>

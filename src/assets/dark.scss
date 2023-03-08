@@ -94,6 +94,14 @@ body[data-theme="dark"] {
     stroke-width: 0.3
   }
 
+  g.highcharts-label.highcharts-data-label text {
+    fill: white !important;
+  }
+
+  text.highcharts-title {
+    fill: #8b8d8f !important;
+  }
+
   div.highcharts-label span {
     color: white !important;
   }

@@ -97,10 +97,10 @@ onMounted(() => {
                     metric="network"
                     :id="(inet as string)"
                     :title="`Interface ${inet}`"
-                    :series="[
+                    :series="network.formatBarChartDataForNetwork([
                       network.data.interfaces[inet].mb_sent,
                       network.data.interfaces[inet].mb_received,
-                    ]"
+                    ], ['mb_received', 'mb_sent'])"
                   >
                   </BarChart>
                 </div>

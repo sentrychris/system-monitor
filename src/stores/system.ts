@@ -1,11 +1,13 @@
-import { defineStore } from "pinia";
-import { useLoadingStore } from "./loading";
-import { config } from "@/config";
-import { http } from "@/plugins/http";
 import type {
   SystemResponse,
   RealtimeSystemResponse,
 } from "@/interfaces/SystemResponse";
+import type { ProcessInformation } from "@/interfaces/SystemInformation";
+import type { ProcessMetric } from "@/interfaces/types/SystemTypes";
+import { defineStore } from "pinia";
+import { useLoadingStore } from "./loading";
+import { config } from "@/config";
+import { http } from "@/plugins/http";
 
 export const useSystemStore = defineStore("system", {
   state: () => ({
@@ -153,6 +155,50 @@ export const useSystemStore = defineStore("system", {
     setConnectionType(type: string) {
       this.type = type;
     },
+    formatBarChartDataForSystem(
+      series: Array<ProcessInformation>,
+      key: ProcessMetric
+    ) {
+      const response: Array<{ name: string; data: Array<number> }> = [];
+    
+      series.forEach((point) => {
+        const dp = response.find((dp) => {
+          return dp.name === point.name;
+        });
+    
+        if (dp) {
+          dp.data[0] += point.mem;
+        } else {
+          response.push({
+            name: point.name,
+            data: [(<unknown>point[key]) as number],
+          });
+        }
+      });
+    
+      return response;
+    },
+    formatPieChartDataForProcesses(
+      series: Array<ProcessInformation>
+    ) {
+      const response: Array<{ name: string; y: number }> = [];
+      series.forEach((point) => {
+        const dp = response.find((dp) => {
+          return dp.name === point.name;
+        });
+    
+        if (dp) {
+          dp.y += point.mem;
+        } else {
+          response.push({
+            name: point.name,
+            y: (<unknown>point.mem) as number,
+          });
+        }
+      });
+    
+      return response;
+    }
   },
   persist: {
     storage: localStorage,

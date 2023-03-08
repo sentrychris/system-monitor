@@ -23,12 +23,26 @@ export interface Gauge extends ChartRegistry {
 export interface Bar extends ChartRegistry {
   create({
     id,
+    title,
     series,
   }: {
     id: string;
-    series: Array<any>; // TODO change
+    title?: string;
+    series: Array<any>;
     yAxisText?: string;
     xAxisText?: string;
+  }): Chart;
+}
+
+export interface Pie extends ChartRegistry {
+  create({
+    id,
+    title,
+    series,
+  }: {
+    id: string;
+    title?: string;
+    series: Array<any>;
   }): Chart;
 }
 
