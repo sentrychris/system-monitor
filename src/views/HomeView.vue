@@ -175,11 +175,13 @@ onBeforeMount(() => {
                     <BarChart
                       metric="system"
                       id="processes"
-                      title="Grouped Processes"
+                      title="Grouped Process Usage"
                       :series="
                         (system.live && system.realtime.processes.length > 0)
                           ? system.formatBarChartDataForSystem(system.realtime.processes, 'mem')
                           : system.formatBarChartDataForSystem(system.data.processes, 'mem')"
+                      sort-key="data"
+                      sort-order="desc"
                       y-axis-text="Memory Used"
                       x-axis-text="Process Group"
                     />

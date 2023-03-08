@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, watch, computed, onMounted, type Ref } from "vue";
-import _ from "lodash";
+import { orderBy } from "lodash";
 
 const props = defineProps<{
   type: string;
@@ -22,7 +22,7 @@ const formatHeader = (header: string) => {
 const changeOrder = (key: string) => {
   tableSortKey.value = key;
   tableSortOrder.value = tableSortOrder.value === "asc" ? "desc" : "asc";
-  tableData.value = _.orderBy(tableData.value, key, tableSortOrder.value);
+  tableData.value = orderBy(tableData.value, key, tableSortOrder.value);
 };
 
 const transpose = () => {

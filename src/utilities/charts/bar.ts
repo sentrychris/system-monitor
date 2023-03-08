@@ -36,11 +36,14 @@ export const bar: Bar = {
       },
       plotOptions: {
         bar: {
+          cursor: "pointer",
+          allowPointSelect: true,
           dataLabels: {
             enabled: true,
             style: {
               textOutline: false,
             },
+            format: '{point.y:.2f} MB'
           },
           borderColor: "transparent",
         },

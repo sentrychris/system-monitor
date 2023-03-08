@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { watch, onMounted } from "vue";
+import { orderBy } from "lodash";
 import { bar } from "@/utilities/charts/bar";
 
 const props = defineProps<{
@@ -11,13 +12,15 @@ const props = defineProps<{
   yAxisText?: string;
   xAxisText?: string;
   sortKey?: string;
+  sortOrder?: "asc" | "desc"
 }>();
 
 onMounted(() => {
+  const series = orderBy(props.series, props.sortKey, props.sortOrder);
   bar.create({
     id: props.id,
     title: props.title,
-    series: props.series,
+    series,
     yAxisText: props.yAxisText,
     xAxisText: props.xAxisText,
   });

@@ -16,7 +16,7 @@ export const pie: Pie = {
         text: title,
       },
       tooltip: {
-        pointFormat: "{series.name}: <b>{point.percentage:.1f}%</b>",
+        pointFormat: "{point.name}: <b>{point.percentage:.0f}%</b>",
       },
       accessibility: {
         point: {
@@ -33,7 +33,7 @@ export const pie: Pie = {
             style: {
               textOutline: false,
             },
-            format: "<b>{point.name}</b>: {point.percentage:.1f} %",
+            format: "<b>{point.name}</b>: {point.percentage:.0f}%",
           },
           borderColor: "transparent",
         },
@@ -44,6 +44,7 @@ export const pie: Pie = {
       series: [
         {
           colorByPoint: true,
+          allowPointSelect: true,
           data: series,
         },
       ],
