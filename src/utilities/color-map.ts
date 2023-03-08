@@ -12,7 +12,7 @@ export const mapTextContrast = <ColorMap>{
 export const mapTemperatureColor = (value: number) => {
   let color = "#41B883"; // green
   if (value > 50 && value <= 70) {
-    color = "#ffda6b"; // orange
+    color = "#ff906b"; // orange
   } else if (value > 70) {
     color = "#ff4136"; // red
   }
@@ -23,7 +23,7 @@ export const mapTemperatureColor = (value: number) => {
 export const mapUsageColor = (value: number) => {
   let color = "#41B883"; // green
   if (value > 50 && value <= 70) {
-    color = "#ffda6b"; // orange
+    color = "#ff906b"; // orange
   } else if (value > 70) {
     color = "#ff4136"; // red
   }

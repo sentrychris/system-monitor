@@ -34,6 +34,7 @@ export const useSystemStore = defineStore("system", {
     type: <string | null>null,
     live: false,
     connected: false,
+    poll: <any>null,
   }),
   actions: {
     async connect({
@@ -110,6 +111,19 @@ export const useSystemStore = defineStore("system", {
         this.connection = null;
         console.log("websocket connection closed");
       };
+    },
+    async startPollingApi(interval: number = 30000) {
+      if (!this.poll) {
+        this.poll = setInterval(() => {
+          this.refresh(false);
+        }, interval);
+      }
+    },
+    async stopPollingApi() {
+      if (this.poll) {
+        clearInterval(this.poll);
+      }
+      this.poll = null;
     },
     async toggle() {
       const type = this.type === "websocket" ? "http" : "websocket";

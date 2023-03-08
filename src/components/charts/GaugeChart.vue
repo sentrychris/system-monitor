@@ -4,7 +4,7 @@ import { gauge } from "@/utilities/charts";
 
 const props = defineProps<{
   id: string;
-  title: string;
+  title?: string;
   metric: number;
   format: string;
 }>();
@@ -29,7 +29,7 @@ onMounted(() => {
 
 <template>
   <div class="highcharts-gauge">
-    <div class="chart-legend text-center text-muted">
+    <div class="chart-legend text-center text-muted" v-if="title">
       {{ title }}
     </div>
     <div :id="id" class="gauge"></div>

@@ -1,28 +1,15 @@
 <script setup lang="ts">
-import { computed, onMounted } from "vue";
+import { onMounted } from "vue";
 import { useLoadingStore } from "@/stores/loading";
 import { useNetworkStore } from "@/stores/network";
-import { mapSpeedtestColor } from "@/utilities/color-map";
 import PageHeader from "@/components/PageHeader.vue";
 import StatCard from "@/components/stats/StatCard.vue";
+import NetworkDetail from "@/components/stats/NetworkDetail.vue";
+import GaugeChart from "@/components/charts/GaugeChart.vue";
 import BarChart from "@/components/charts/BarChart.vue";
 
 const loader = useLoadingStore();
 const network = useNetworkStore();
-
-const downloadBg = computed(() => {
-  return mapSpeedtestColor(network.speed.download, {
-    min: 10,
-    max: 20,
-  });
-});
-
-const uploadBg = computed(() => {
-  return mapSpeedtestColor(network.speed.upload, {
-    min: 5,
-    max: 10,
-  });
-});
 
 onMounted(() => {
   network
@@ -53,29 +40,37 @@ onMounted(() => {
               icon="fa-solid fa-wifi"
             >
               <template #detail>
-                <strong>{{ network.wifi.name }}</strong>
+                <NetworkDetail :wifi="network.wifi" :network="network.data" />
               </template>
             </StatCard>
           </div>
           <div class="col d-flex align-items-stretch mt-3 mt-md-0">
             <StatCard
               title="Download Speed"
-              :bg="downloadBg"
+              bg="dark"
               icon="fa-solid fa-arrow-circle-down"
             >
               <template #detail>
-                <strong>{{ network.speed.download }}</strong>
+                <GaugeChart
+                  id="download"
+                  :metric="parseInt(network.speed.download ?? '0')"
+                  format="{y} Mb/s"
+                />
               </template>
             </StatCard>
           </div>
           <div class="col d-flex align-items-stretch mt-3 mt-md-0">
             <StatCard
               title="Upload Speed"
-              :bg="uploadBg"
+              bg="dark"
               icon="fa-solid fa-arrow-circle-up"
             >
               <template #detail>
-                <strong>{{ network.speed.upload }}</strong>
+                <GaugeChart
+                  id="upload"
+                  :metric="parseInt(network.speed.upload ?? '0')"
+                  format="{y} Mb/s"
+                />
               </template>
             </StatCard>
           </div>

@@ -2,7 +2,7 @@
 
 A lightweight monitor for your raspberry pi, works with the [API](https://github.com/chrisrowles/pi-monitor-api) and the [Websocket Server](https://github.com/chrisrowles/pi-monitor-wss).
 
-![image](https://i.imgur.com/76jVA1K.png)
+![image](https://i.imgur.com/kxryKYY.png)
 
 ## Setup
 
@@ -33,7 +33,7 @@ VITE_CONNECTION_TYPE="websocket"
 - `VITE_WS_URL`: The URL to the websocket server
 - `VITE_CONNECTION_TYPE`: If you set this to `http`, the websocket server will not be used, instead the dashboard will be displayed with "static" data from the API. If you set this to `websocket`, then the websocket server will be used and you will see live data updating in realtime. In any case the API is always used, if you are using the websocket server for realtime data, then the API will act as an initialiser/fallback.
 
-![image](https://i.imgur.com/oX4Y72B.png)
+![image](https://i.imgur.com/RI57qJ2.png)
 
 ## Contributing
 

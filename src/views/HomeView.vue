@@ -17,8 +17,13 @@ const loader = useLoadingStore();
 const system = useSystemStore();
 
 onBeforeMount(() => {
-  const websocket = system.type ?? config.api.connection;
-  system.connect({ websocket: websocket === "websocket", refresh: false });
+  const connection = system.type ?? config.api.connection;
+
+  system.connect({ websocket: connection === "websocket", refresh: false });
+
+  if (connection === "http") {
+    system.startPollingApi(1000 * 60 * 2);
+  }
 });
 </script>
 
