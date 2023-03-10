@@ -5,11 +5,10 @@ import type {
 } from "@/interfaces/NetworkResponse";
 import type {
   NetworkTrafficMetric,
-  WifiMetric
+  WifiMetric,
 } from "@/interfaces/types/NetworkTypes";
 import { defineStore } from "pinia";
 import { useLoadingStore } from "./loading";
-import { http } from "@/plugins/http";
 
 export const useNetworkStore = defineStore("network", {
   state: () => ({
@@ -27,7 +26,7 @@ export const useNetworkStore = defineStore("network", {
       const loader = useLoadingStore();
       loader.setMessage("Retrieving network information...");
 
-      http
+      this.http
         .get("network")
         .then(async (response) => {
           const { data }: { data: NetworkResponse } = response.data;
@@ -37,7 +36,7 @@ export const useNetworkStore = defineStore("network", {
           }, 1000);
 
           if (wifi) {
-            const response = await http.get("network/wifi");
+            const response = await this.http.get("network/wifi");
             const { data }: { data: WifiResponse } = response.data;
             this.updateWifi(data);
           }
@@ -83,7 +82,7 @@ export const useNetworkStore = defineStore("network", {
           progress[metric] = waiting(metric);
         }
 
-        http.get("network/wifi/speed").then((response) => {
+        this.http.get("network/wifi/speed").then((response) => {
           const { data }: { data: WifiSpeedtestResponse } = response.data;
           for (const key in this.speed) {
             const metric = <WifiMetric>key;
@@ -117,15 +116,13 @@ export const useNetworkStore = defineStore("network", {
       key: Array<NetworkTrafficMetric>
     ) {
       const response: Array<{ name: string; data: Array<number> }> = [];
-    
       series.forEach((point, idx) => {
         response.push({
           name: key[idx],
           data: [(<unknown>point) as number],
         });
       });
-    
       return response;
-    }
+    },
   },
 });

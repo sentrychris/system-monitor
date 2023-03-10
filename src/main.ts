@@ -2,7 +2,7 @@ import { createApp } from "vue";
 import { createPinia } from "pinia";
 import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
 
-import { useHttp } from "./plugins/http";
+import { http, useHttp } from "./plugins/http";
 import { useWebsocket } from "./plugins/websocket";
 
 import App from "./App.vue";
@@ -14,8 +14,11 @@ import "./utilities/icons";
 import "bootstrap";
 import "./assets/main.scss";
 
-const pinia = createPinia();
-pinia.use(piniaPluginPersistedstate);
+const pinia = createPinia()
+  .use(piniaPluginPersistedstate)
+  .use(({ store }) => {
+    store.http = http;
+  });
 
 createApp(App)
   .use(pinia)

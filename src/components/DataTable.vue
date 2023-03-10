@@ -46,7 +46,7 @@ const transpose = () => {
 
 const verticalData = computed(() => {
   const data = transpose();
-  return _.orderBy(data, props.sortKey, tableSortOrder.value);
+  return orderBy(data, props.sortKey, tableSortOrder.value);
 });
 
 onMounted(() => {

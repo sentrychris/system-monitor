@@ -25,7 +25,7 @@ export class HttpMaker {
     });
 
     http.interceptors.request.use(
-      (config: AxiosRequestConfig): AxiosRequestConfig => {
+      (config) => {
         try {
           const token = localStorage.getItem("accessToken");
 

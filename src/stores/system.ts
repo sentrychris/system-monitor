@@ -7,7 +7,6 @@ import type { ProcessMetric } from "@/interfaces/types/SystemTypes";
 import { defineStore } from "pinia";
 import { useLoadingStore } from "./loading";
 import { config } from "@/config";
-import { http } from "@/plugins/http";
 
 export const useSystemStore = defineStore("system", {
   state: () => ({
@@ -56,7 +55,7 @@ export const useSystemStore = defineStore("system", {
           loader.setMessage("Connecting to system monitor...");
         }
 
-        http
+        this.http
           .get("system")
           .then((response) => {
             const { data }: { data: SystemResponse } = response.data;
@@ -162,12 +161,12 @@ export const useSystemStore = defineStore("system", {
       key: ProcessMetric
     ) {
       const response: Array<{ name: string; data: Array<number> }> = [];
-    
+
       series.forEach((point) => {
         const dp = response.find((dp) => {
           return dp.name === point.name;
         });
-    
+
         if (dp) {
           dp.data[0] += point.mem;
         } else {
@@ -177,7 +176,7 @@ export const useSystemStore = defineStore("system", {
           });
         }
       });
-    
+
       return response;
     },
     formatPieChartDataForProcesses(
