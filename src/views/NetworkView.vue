@@ -13,9 +13,7 @@ const network = useNetworkStore();
 
 onMounted(() => {
   network
-    .get({
-      wifi: true,
-    })
+    .get()
     .then(() => {
       if (!network.speedtestInProgress) {
         network.speedtest({ timeout: true });
@@ -40,7 +38,7 @@ onMounted(() => {
               icon="fa-solid fa-wifi"
             >
               <template #detail>
-                <NetworkDetail :wifi="network.wifi" :network="network.data" />
+                <NetworkDetail :wifi="network.data.wireless" :network="network.data" />
               </template>
             </StatCard>
           </div>
@@ -77,11 +75,11 @@ onMounted(() => {
         </div>
       </section>
 
-      <section v-for="(idx, inet) in network.data.interfaces" :key="inet">
+      <section v-for="(idx, inet) in network.data.statistics" :key="inet">
         <div
           v-if="
-            typeof network.data.interfaces[inet] !== undefined &&
-            network.data.interfaces[inet].mb_received > 0
+            typeof network.data.statistics[inet] !== undefined &&
+            network.data.statistics[inet].mb_received > 0
           "
         >
           <div class="row mt-3">
@@ -98,8 +96,8 @@ onMounted(() => {
                     :id="(inet as string)"
                     :title="`Interface ${inet}`"
                     :series="network.formatBarChartDataForNetwork([
-                      network.data.interfaces[inet].mb_sent,
-                      network.data.interfaces[inet].mb_received,
+                      network.data.statistics[inet].mb_sent,
+                      network.data.statistics[inet].mb_received,
                     ], ['mb_received', 'mb_sent'])"
                   >
                   </BarChart>

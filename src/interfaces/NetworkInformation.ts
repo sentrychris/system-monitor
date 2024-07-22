@@ -1,4 +1,4 @@
-export interface NetworkTrafficInformation {
+export interface NetworkStatisticInformation {
   mb_sent: number;
   mb_received: number;
   pk_sent: number;
@@ -6,9 +6,4 @@ export interface NetworkTrafficInformation {
   error_in: number;
   error_out: number;
   dropout: number;
-}
-
-export interface NetworkConnectionsInformation {
-  local_port: number;
-  remote_ip: string;
 }

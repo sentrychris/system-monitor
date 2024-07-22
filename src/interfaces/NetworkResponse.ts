@@ -1,14 +1,17 @@
-import type {
-  NetworkTrafficInformation,
-  NetworkConnectionsInformation,
-} from "./NetworkInformation";
+import type { NetworkStatisticInformation } from "./NetworkInformation";
 
 export interface NetworkResponse {
-  interfaces: {
-    [key: string]: NetworkTrafficInformation;
+  interfaces: Array<string>;
+  wireless: {
+    name: string;
+    quality: string;
+    channel: string;
+    encryption: string;
+    address: string;
+    signal: string;
   };
-  connections: {
-    [key: string]: Array<NetworkConnectionsInformation>;
+  statistics: {
+    [key: string]: NetworkStatisticInformation;
   };
 }
 

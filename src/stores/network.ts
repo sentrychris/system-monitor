@@ -1,6 +1,5 @@
 import type {
   NetworkResponse,
-  WifiResponse,
   WifiSpeedtestResponse,
 } from "@/interfaces/NetworkResponse";
 import type {
@@ -13,7 +12,6 @@ import { useLoadingStore } from "./loading";
 export const useNetworkStore = defineStore("network", {
   state: () => ({
     data: <NetworkResponse>{},
-    wifi: <WifiResponse>{},
     speed: <WifiSpeedtestResponse>{
       ping: "",
       download: <string | null>null,
@@ -22,24 +20,18 @@ export const useNetworkStore = defineStore("network", {
     speedtestInProgress: false,
   }),
   actions: {
-    async get({ wifi = false }: { wifi: boolean }) {
+    async get() {
       const loader = useLoadingStore();
       loader.setMessage("Retrieving network information...");
 
       this.http
         .get("network")
         .then(async (response) => {
-          const { data }: { data: NetworkResponse } = response.data;
+          const { data }: { data: NetworkResponse } = response;
           this.updateNetwork(data);
           setTimeout(() => {
             loader.toggle(true);
           }, 1000);
-
-          if (wifi) {
-            const response = await this.http.get("network/wifi");
-            const { data }: { data: WifiResponse } = response.data;
-            this.updateWifi(data);
-          }
         })
         .catch(() => {
           loader.setError("An unexpected error has occurred");
@@ -104,9 +96,6 @@ export const useNetworkStore = defineStore("network", {
     },
     updateNetwork(data: NetworkResponse) {
       this.$patch({ data });
-    },
-    updateWifi(wifi: WifiResponse) {
-      this.$patch({ wifi });
     },
     updateSpeedTest(speed: WifiSpeedtestResponse) {
       this.$patch({ speed });

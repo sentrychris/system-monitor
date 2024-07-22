@@ -58,7 +58,7 @@ export const useSystemStore = defineStore("system", {
         this.http
           .get("system")
           .then((response) => {
-            const { data }: { data: SystemResponse } = response.data;
+            const { data }: { data: SystemResponse } = response;
             this.staticUpdate(data);
             this.connected = true;
             if (websocket) {
