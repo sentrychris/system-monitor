@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onMounted } from "vue";
+import { config } from "@/config";
 import { useLoadingStore } from "@/stores/loading";
 import { useNetworkStore } from "@/stores/network";
 import PageHeader from "@/components/PageHeader.vue";
@@ -26,7 +27,7 @@ onMounted(() => {
   <Transition name="fade">
     <div v-if="loader.loaded" class="container py-4">
       <PageHeader
-        decor-title="Raspberry Pi Monitor"
+        :decor-title="config.app.name"
         title="Network Monitoring"
       />
       <section id="statistics" class="page-section mt-0">

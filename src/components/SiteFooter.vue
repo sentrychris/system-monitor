@@ -5,7 +5,7 @@ import { config } from "@/config";
 <template>
   <footer class="bg-dark text-white" id="site-footer">
     <div
-      class="container-fluid px-5 pb-1 pt-2 d-flex align-items-center justify-content-between"
+      class="container-fluid px-5 py-2 d-flex align-items-center justify-content-between"
     >
       <span class="text-muted">{{ config.app.name }}</span>
       <small class="text-muted">{{ config.app.version }}</small>

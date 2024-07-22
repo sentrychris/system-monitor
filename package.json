@@ -1,5 +1,5 @@
 {
-  "name": "pi-monitor",
+  "name": "system-monitor",
   "version": "1.0.5",
   "scripts": {
     "dev": "vite",

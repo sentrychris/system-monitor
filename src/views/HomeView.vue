@@ -26,7 +26,7 @@ onBeforeMount(() => {
 <template>
   <Transition name="fade">
     <div v-if="loader.loaded" class="container py-4">
-      <PageHeader decor-title="Raspberry Pi Monitor" title="System Dashboard" />
+      <PageHeader :decor-title="config.app.name" title="System Dashboard" />
       <section id="statistics" class="page-section mt-0">
         <div class="row mt-3">
           <div class="col-sm-12 col-md-6 col-lg-3 d-flex align-items-stretch">
