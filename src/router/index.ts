@@ -1,14 +1,14 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { config } from "@/config";
-import HomeView from "../views/HomeView.vue";
+import DashboardView from "../views/DashboardView.vue";
 
 const router = createRouter({
   history: createWebHistory(config.app.base_url),
   routes: [
     {
       path: "/",
-      name: "home",
-      component: HomeView,
+      name: "dashboard",
+      component: DashboardView,
     },
     {
       path: "/network",

@@ -33,8 +33,8 @@ const system = useSystemStore();
           <li class="nav-item">
             <RouterLink
               class="nav-link"
-              :class="{ active: route.name === 'home' }"
-              :to="{ name: 'home' }"
+              :class="{ active: route.name === 'dashboard' }"
+              :to="{ name: 'dashboard' }"
               >System</RouterLink
             >
           </li>
