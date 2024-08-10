@@ -1,14 +1,14 @@
 # System Monitor
 
-A lightweight monitoring dashboard for your server, works with [psutil-websocket-monitor](https://github.com/sentrychris/psutil-websocket-monitor).
+A lightweight monitoring dashboard for your server.
 
 ## Quick Start
 
 ### Requirements
 
-- [psutil-websocket-monitor](https://github.com/sentrychris/psutil-websocket-monitor)
+- [psmonitor](https://github.com/sentrychris/psmonitor) (standalone server or full application)
 
-Before you setup this project, you'll need to setup [psutil-websocket-monitor](https://github.com/sentrychris/psutil-websocket-monitor) to provide the data that the dashboard will request and display.
+Before you setup this project, you'll need to setup [psmonitor](https://github.com/sentrychris/psutil-websocket-monitor) to provide the data that the dashboard will request and display, you don't need the full application, just the standalone server.
 
 1. Clone the repository
     ```
