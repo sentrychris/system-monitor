@@ -10,14 +10,6 @@ const router = createRouter({
       name: "dashboard",
       component: DashboardView,
     },
-    {
-      path: "/network",
-      name: "network",
-      // route level code-splitting
-      // this generates a separate chunk (Network.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import("../views/NetworkView.vue"),
-    },
   ],
 });
 

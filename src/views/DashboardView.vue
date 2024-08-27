@@ -94,7 +94,7 @@ onBeforeMount(() => {
                   </div>
                   <div class="col-sm-12 col-md-6 col-lg-4 mt-3 mt-md-0">
                     <GaugeChart
-                      title="Disk Usage"
+                      title="Disk Capacity"
                       id="disk"
                       :metric="system.live
                         ? system.realtime.disk.percent
@@ -132,7 +132,7 @@ onBeforeMount(() => {
               <div class="card-body pt-0">
                 <RealtimeLineChart
                   :data-point="system.realtime.mem.used"
-                  :y-axis-range="[0, 4]"
+                  :y-axis-range="[0, 8]"
                 />
               </div>
             </div>
@@ -153,7 +153,7 @@ onBeforeMount(() => {
                     <BarChart
                       metric="system"
                       id="processes"
-                      title="Grouped Memory Usage"
+                      title=""
                       :series="
                         (system.live && system.realtime.processes.length > 0)
                           ? system.formatBarChartDataForSystem(system.realtime.processes, 'mem')
@@ -161,13 +161,13 @@ onBeforeMount(() => {
                       sort-key="data"
                       sort-order="desc"
                       y-axis-text="Memory Used"
-                      x-axis-text="Process Group"
+                      x-axis-text="System Process"
                     />
                   </div>
                   <div class="col-sm-12 col-md-6 col-lg-4">
                     <PieChart
                       id="system-processes"
-                      title="Grouped Memory Usage"
+                      title=""
                       :series="
                       (system.live && system.realtime.processes.length > 0)
                         ? system.formatPieChartDataForProcesses(system.realtime.processes)
