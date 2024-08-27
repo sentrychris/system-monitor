@@ -12,7 +12,6 @@ import GaugeChart from "@/components/charts/GaugeChart.vue";
 import RealtimeLineChart from "@/components/charts/RealtimeLineChart.vue";
 import BarChart from "@/components/charts/BarChart.vue";
 import PieChart from "@/components/charts/PieChart.vue";
-import DataTable from "@/components/DataTable.vue";
 
 const loader = useLoadingStore();
 const system = useSystemStore();
@@ -26,10 +25,10 @@ onBeforeMount(() => {
 <template>
   <Transition name="fade">
     <div v-if="loader.loaded" class="container py-4">
-      <PageHeader :decor-title="config.app.name" title="System Dashboard" />
+      <PageHeader :decor-title="config.app.name" title="Versyx Status Overview" />
       <section id="statistics" class="page-section mt-0">
         <div class="row mt-3">
-          <div class="col-sm-12 col-md-6 col-lg-3 d-flex align-items-stretch">
+          <div class="col-sm-12 col-md-6 col-lg-4 d-flex align-items-stretch">
             <StatCard title="Platform" bg="dark" icon="fa-solid fa-server">
               <template #detail>
                 <PlatformDetail
@@ -39,7 +38,7 @@ onBeforeMount(() => {
               </template>
             </StatCard>
           </div>
-          <div class="col-sm-12 col-md-6 col-lg-3 d-flex align-items-stretch">
+          <div class="col-sm-12 col-md-6 col-lg-4 d-flex align-items-stretch mt-4 mt-md-0">
             <StatCard title="CPU" bg="dark" icon="fa-solid fa-tachometer-alt">
               <template #detail>
                 <CpuDetail
@@ -50,24 +49,13 @@ onBeforeMount(() => {
               </template>
             </StatCard>
           </div>
-          <div class="col-sm-12 col-md-6 col-lg-3 d-flex align-items-stretch mt-4 mt-lg-0">
+          <div class="col-sm-12 col-md-6 col-lg-4 d-flex align-items-stretch mt-4 mt-lg-0">
             <StatCard title="Memory" bg="dark" icon="fa-solid fa-server">
               <template #detail>
                 <UsageDetail
                   :detail="system.live
                     ? system.realtime.mem
                     : system.data.mem"
-                />
-              </template>
-            </StatCard>
-          </div>
-          <div class="col-sm-12 col-md-6 col-lg-3 d-flex align-items-stretch mt-4 mt-lg-0">
-            <StatCard title="Disk" bg="dark" icon="fa-solid fa-hard-drive">
-              <template #detail>
-                <UsageDetail
-                  :detail="system.live
-                    ? system.realtime.disk
-                    : system.data.disk"
                 />
               </template>
             </StatCard>
@@ -84,17 +72,7 @@ onBeforeMount(() => {
               </div>
               <div class="card-body p-0">
                 <div class="row">
-                  <div class="col-sm-12 col-md-6 col-lg-3 mt-3 mt-md-0">
-                    <GaugeChart
-                      title="Temperature"
-                      id="temp"
-                      :metric="system.live
-                        ? system.realtime.cpu.temp
-                        : system.data.cpu.temp"
-                      format="{y}°C"
-                    />
-                  </div>
-                  <div class="col-sm-12 col-md-6 col-lg-3 mt-3 mt-md-0">
+                  <div class="col-sm-12 col-md-6 col-lg-4 mt-3 mt-md-0">
                     <GaugeChart
                       title="CPU Usage"
                       id="cpu"
@@ -104,7 +82,7 @@ onBeforeMount(() => {
                       format="{y}%"
                     />
                   </div>
-                  <div class="col-sm-12 col-md-6 col-lg-3 mt-3 mt-md-0">
+                  <div class="col-sm-12 col-md-6 col-lg-4 mt-3 mt-md-0">
                     <GaugeChart
                       title="Memory Usage"
                       id="mem"
@@ -114,7 +92,7 @@ onBeforeMount(() => {
                       format="{y}%"
                     />
                   </div>
-                  <div class="col-sm-12 col-md-6 col-lg-3 mt-3 mt-md-0">
+                  <div class="col-sm-12 col-md-6 col-lg-4 mt-3 mt-md-0">
                     <GaugeChart
                       title="Disk Usage"
                       id="disk"
@@ -175,7 +153,7 @@ onBeforeMount(() => {
                     <BarChart
                       metric="system"
                       id="processes"
-                      title="Grouped Process Usage"
+                      title="Grouped Memory Usage"
                       :series="
                         (system.live && system.realtime.processes.length > 0)
                           ? system.formatBarChartDataForSystem(system.realtime.processes, 'mem')
@@ -197,11 +175,6 @@ onBeforeMount(() => {
                     />
                   </div>
                 </div>
-                <DataTable type="horizontal"
-                  :data="(system.live && system.realtime.processes.length > 0)
-                    ? system.realtime.processes
-                    : system.data.processes"
-                />
               </div>
             </div>
           </div>

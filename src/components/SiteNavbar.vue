@@ -13,9 +13,9 @@ const system = useSystemStore();
 
 <template>
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-lg">
-    <div class="container-fluid px-5 py-2">
+    <div class="container py-2">
       <a class="navbar-brand d-flex align-items-center gap-3" href="#">
-        <SiteLogo /> {{ config.app.name }}
+        <SiteLogo />
       </a>
       <button
         class="navbar-toggler"
@@ -30,22 +30,6 @@ const system = useSystemStore();
       </button>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item">
-            <RouterLink
-              class="nav-link"
-              :class="{ active: route.name === 'dashboard' }"
-              :to="{ name: 'dashboard' }"
-              >System</RouterLink
-            >
-          </li>
-          <li class="nav-item">
-            <RouterLink
-              class="nav-link"
-              :class="{ active: route.name === 'network' }"
-              :to="{ name: 'network' }"
-              >Network</RouterLink
-            >
-          </li>
         </ul>
         <div class="d-block">
           <div
@@ -97,7 +81,7 @@ const system = useSystemStore();
             class="d-flex align-items-center justify-content-start justify-content-md-end mt-2"
           >
             <small class="ms-0 ms-md-2 text-muted fw-bold"
-              >(Connection: {{ system.type }})</small
+              >(Connection: <span class="text-success">{{ system.type }})</span></small
             >
           </div>
         </div>

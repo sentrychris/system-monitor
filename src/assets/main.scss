@@ -2,6 +2,7 @@
 @import "~bootstrap/scss/bootstrap.scss";
 
 @import url('https://fonts.googleapis.com/css2?family=Lato:wght@200;300;400&family=Noto+Sans:wght@200;300;400&family=Nunito:wght@200;300;400&family=Open+Sans&family=Oxygen&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&family=Orbitron:wght@400..900&display=swap');
 
 @import './dark.scss';
 
@@ -10,7 +11,7 @@ html, body, #app {
 }
 
 body {
-  font-family: 'Nunito', 'Open Sans', sans-serif;
+  font-family: 'Exo 2', 'Open Sans', sans-serif;
   background: #EEEEEE;
 }
 
