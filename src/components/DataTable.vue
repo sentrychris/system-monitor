@@ -29,10 +29,10 @@ const transpose = () => {
   const response: Array<{ header: string; value: string }> = [];
 
   for (const key in tableData) {
-    let value = tableData[key];
+    let value = tableData[key as keyof typeof tableData];
 
     if (Number.isInteger(value)) {
-      value = parseFloat(tableData[key]).toFixed(2);
+      value = parseFloat(tableData[key as keyof typeof tableData]).toFixed(2);
     }
 
     response.push({
