@@ -156,11 +156,35 @@ export const useSystemStore = defineStore("system", {
     setConnectionType(type: string) {
       this.type = type;
     },
+    seriesToColor(str: string) {
+      const map = {
+        "mysqld": "#00758f",
+        "next-server (v14.2.6)": "#d9534f",
+        "php-fpm8.2": "#8892bf",
+        "node": "#5cb85c",
+        "PM2 v5.4.2: God": "#5D3FD3",
+        "php": "#8892bf",
+        "systemd-journald": "#f0ad4e",
+        "npm start": "#5cb85c",
+      }
+
+      const colour = map[str as keyof typeof map];
+      if (!colour) {
+        let hash = 0;
+        for (let i = 0; i < str.length; i++) {
+          hash = str.charCodeAt(i) + ((hash << 5) - hash);
+        }
+        const hex = (hash & 0x00FFFFFF).toString(16).toUpperCase();
+        return '#' + '00000'.substring(0, 6 - hex.length) + hex;
+      }
+
+      return colour
+    },
     formatBarChartDataForSystem(
       series: Array<ProcessInformation>,
       key: ProcessMetric
     ) {
-      const response: Array<{ name: string; data: Array<number> }> = [];
+      const response: Array<{ name: string; color: string, data: Array<number> }> = [];
 
       series.forEach((point) => {
         const dp = response.find((dp) => {
@@ -172,6 +196,7 @@ export const useSystemStore = defineStore("system", {
         } else {
           response.push({
             name: point.name,
+            color: this.seriesToColor(point.name),
             data: [(<unknown>point[key]) as number],
           });
         }
@@ -182,7 +207,7 @@ export const useSystemStore = defineStore("system", {
     formatPieChartDataForProcesses(
       series: Array<ProcessInformation>
     ) {
-      const response: Array<{ name: string; y: number }> = [];
+      const response: Array<{ name: string; color: string, y: number }> = [];
       series.forEach((point) => {
         const dp = response.find((dp) => {
           return dp.name === point.name;
@@ -193,6 +218,7 @@ export const useSystemStore = defineStore("system", {
         } else {
           response.push({
             name: point.name,
+            color: this.seriesToColor(point.name),
             y: (<unknown>point.mem) as number,
           });
         }
