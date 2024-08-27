@@ -25,7 +25,7 @@ onBeforeMount(() => {
 <template>
   <Transition name="fade">
     <div v-if="loader.loaded" class="container py-4">
-      <PageHeader :decor-title="config.app.name" title="Versyx Status Overview" />
+      <PageHeader :decor-title="config.app.name" title="Versyx Status" />
       <section id="statistics" class="page-section mt-0">
         <div class="row mt-3">
           <div class="col-sm-12 col-md-6 col-lg-4 d-flex align-items-stretch">
@@ -67,10 +67,7 @@ onBeforeMount(() => {
         <div class="row">
           <div class="col">
             <div class="card border-0 shadow-lg">
-              <div class="card-header bg-transparent border-0 d-flex justify-content-center py-4">
-                <h2 class="lead header">System Overview</h2>
-              </div>
-              <div class="card-body p-0">
+              <div class="card-body pt-4">
                 <div class="row">
                   <div class="col-sm-12 col-md-6 col-lg-4 mt-3 mt-md-0">
                     <GaugeChart
@@ -94,7 +91,7 @@ onBeforeMount(() => {
                   </div>
                   <div class="col-sm-12 col-md-6 col-lg-4 mt-3 mt-md-0">
                     <GaugeChart
-                      title="Disk Capacity"
+                      title="Disk Space Used"
                       id="disk"
                       :metric="system.live
                         ? system.realtime.disk.percent
@@ -114,9 +111,9 @@ onBeforeMount(() => {
           <div class="col-sm-12 col-md-6">
             <div class="card border-0 shadow-lg">
               <div class="card-header pb-0 bg-transparent border-0 d-flex justify-content-center py-4">
-                <h2 class="lead header">CPU Usage %</h2>
+                <h3 class="lead header">CPU Usage %</h3>
               </div>
-              <div class="card-body pt-0">
+              <div class="card-body p-0">
                 <RealtimeLineChart
                   :data-point="system.realtime.cpu.usage"
                   :y-axis-range="[0, 100]"
@@ -127,9 +124,9 @@ onBeforeMount(() => {
           <div class="col-sm-12 col-md-6 mt-4 mt-md-0">
             <div class="card border-0 shadow-lg">
               <div class="card-header pb-0 bg-transparent border-0 d-flex justify-content-center py-4">
-                <h2 class="lead header">Memory Usage GB</h2>
+                <h3 class="lead header">Memory Usage GB</h3>
               </div>
-              <div class="card-body pt-0">
+              <div class="card-body p-0">
                 <RealtimeLineChart
                   :data-point="system.realtime.mem.used"
                   :y-axis-range="[0, 8]"
@@ -145,7 +142,7 @@ onBeforeMount(() => {
           <div class="col">
             <div class="card border-0 shadow-lg">
               <div class="card-header bg-transparent border-0 d-flex justify-content-center py-4">
-                <h2 class="lead header">Process Information</h2>
+                <h3 class="lead header">Top Processes by Memory</h3>
               </div>
               <div class="card-body pt-0">
                 <div class="row">

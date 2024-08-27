@@ -39,7 +39,7 @@ onMounted(() => {
 <style scoped>
 .gauge {
   max-width: 400px;
-  height: 300px;
+  height: 200px;
   margin: 0 auto;
 }
 </style>

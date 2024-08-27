@@ -11,7 +11,11 @@ import { config } from "@/config";
         href="https://github.com/sentrychris/system-monitor">
           {{ config.app.name }}</a> - Made with ❤️  by <a class="text-success text-decoration-none" href="https://versyx.dev">Chris Rowles</a>
       </span>
-      <small class="text-muted">{{ config.app.version }}</small>
+      <span class="d-flex items-center justify-between flex-wrap gap-1">
+        <small class="text-muted">{{ config.app.version }}</small>
+        <small class="text-muted">-</small>
+        <small class="text-muted">us-central1-a</small>
+      </span>
     </div>
   </footer>
 </template>
