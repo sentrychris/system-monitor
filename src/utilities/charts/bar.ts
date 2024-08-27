@@ -4,6 +4,7 @@ import * as Highcharts from "highcharts";
 export const bar: Bar = {
   registry: {},
   create({ id, title, series, yAxisText = null, xAxisText = null }) {
+    series.sort((a, b) => b.data[0] - a.data[0]);
     // @ts-ignore
     const chart = Highcharts.chart(id, {
       chart: {
