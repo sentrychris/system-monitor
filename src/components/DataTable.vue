@@ -4,10 +4,11 @@ import { orderBy } from "lodash";
 
 const props = defineProps<{
   type: string;
-  data: any; // TODO change
+  data: any;
   nested?: boolean;
   sortKey?: string;
   sortOrder?: string;
+  excludeColumns?: Array<string>;
 }>();
 
 const tableData = ref(props.data);
@@ -17,6 +18,13 @@ const tableSortOrder: Ref<"asc" | "desc"> = ref("desc");
 const formatHeader = (header: string) => {
   header = header.charAt(0).toUpperCase() + header.slice(1);
   return header.replace("_", " ");
+};
+
+const getFilteredHeaders = (headers: string[]) => {
+  if (props.excludeColumns && props.excludeColumns.length > 0) {
+    return headers.filter(header => !props.excludeColumns?.includes(header));
+  }
+  return headers;
 };
 
 const changeOrder = (key: string) => {
@@ -39,9 +47,9 @@ const transpose = () => {
       header: formatHeader(key),
       value,
     });
-
-    return response;
   }
+
+  return response;
 };
 
 const verticalData = computed(() => {
@@ -55,7 +63,7 @@ onMounted(() => {
       tableData.value = props.data
     }
   );
-})
+});
 </script>
 
 <template>
@@ -74,7 +82,7 @@ onMounted(() => {
       <tr v-if="nested">
         <th
           class="cursor-pointer"
-          v-for="(header, key) in Object.keys(tableData)"
+          v-for="(header, key) in getFilteredHeaders(Object.keys(tableData))"
           :key="key"
           @click="changeOrder(header)"
         >
@@ -91,7 +99,7 @@ onMounted(() => {
       <tr v-else>
         <th
           class="cursor-pointer"
-          v-for="(header, key) in Object.keys(tableData[0])"
+          v-for="(header, key) in getFilteredHeaders(Object.keys(tableData[0]))"
           :key="key"
           @click="changeOrder(header)"
         >
@@ -113,12 +121,12 @@ onMounted(() => {
     </thead>
     <tbody v-if="nested">
       <tr>
-        <td v-for="(object, key) in tableData" :key="key">{{ object }}</td>
+        <td v-for="(object, key) in getFilteredHeaders(Object.keys(tableData))" :key="key">{{ tableData[object] }}</td>
       </tr>
     </tbody>
     <tbody v-else>
       <tr v-for="(object, key) in tableData" :key="key">
-        <td v-for="(content, index) in object" :key="index">{{ content }}</td>
+        <td v-for="(content, index) in getFilteredHeaders(Object.keys(object))" :key="index">{{ object[content] }}</td>
       </tr>
     </tbody>
   </table>

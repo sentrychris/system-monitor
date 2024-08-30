@@ -12,6 +12,7 @@ import GaugeChart from "@/components/charts/GaugeChart.vue";
 import RealtimeLineChart from "@/components/charts/RealtimeLineChart.vue";
 import BarChart from "@/components/charts/BarChart.vue";
 import PieChart from "@/components/charts/PieChart.vue";
+import DataTable from "@/components/DataTable.vue";
 
 const loader = useLoadingStore();
 const system = useSystemStore();
@@ -172,6 +173,12 @@ onBeforeMount(() => {
                     />
                   </div>
                 </div>
+                <DataTable type="horizontal"
+                  :data="(system.live && system.realtime.processes.length > 0)
+                    ? system.realtime.processes
+                    : system.data.processes"
+                  :exclude-columns="['memory_info']"
+                />
               </div>
             </div>
           </div>
