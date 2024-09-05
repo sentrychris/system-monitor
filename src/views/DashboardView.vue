@@ -29,7 +29,7 @@ onBeforeMount(() => {
       <PageHeader :decor-title="config.app.name" title="Versyx Status" />
       <section id="statistics" class="page-section mt-0">
         <div class="row mt-3">
-          <div class="col-sm-12 col-md-6 col-lg-4 d-flex align-items-stretch">
+          <div class="col-sm-12 col-md-6 col-lg-3 d-flex align-items-stretch">
             <StatCard title="Platform" bg="dark" icon="fa-solid fa-server">
               <template #detail>
                 <PlatformDetail
@@ -39,7 +39,7 @@ onBeforeMount(() => {
               </template>
             </StatCard>
           </div>
-          <div class="col-sm-12 col-md-6 col-lg-4 d-flex align-items-stretch mt-4 mt-md-0">
+          <div class="col-sm-12 col-md-6 col-lg-3 d-flex align-items-stretch mt-4 mt-md-0">
             <StatCard title="CPU" bg="dark" icon="fa-solid fa-tachometer-alt">
               <template #detail>
                 <CpuDetail
@@ -50,13 +50,24 @@ onBeforeMount(() => {
               </template>
             </StatCard>
           </div>
-          <div class="col-sm-12 col-md-6 col-lg-4 d-flex align-items-stretch mt-4 mt-lg-0">
+          <div class="col-sm-12 col-md-6 col-lg-3 d-flex align-items-stretch mt-4 mt-lg-0">
             <StatCard title="Memory" bg="dark" icon="fa-solid fa-server">
               <template #detail>
                 <UsageDetail
                   :detail="system.live
                     ? system.realtime.mem
                     : system.data.mem"
+                />
+              </template>
+            </StatCard>
+          </div>
+          <div class="col-sm-12 col-md-6 col-lg-3 d-flex align-items-stretch mt-4 mt-lg-0">
+            <StatCard title="Disk" bg="dark" icon="fa-solid fa-hard-drive">
+              <template #detail>
+                <UsageDetail
+                  :detail="system.live
+                    ? system.realtime.disk
+                    : system.data.disk"
                 />
               </template>
             </StatCard>
