@@ -141,7 +141,7 @@ onBeforeMount(() => {
               <div class="card-body p-0">
                 <RealtimeLineChart
                   :data-point="system.realtime.mem.used"
-                  :y-axis-range="[0, 8]"
+                  :y-axis-range="[0, 16]"
                 />
               </div>
             </div>
