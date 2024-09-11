@@ -40,5 +40,5 @@ library.add(
   faTachometer,
   faTachometerAlt,
   faUpload,
-  faWifi
+  faWifi,
 );

@@ -25,8 +25,7 @@ const system = useSystemStore();
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        </ul>
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0"></ul>
         <div class="d-block">
           <div
             class="d-flex align-items-center justify-content-start justify-content-md-end gap-4"
@@ -77,7 +76,10 @@ const system = useSystemStore();
             class="d-flex align-items-center justify-content-start justify-content-md-end mt-2"
           >
             <small class="ms-0 ms-md-2 text-muted fw-bold"
-              >(Connection: <span class="text-success">{{ system.connectionType }})</span></small
+              >(Connection:
+              <span class="text-success"
+                >{{ system.connectionType }})</span
+              ></small
             >
           </div>
         </div>

@@ -39,35 +39,37 @@ onBeforeMount(() => {
               </template>
             </StatCard>
           </div>
-          <div class="col-sm-12 col-md-6 col-lg-3 d-flex align-items-stretch mt-4 mt-md-0">
+          <div
+            class="col-sm-12 col-md-6 col-lg-3 d-flex align-items-stretch mt-4 mt-md-0"
+          >
             <StatCard title="CPU" bg="dark" icon="fa-solid fa-tachometer-alt">
               <template #detail>
                 <CpuDetail
-                  :detail="system.live
-                    ? system.realtime.cpu
-                    : system.data.cpu"
+                  :detail="system.live ? system.realtime.cpu : system.data.cpu"
                 />
               </template>
             </StatCard>
           </div>
-          <div class="col-sm-12 col-md-6 col-lg-3 d-flex align-items-stretch mt-4 mt-lg-0">
+          <div
+            class="col-sm-12 col-md-6 col-lg-3 d-flex align-items-stretch mt-4 mt-lg-0"
+          >
             <StatCard title="Memory" bg="dark" icon="fa-solid fa-server">
               <template #detail>
                 <UsageDetail
-                  :detail="system.live
-                    ? system.realtime.mem
-                    : system.data.mem"
+                  :detail="system.live ? system.realtime.mem : system.data.mem"
                 />
               </template>
             </StatCard>
           </div>
-          <div class="col-sm-12 col-md-6 col-lg-3 d-flex align-items-stretch mt-4 mt-lg-0">
+          <div
+            class="col-sm-12 col-md-6 col-lg-3 d-flex align-items-stretch mt-4 mt-lg-0"
+          >
             <StatCard title="Disk" bg="dark" icon="fa-solid fa-hard-drive">
               <template #detail>
                 <UsageDetail
-                  :detail="system.live
-                    ? system.realtime.disk
-                    : system.data.disk"
+                  :detail="
+                    system.live ? system.realtime.disk : system.data.disk
+                  "
                 />
               </template>
             </StatCard>
@@ -85,9 +87,11 @@ onBeforeMount(() => {
                     <GaugeChart
                       title="CPU Usage"
                       id="cpu"
-                      :metric="system.live
-                        ? system.realtime.cpu.usage
-                        : system.data.cpu.usage"
+                      :metric="
+                        system.live
+                          ? system.realtime.cpu.usage
+                          : system.data.cpu.usage
+                      "
                       format="{y}%"
                     />
                   </div>
@@ -95,9 +99,11 @@ onBeforeMount(() => {
                     <GaugeChart
                       title="Memory Usage"
                       id="mem"
-                      :metric="system.live
-                        ? system.realtime.mem.percent
-                        : system.data.mem.percent"
+                      :metric="
+                        system.live
+                          ? system.realtime.mem.percent
+                          : system.data.mem.percent
+                      "
                       format="{y}%"
                     />
                   </div>
@@ -105,9 +111,11 @@ onBeforeMount(() => {
                     <GaugeChart
                       title="Disk Space Used"
                       id="disk"
-                      :metric="system.live
-                        ? system.realtime.disk.percent
-                        : system.data.disk.percent"
+                      :metric="
+                        system.live
+                          ? system.realtime.disk.percent
+                          : system.data.disk.percent
+                      "
                       format="{y}%"
                     />
                   </div>
@@ -122,7 +130,9 @@ onBeforeMount(() => {
         <div class="row">
           <div class="col-sm-12 col-md-6">
             <div class="card border-0 shadow-lg">
-              <div class="card-header pb-0 bg-transparent border-0 d-flex justify-content-center py-4">
+              <div
+                class="card-header pb-0 bg-transparent border-0 d-flex justify-content-center py-4"
+              >
                 <h3 class="lead header">CPU Usage %</h3>
               </div>
               <div class="card-body p-0">
@@ -135,7 +145,9 @@ onBeforeMount(() => {
           </div>
           <div class="col-sm-12 col-md-6 mt-4 mt-md-0">
             <div class="card border-0 shadow-lg">
-              <div class="card-header pb-0 bg-transparent border-0 d-flex justify-content-center py-4">
+              <div
+                class="card-header pb-0 bg-transparent border-0 d-flex justify-content-center py-4"
+              >
                 <h3 class="lead header">Memory Usage GB</h3>
               </div>
               <div class="card-body p-0">
@@ -153,7 +165,9 @@ onBeforeMount(() => {
         <div class="row">
           <div class="col">
             <div class="card border-0 shadow-lg">
-              <div class="card-header bg-transparent border-0 d-flex justify-content-center py-4">
+              <div
+                class="card-header bg-transparent border-0 d-flex justify-content-center py-4"
+              >
                 <h3 class="lead header">Top Processes by Memory</h3>
               </div>
               <div class="card-body pt-0">
@@ -164,9 +178,16 @@ onBeforeMount(() => {
                       id="processes"
                       title=""
                       :series="
-                        (system.live && system.realtime.processes.length > 0)
-                          ? system.formatBarChartDataForSystem(system.realtime.processes, 'mem')
-                          : system.formatBarChartDataForSystem(system.data.processes, 'mem')"
+                        system.live && system.realtime.processes.length > 0
+                          ? system.formatBarChartDataForSystem(
+                              system.realtime.processes,
+                              'mem',
+                            )
+                          : system.formatBarChartDataForSystem(
+                              system.data.processes,
+                              'mem',
+                            )
+                      "
                       sort-key="data"
                       sort-order="desc"
                       y-axis-text="Memory Used"
@@ -178,16 +199,24 @@ onBeforeMount(() => {
                       id="system-processes"
                       title=""
                       :series="
-                      (system.live && system.realtime.processes.length > 0)
-                        ? system.formatPieChartDataForProcesses(system.realtime.processes)
-                        : system.formatPieChartDataForProcesses(system.data.processes)"
+                        system.live && system.realtime.processes.length > 0
+                          ? system.formatPieChartDataForProcesses(
+                              system.realtime.processes,
+                            )
+                          : system.formatPieChartDataForProcesses(
+                              system.data.processes,
+                            )
+                      "
                     />
                   </div>
                 </div>
-                <DataTable type="horizontal"
-                  :data="(system.live && system.realtime.processes.length > 0)
-                    ? system.realtime.processes
-                    : system.data.processes"
+                <DataTable
+                  type="horizontal"
+                  :data="
+                    system.live && system.realtime.processes.length > 0
+                      ? system.realtime.processes
+                      : system.data.processes
+                  "
                   :exclude-columns="['memory_info']"
                 />
               </div>

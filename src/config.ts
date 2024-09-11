@@ -1,5 +1,5 @@
 import type { Configuration } from "./interfaces/Configuration";
-import { APP_VERSION } from './version';
+import { APP_VERSION } from "./version";
 
 export const config: Configuration = {
   app: {
@@ -10,7 +10,7 @@ export const config: Configuration = {
     deployment: {
       region: import.meta.env.VITE_DEPLOY_REGION,
       instance: import.meta.env.VITE_DEPLOY_INSTANCE,
-    }
+    },
   },
   api: {
     connection: import.meta.env.VITE_CONNECTION_TYPE,

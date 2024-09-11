@@ -12,7 +12,7 @@ const props = defineProps<{
   yAxisText?: string;
   xAxisText?: string;
   sortKey?: string;
-  sortOrder?: "asc" | "desc"
+  sortOrder?: "asc" | "desc";
 }>();
 
 onMounted(() => {

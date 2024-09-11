@@ -22,7 +22,7 @@ onMounted(() => {
     () => props.metric,
     (next) => {
       gauge.updateDataPoint(props.id, next);
-    }
+    },
   );
 });
 </script>

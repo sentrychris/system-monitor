@@ -19,7 +19,7 @@ onMounted(() => {
     () => props.series,
     (next) => {
       pie.updateDataSeries(props.id, next);
-    }
+    },
   );
 });
 </script>

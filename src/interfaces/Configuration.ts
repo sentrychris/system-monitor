@@ -8,7 +8,7 @@ interface BaseConfiguration {
   deployment: {
     instance: string;
     region: string;
-  }
+  };
 }
 
 interface ApiConfiguration {

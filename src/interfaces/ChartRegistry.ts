@@ -6,15 +6,7 @@ interface ChartRegistry {
 }
 
 export interface Gauge extends ChartRegistry {
-  create({
-    id,
-    value,
-    format,
-  }: {
-    id: string;
-    value: number;
-    format: string;
-  }): Chart;
+  create({ id, value, format }: { id: string; value: number; format: string }): Chart;
   registerObserver(id: string): void;
   updateTheme(id: string, color: string): void;
   updateDataPoint(id: string, value: number): void;
@@ -36,15 +28,7 @@ export interface Bar extends ChartRegistry {
 }
 
 export interface Pie extends ChartRegistry {
-  create({
-    id,
-    title,
-    series,
-  }: {
-    id: string;
-    title?: string;
-    series: Array<any>;
-  }): Chart;
+  create({ id, title, series }: { id: string; title?: string; series: Array<any> }): Chart;
   updateDataSeries(id: string, series: Series[]): void;
 }
 

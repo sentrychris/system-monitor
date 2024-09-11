@@ -22,7 +22,7 @@ const formatHeader = (header: string) => {
 
 const getFilteredHeaders = (headers: string[]) => {
   if (props.excludeColumns && props.excludeColumns.length > 0) {
-    return headers.filter(header => !props.excludeColumns?.includes(header));
+    return headers.filter((header) => !props.excludeColumns?.includes(header));
   }
   return headers;
 };
@@ -58,10 +58,11 @@ const verticalData = computed(() => {
 });
 
 onMounted(() => {
-  watch(() => props.data,
+  watch(
+    () => props.data,
     () => {
-      tableData.value = props.data
-    }
+      tableData.value = props.data;
+    },
   );
 });
 </script>
@@ -121,12 +122,22 @@ onMounted(() => {
     </thead>
     <tbody v-if="nested">
       <tr>
-        <td v-for="(object, key) in getFilteredHeaders(Object.keys(tableData))" :key="key">{{ tableData[object] }}</td>
+        <td
+          v-for="(object, key) in getFilteredHeaders(Object.keys(tableData))"
+          :key="key"
+        >
+          {{ tableData[object] }}
+        </td>
       </tr>
     </tbody>
     <tbody v-else>
       <tr v-for="(object, key) in tableData" :key="key">
-        <td v-for="(content, index) in getFilteredHeaders(Object.keys(object))" :key="index">{{ object[content] }}</td>
+        <td
+          v-for="(content, index) in getFilteredHeaders(Object.keys(object))"
+          :key="index"
+        >
+          {{ object[content] }}
+        </td>
       </tr>
     </tbody>
   </table>

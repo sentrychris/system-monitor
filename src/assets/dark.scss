@@ -1,48 +1,48 @@
-@import './_variables.scss';
+@import "./_variables.scss";
 
 body[data-theme="dark"] {
   background: #1c1a1a;
   color: #f5f5f5;
   --bs-dark-rgb: 45, 45, 45;
-  
+
   table {
     --bs-table-bg: rgb(45, 45, 45);
     --bs-table-color: #cccccc;
     --bs-table-striped-color: #cccccc;
     --bs-border-color: #878787;
   }
-  
+
   .pagination {
     --bs-pagination-bg: rgb(45, 45, 45);
     --bs-pagination-border-color: #4f4f54;
     --bs-pagination-color: #f5f5f5;
-    
+
     --bs-pagination-hover-bg: rgb(61, 61, 61);
     --bs-pagination-hover-border-color: #4f4f54;
     --bs-pagination-hover-color: #ffffff;
-    
+
     --bs-pagination-active-bg: #4f4f54;
     --bs-pagination-active-border-color: #4f4f54;
     --bs-pagination-active-color: #ffffff;
-    
+
     --bs-pagination-disabled-bg: rgb(45, 45, 45);
     --bs-pagination-disabled-border-color: #4f4f54;
     --bs-pagination-disabled-color: #cccccc;
   }
-  
+
   .dropdown-menu {
     --bs-dropdown-bg: black;
     --bs-dropdown-color: #f5f5f5;
-    
+
     --bs-dropdown-link-color: #f5f5f5;
     --bs-dropdown-link-hover-color: #ffffff;
     --bs-dropdown-link-hover-bg: rgb(45, 45, 45);
     --bs-dropdown-link-active-color: #ffffff;
     --bs-dropdown-link-active-bg: rgb(45, 45, 45);
-    
+
     --bs-dropdown-divider-bg: #4f4f54;
   }
-  
+
   .card:not(.stat-card) {
     --bs-card-bg: rgb(45, 45, 45);
     --bs-card-color: #9fa0a1;
@@ -51,7 +51,7 @@ body[data-theme="dark"] {
       --bs-card-cap-color: #cccccc;
     }
   }
-  
+
   .btn-outline-dark {
     --bs-btn-color: #f5f5f5;
     --bs-btn-border-color: #4f4f54;
@@ -59,17 +59,17 @@ body[data-theme="dark"] {
     --bs-btn-hover-bg: #2d2d2d;
     --bs-btn-hover-border-color: #ffffff;
   }
-  
+
   .form-check-input {
     background-color: #4f4f4f;
     border-color: #4f4f4f;
   }
-  
+
   .form-check-input:checked {
     background-color: #4f4f54;
     border-color: #4f4f54;
   }
-  
+
   // Custom overrides
   .text-dark {
     color: #f5f5f5 !important;
@@ -78,7 +78,7 @@ body[data-theme="dark"] {
   .text-white {
     color: #cccccc !important;
   }
-  
+
   .text-muted {
     color: #8b8d8f !important;
   }
@@ -86,13 +86,13 @@ body[data-theme="dark"] {
   svg rect.highcharts-background {
     fill: rgb(45, 45, 45) !important;
   }
-  
+
   rect.highcharts-legend-box {
-    fill:#323232;
+    fill: #323232;
   }
 
   g.highcharts-grid.highcharts-yaxis-grid path {
-    stroke-width: 0.3
+    stroke-width: 0.3;
   }
 
   g.highcharts-label.highcharts-data-label text {
@@ -110,7 +110,7 @@ body[data-theme="dark"] {
   div.highcharts-label.highcharts-data-label span {
     color: #9fa0a1 !important;
   }
-  
+
   .highcharts-legend-item text {
     fill: #9fa0a1 !important;
   }
