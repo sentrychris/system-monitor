@@ -8,11 +8,13 @@ View a [live example here](https://status.versyx.net).
 
 ### Requirements
 
-- [psmonitor](https://github.com/sentrychris/psmonitor): You can choose between either the standalone server or the full application, both of them contain the remote monitoring component. You can download a ready-made exeutable from the [Releases section](https://github.com/sentrychris/psmonitor/releases/tag/v1.2.2.1551).
+- [psmonitor](https://github.com/sentrychris/psmonitor): You can choose between either the standalone server or the full application, both of them contain the remote monitoring component. You can download a ready-made executable from the [Releases section](https://github.com/sentrychris/psmonitor/releases/tag/v1.2.2.1551).
 
 ### Setup
 
-Before you setup this project, you'll need to setup [psmonitor](https://github.com/sentrychris/psutil-websocket-monitor) to provide the data that the dashboard will request and display, you don't need the full application, just the standalone server.
+Before you setup this project, you'll need to setup [psmonitor](https://github.com/sentrychris/psutil-websocket-monitor) to provide the data that the dashboard will request and display.
+
+After downloading and running psmonitor, proceed with the setup.
 
 1. Clone the repository
     ```
