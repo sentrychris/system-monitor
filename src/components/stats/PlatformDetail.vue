@@ -8,7 +8,7 @@ defineProps<{
 </script>
 
 <template>
-  <p class="small"><strong>OS</strong> {{ detail.distro }}</p>
-  <p class="small"><strong>Kernel</strong> {{ detail.kernel }}</p>
-  <p class="small"><strong>Uptime</strong> {{ uptime ?? detail.uptime }}</p>
+  <p class="small"><strong>OS:</strong> {{ detail.distro }}</p>
+  <p class="small"><strong>Kernel:</strong> {{ detail.kernel }}</p>
+  <p class="small"><strong>Uptime:</strong> {{ uptime ?? detail.uptime }}</p>
 </template>

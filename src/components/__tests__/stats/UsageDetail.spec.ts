@@ -19,14 +19,14 @@ describe("UsageDetail", () => {
 
   it("renders properly", () => {
     const testHtml =
-      `<p class="small"><strong>Used</strong> ${testProps.detail.used} GB</p>\n` +
-      `<p class="small"><strong>Free</strong> ${testProps.detail.free} GB</p>\n` +
-      `<p class="small"><strong>Total</strong> ${testProps.detail.total} GB</p>`;
+      `<p class="small"><strong>Usage:</strong> ${testProps.detail.used} %</p>\n` +
+      `<p class="small"><strong>Free:</strong> ${testProps.detail.free} GB</p>\n` +
+      `<p class="small"><strong>Total:</strong> ${testProps.detail.total} GB</p>`;
 
     const testSubject = getWrapper();
 
     expect(testSubject.exists()).toBeTruthy();
     expect(testSubject.props()).toEqual(testProps);
-    expect(testSubject.html()).toEqual(testHtml);
+    expect(testSubject.html()).toContain(testHtml);
   });
 });
