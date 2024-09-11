@@ -2,6 +2,7 @@ import type {
   SystemResponse,
   RealtimeSystemResponse,
 } from "@/interfaces/SystemResponse";
+import type { ConnectionTypes } from "@/interfaces/types/ConnectionTypes";
 import type { ProcessInformation } from "@/interfaces/SystemInformation";
 import type { ProcessMetric } from "@/interfaces/types/SystemTypes";
 import { defineStore } from "pinia";
@@ -33,7 +34,7 @@ export const useSystemStore = defineStore("system", {
       processes: [],
     },
     connection: <WebSocket | null>null,
-    type: <string | null>null,
+    connectionType: <ConnectionTypes | null>null,
     live: false,
     connected: false,
     poll: <any>null,
@@ -46,7 +47,7 @@ export const useSystemStore = defineStore("system", {
       websocket: boolean;
       refresh?: boolean;
     }) {
-      this.type = websocket ? "websocket" : "http";
+      this.connectionType = websocket ? "websocket" : "http";
       if (!this.connected) {
         const loader = useLoadingStore();
 
@@ -128,9 +129,12 @@ export const useSystemStore = defineStore("system", {
       this.poll = null;
     },
     async toggle() {
-      const type = this.type === "websocket" ? "http" : "websocket";
+      const type = this.connectionType === "websocket"
+        ? "http"
+        : "websocket";
+
       this.setConnectionType(type);
-      this.refresh(this.type === "websocket");
+      this.refresh(this.connectionType === "websocket");
     },
     async refresh(websocket: boolean) {
       if (this.connection instanceof WebSocket) {
@@ -153,8 +157,8 @@ export const useSystemStore = defineStore("system", {
       this.$patch({ realtime });
       this.realtime.processes = realtime.processes;
     },
-    setConnectionType(type: string) {
-      this.type = type;
+    setConnectionType(type: ConnectionTypes) {
+      this.connectionType = type;
     },
     seriesToColor(str: string) {
       const map = {

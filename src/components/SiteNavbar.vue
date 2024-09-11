@@ -1,12 +1,8 @@
 <script setup lang="ts">
-import { RouterLink } from "vue-router";
-import { useRoute } from "vue-router";
-import { config } from "@/config";
 import { useThemeStore } from "@/stores/theme";
 import { useSystemStore } from "@/stores/system";
 import SiteLogo from "./SiteLogo.vue";
 
-const route = useRoute();
 const theme = useThemeStore();
 const system = useSystemStore();
 </script>
@@ -57,7 +53,7 @@ const system = useSystemStore();
             <div class="form-check form-switch">
               <input
                 @change="system.toggle"
-                :checked="system.type === 'websocket'"
+                :checked="system.connectionType === 'websocket'"
                 class="form-check-input"
                 type="checkbox"
                 role="switch"
@@ -66,12 +62,12 @@ const system = useSystemStore();
               <label class="form-check-label" for="flexSwitchCheckDesfault">
                 <font-awesome-icon
                   class="text-muted"
-                  v-if="system.type === 'websocket'"
+                  v-if="system.connectionType === 'websocket'"
                   icon="fa-solid fa-pause"
                 />
                 <font-awesome-icon
                   class="text-success"
-                  v-if="system.type === 'http'"
+                  v-if="system.connectionType === 'http'"
                   icon="fa-solid fa-play"
                 />
               </label>
@@ -81,7 +77,7 @@ const system = useSystemStore();
             class="d-flex align-items-center justify-content-start justify-content-md-end mt-2"
           >
             <small class="ms-0 ms-md-2 text-muted fw-bold"
-              >(Connection: <span class="text-success">{{ system.type }})</span></small
+              >(Connection: <span class="text-success">{{ system.connectionType }})</span></small
             >
           </div>
         </div>

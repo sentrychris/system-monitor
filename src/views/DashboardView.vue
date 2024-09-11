@@ -18,7 +18,7 @@ const loader = useLoadingStore();
 const system = useSystemStore();
 
 onBeforeMount(() => {
-  const connection = system.type ?? config.api.connection;
+  const connection = system.connectionType ?? config.api.connection;
   system.connect({ websocket: connection === "websocket", refresh: false });
 });
 </script>
