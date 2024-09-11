@@ -9,12 +9,14 @@ import { config } from "@/config";
     >
       <span class="text-muted small"><a class="text-success text-decoration-none"
         href="https://github.com/sentrychris/system-monitor">
-          {{ config.app.name }}</a> - Made with ❤️  by <a class="text-success text-decoration-none" href="https://versyx.dev">Chris Rowles</a>
+          {{ config.app.name }}</a> - Made with ❤️  by <a class="text-success text-decoration-none" href="https://versyx.dev">Versyx</a>
       </span>
       <span class="d-flex items-center justify-between flex-wrap gap-1">
-        <small class="text-muted">{{ config.app.version }}</small>
-        <small class="text-muted">-</small>
-        <small class="text-muted">us-central1-a</small>
+        <small class="text-muted">v{{ config.app.version }}</small>
+        <div class="d-flex items-cetner">
+          <small v-if="config.app.deployment.region" class="text-muted">- {{ config.app.deployment.region }}&nbsp;</small>
+          <small v-if="config.app.deployment.instance" class="text-muted">- {{ config.app.deployment.instance }}</small>
+        </div>
       </span>
     </div>
   </footer>

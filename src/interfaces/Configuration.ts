@@ -4,6 +4,10 @@ interface BaseConfiguration {
   name: string;
   version: string;
   base_url: string;
+  deployment: {
+    instance: string;
+    region: string;
+  }
 }
 
 interface ApiConfiguration {

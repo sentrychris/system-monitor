@@ -1,9 +1,10 @@
 {
   "name": "system-monitor",
-  "version": "1.0.5",
+  "version": "1.2.0",
   "scripts": {
+    "prebuild": "node -p \"'export const APP_VERSION = ' + JSON.stringify(require('./package.json').version) + ';'\" > src/version.ts",
     "dev": "vite",
-    "build": "run-p type-check build-only",
+    "build": "npm run prebuild && run-p type-check build-only",
     "preview": "vite preview",
     "test:unit": "vitest --environment jsdom --root src/",
     "test:e2e": "playwright test",

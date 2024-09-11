@@ -1,10 +1,15 @@
 import type { Configuration } from "./interfaces/Configuration";
+import { APP_VERSION } from './version';
 
 export const config: Configuration = {
   app: {
-    name: import.meta.env.VITE_APP_NAME,
-    version: import.meta.env.VITE_APP_VERSION,
     base_url: import.meta.env.BASE_URL,
+    name: import.meta.env.VITE_APP_NAME,
+    version: APP_VERSION,
+    deployment: {
+      region: import.meta.env.VITE_DEPLOY_REGION,
+      instance: import.meta.env.VITE_DEPLOY_INSTANCE,
+    }
   },
   api: {
     connection: import.meta.env.VITE_CONNECTION_TYPE,
