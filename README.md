@@ -28,7 +28,11 @@ After downloading and running psmonitor, proceed with the setup.
 
 3. Copy `.env.example` to `.env` and configure your environment variables
     ```
-    VITE_APP_NAME="System Monitor"                        # Visible in the navbar, page headers and the footer
+    VITE_APP_NAME="System Monitor"                        # Visible in the navbar, above page heading and the footer
+    VITE_APP_TITLE="Versyx Status"                        # Page title, visible as the page heading
+
+    VITE_APP_DEPLOY_REGION=us-central1-a                  # (optional) visible in the footer
+    VITE_APP_DEPLOY_INSTANCE=versyxweb1                   # (optional) visible in the footer
 
     VITE_API_URL="http://192.168.1.237:4500"              # The URL for the psutil-websocket-monitor server
     VITE_WORKER_URL="http://192.168.1.237:4500"           # The URL for the psutil-websocket-monitor endpoint for fetching a worker

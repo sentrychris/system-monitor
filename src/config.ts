@@ -5,6 +5,7 @@ export const config: Configuration = {
   app: {
     base_url: import.meta.env.BASE_URL,
     name: import.meta.env.VITE_APP_NAME,
+    title: import.meta.env.VITE_APP_TITLE,
     version: APP_VERSION,
     deployment: {
       region: import.meta.env.VITE_DEPLOY_REGION,
