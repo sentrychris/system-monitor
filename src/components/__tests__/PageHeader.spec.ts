@@ -19,10 +19,8 @@ describe("PageHeader", () => {
     expect(testSubject.exists()).toBeTruthy();
     expect(testSubject.props()).toEqual(testProps);
     expect(testSubject.html()).toContain(
-      `<p class="text-muted decor small">${testProps.decorTitle}</p>`
+      `<p class="text-muted decor small">${testProps.decorTitle}</p>`,
     );
-    expect(testSubject.html()).toContain(
-      `<h1 class="header">${testProps.title}</h1>`
-    );
+    expect(testSubject.html()).toContain(`<h1 class="header">${testProps.title}</h1>`);
   });
 });

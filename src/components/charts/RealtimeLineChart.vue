@@ -41,7 +41,10 @@ const draw = () => {
   const timeScale = d3.scaleTime().range([0, width]);
 
   // Linear (y-axis) scale
-  const valueScale = d3.scaleLinear().domain(props.yAxisRange).range([height, 0]);
+  const valueScale = d3
+    .scaleLinear()
+    .domain(props.yAxisRange)
+    .range([height, 0]);
 
   // Construct line generator
   const line = d3
@@ -73,7 +76,7 @@ const draw = () => {
         .axisLeft(valueScale)
         .tickSizeInner(-width)
         .tickSizeOuter(0)
-        .tickPadding(10)
+        .tickPadding(10),
     );
 
   // Append paths

@@ -45,7 +45,7 @@ export const bar: Bar = {
             style: {
               textOutline: false,
             },
-            format: '{point.y:.2f} MB'
+            format: "{point.y:.2f} MB",
           },
           borderColor: "transparent",
         },

@@ -1,7 +1,4 @@
-import type {
-  SystemResponse,
-  RealtimeSystemResponse,
-} from "@/interfaces/SystemResponse";
+import type { SystemResponse, RealtimeSystemResponse } from "@/interfaces/SystemResponse";
 import type { ConnectionTypes } from "@/interfaces/types/ConnectionTypes";
 import type { ProcessInformation } from "@/interfaces/SystemInformation";
 import type { ProcessMetric } from "@/interfaces/types/SystemTypes";
@@ -56,10 +53,9 @@ export const useSystemStore = defineStore("system", {
           loader.setMessage("Connecting to system monitor...");
         }
 
-        this.http
-          .get("system")
+        this.http.get<SystemResponse>("system")
           .then((response) => {
-            const { data }: { data: SystemResponse } = response;
+            const { data } = response;
             this.staticUpdate(data);
             this.connected = true;
             if (websocket) {
@@ -129,9 +125,7 @@ export const useSystemStore = defineStore("system", {
       this.poll = null;
     },
     async toggle() {
-      const type = this.connectionType === "websocket"
-        ? "http"
-        : "websocket";
+      const type = this.connectionType === "websocket" ? "http" : "websocket";
 
       this.setConnectionType(type);
       this.refresh(this.connectionType === "websocket");
@@ -162,15 +156,15 @@ export const useSystemStore = defineStore("system", {
     },
     seriesToColor(str: string) {
       const map = {
-        "mysqld": "#00758f",
+        mysqld: "#00758f",
         "next-server (v14.2.6)": "#d9534f",
         "php-fpm8.2": "#8892bf",
-        "node": "#5cb85c",
+        node: "#5cb85c",
         "PM2 v5.4.2: God": "#5D3FD3",
-        "php": "#8892bf",
+        php: "#8892bf",
         "systemd-journald": "#f0ad4e",
         "npm start": "#5cb85c",
-      }
+      };
 
       const colour = map[str as keyof typeof map];
       if (!colour) {
@@ -178,17 +172,14 @@ export const useSystemStore = defineStore("system", {
         for (let i = 0; i < str.length; i++) {
           hash = str.charCodeAt(i) + ((hash << 5) - hash);
         }
-        const hex = (hash & 0x00FFFFFF).toString(16).toUpperCase();
-        return '#' + '00000'.substring(0, 6 - hex.length) + hex;
+        const hex = (hash & 0x00ffffff).toString(16).toUpperCase();
+        return "#" + "00000".substring(0, 6 - hex.length) + hex;
       }
 
-      return colour
+      return colour;
     },
-    formatBarChartDataForSystem(
-      series: Array<ProcessInformation>,
-      key: ProcessMetric
-    ) {
-      const response: Array<{ name: string; color: string, data: Array<number> }> = [];
+    formatBarChartDataForSystem(series: Array<ProcessInformation>, key: ProcessMetric) {
+      const response: Array<{ name: string; color: string; data: Array<number> }> = [];
 
       series.forEach((point) => {
         const dp = response.find((dp) => {
@@ -208,15 +199,13 @@ export const useSystemStore = defineStore("system", {
 
       return response;
     },
-    formatPieChartDataForProcesses(
-      series: Array<ProcessInformation>
-    ) {
-      const response: Array<{ name: string; color: string, y: number }> = [];
+    formatPieChartDataForProcesses(series: Array<ProcessInformation>) {
+      const response: Array<{ name: string; color: string; y: number }> = [];
       series.forEach((point) => {
         const dp = response.find((dp) => {
           return dp.name === point.name;
         });
-    
+
         if (dp) {
           dp.y += point.mem;
         } else {
@@ -227,9 +216,9 @@ export const useSystemStore = defineStore("system", {
           });
         }
       });
-    
+
       return response;
-    }
+    },
   },
   persist: {
     storage: localStorage,

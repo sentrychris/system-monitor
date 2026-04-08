@@ -31,10 +31,7 @@ export const mapUsageColor = (value: number) => {
   return color;
 };
 
-export const mapSpeedtestColor = (
-  metric: string,
-  { min, max }: { min: number; max: number }
-) => {
+export const mapSpeedtestColor = (metric: string, { min, max }: { min: number; max: number }) => {
   const value = parseInt(metric);
   let color = "dark";
   if (!isNaN(value)) {
