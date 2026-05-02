@@ -160,7 +160,7 @@ onBeforeMount(() => {
             <div class="card panel-card border-0 shadow-lg">
               <SectionHeader
                 title="Memory Usage"
-                subtitle="Last 60 seconds · GB"
+                subtitle="System total · last 60 seconds · GB"
                 icon="fa-solid fa-wave-square"
                 tone="amber"
               />
@@ -185,7 +185,7 @@ onBeforeMount(() => {
             <div class="card panel-card border-0 shadow-lg">
               <SectionHeader
                 title="Top Processes"
-                subtitle="By memory usage"
+                subtitle="Per-process RSS · top 10"
                 icon="fa-solid fa-list-ul"
                 tone="green"
               />
