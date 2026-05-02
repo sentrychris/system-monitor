@@ -8,11 +8,11 @@ defineProps<{
 
 <template>
   <div class="metric-block">
-    <div class="metric-primary">
+    <div class="metric-primary metric-num">
       <span class="metric-value">{{ detail.percent }}</span>
       <span class="metric-unit">%</span>
     </div>
-    <div class="metric-label">Used</div>
+    <div class="metric-label">UTILIZATION</div>
     <div class="usage-bar">
       <div
         class="usage-bar-fill"
@@ -26,12 +26,12 @@ defineProps<{
   </div>
   <div class="metric-rows">
     <div class="metric-row">
-      <span class="row-label">Free</span>
-      <span class="row-value">{{ detail.free }} <span class="row-unit">GB</span></span>
+      <span class="row-label">FREE</span>
+      <span class="row-value mono">{{ detail.free }} <span class="row-unit">GB</span></span>
     </div>
     <div class="metric-row">
-      <span class="row-label">Total</span>
-      <span class="row-value">{{ detail.total }} <span class="row-unit">GB</span></span>
+      <span class="row-label">TOTAL</span>
+      <span class="row-value mono">{{ detail.total }} <span class="row-unit">GB</span></span>
     </div>
   </div>
 </template>
@@ -44,7 +44,7 @@ defineProps<{
   line-height: 1;
 }
 .metric-value {
-  font-size: 2.2rem;
+  font-size: 2rem;
   font-weight: 700;
   color: #111827;
 }
@@ -55,13 +55,23 @@ defineProps<{
   margin-left: 4px;
 }
 .metric-label {
-  font-size: 0.68rem;
+  font-family: "Orbitron", "Exo 2", monospace;
+  font-size: 0.62rem;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.18em;
   color: #6b7280;
   margin-top: 4px;
   margin-bottom: 0.5rem;
+}
+.row-label {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+}
+.row-value.mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.75rem;
 }
 
 .usage-bar {
@@ -101,12 +111,12 @@ defineProps<{
 }
 .row-unit { color: #9ca3af; font-weight: 500; font-size: 0.72rem; margin-left: 2px; }
 
-body[data-theme="dark"] .metric-value { color: #f9fafb; }
-body[data-theme="dark"] .metric-unit  { color: #8b8d8f; }
-body[data-theme="dark"] .metric-label { color: #8b8d8f; }
-body[data-theme="dark"] .usage-bar    { background: rgba(255, 255, 255, 0.08); }
-body[data-theme="dark"] .metric-rows  { border-top-color: rgba(255, 255, 255, 0.06); }
-body[data-theme="dark"] .row-label    { color: #8b8d8f; }
-body[data-theme="dark"] .row-value    { color: #e5e7eb; }
-body[data-theme="dark"] .row-unit     { color: #6b7280; }
+body[data-theme="dark"] .metric-value { color: var(--text-primary); }
+body[data-theme="dark"] .metric-unit  { color: var(--text-muted); }
+body[data-theme="dark"] .metric-label { color: var(--text-muted); }
+body[data-theme="dark"] .usage-bar    { background: var(--border-default); }
+body[data-theme="dark"] .metric-rows  { border-top-color: var(--border-subtle); }
+body[data-theme="dark"] .row-label    { color: var(--text-muted); }
+body[data-theme="dark"] .row-value    { color: var(--text-secondary); }
+body[data-theme="dark"] .row-unit     { color: var(--text-dim); }
 </style>

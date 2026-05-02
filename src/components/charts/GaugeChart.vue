@@ -51,6 +51,6 @@ onMounted(() => {
 }
 
 body[data-theme="dark"] .chart-legend {
-  color: #8b8d8f;
+  color: var(--text-muted);
 }
 </style>

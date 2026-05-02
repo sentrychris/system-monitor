@@ -25,7 +25,7 @@ onBeforeMount(() => {
 
 <template>
   <Transition name="fade">
-    <div v-if="loader.loaded" class="container py-4">
+    <div v-if="loader.loaded" class="container py-4 py-sm-4 dashboard-root">
       <!-- Top stat cards -->
       <section id="statistics" class="page-section mt-0">
         <div class="row mt-3 g-3">
@@ -231,3 +231,9 @@ onBeforeMount(() => {
     </div>
   </Transition>
 </template>
+
+<style scoped>
+@media (max-width: 575.98px) {
+  .dashboard-root { padding-top: 1rem !important; padding-bottom: 1rem !important; }
+}
+</style>

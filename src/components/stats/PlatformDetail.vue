@@ -10,15 +10,15 @@ defineProps<{
 <template>
   <div class="metric-block">
     <div class="distro" :title="detail.distro">{{ detail.distro || "—" }}</div>
-    <div class="metric-label">Distribution</div>
+    <div class="metric-label">SYSTEM</div>
   </div>
   <div class="metric-rows">
     <div class="metric-row">
-      <span class="row-label">Kernel</span>
+      <span class="row-label">KERNEL</span>
       <span class="row-value mono">{{ detail.kernel || "—" }}</span>
     </div>
     <div class="metric-row">
-      <span class="row-label">Uptime</span>
+      <span class="row-label">UPTIME</span>
       <span class="row-value">{{ uptime ?? detail.uptime ?? "—" }}</span>
     </div>
   </div>
@@ -36,12 +36,18 @@ defineProps<{
   text-overflow: ellipsis;
 }
 .metric-label {
-  font-size: 0.68rem;
+  font-family: "Orbitron", "Exo 2", monospace;
+  font-size: 0.62rem;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.18em;
   color: #6b7280;
   margin-top: 4px;
+}
+.row-label {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
 }
 
 .metric-rows {
@@ -74,9 +80,9 @@ defineProps<{
   font-size: 0.75rem;
 }
 
-body[data-theme="dark"] .distro       { color: #f9fafb; }
-body[data-theme="dark"] .metric-label { color: #8b8d8f; }
-body[data-theme="dark"] .metric-rows  { border-top-color: rgba(255, 255, 255, 0.06); }
-body[data-theme="dark"] .row-label    { color: #8b8d8f; }
-body[data-theme="dark"] .row-value    { color: #e5e7eb; }
+body[data-theme="dark"] .distro       { color: var(--text-primary); }
+body[data-theme="dark"] .metric-label { color: var(--text-muted); }
+body[data-theme="dark"] .metric-rows  { border-top-color: var(--border-subtle); }
+body[data-theme="dark"] .row-label    { color: var(--text-muted); }
+body[data-theme="dark"] .row-value    { color: var(--text-secondary); }
 </style>

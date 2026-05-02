@@ -61,8 +61,23 @@ h2.header {
 }
 
 .page-section {
-  margin-top: 1.5rem;
-  margin-bottom: 1.5rem;
+  margin-top: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+@media (max-width: 575.98px) {
+  .page-section {
+    margin-top: 0.85rem;
+    margin-bottom: 0.85rem;
+  }
+}
+
+/* SOC dashboard utility class — applies a tight Orbitron number rendering
+   style for primary metrics that should feel "instrument cluster" technical. */
+.metric-num {
+  font-family: "Orbitron", "Exo 2", monospace;
+  font-feature-settings: "tnum";
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
 }
 
 /* Shared "panel" card chrome used by every dashboard section. The header
@@ -70,7 +85,7 @@ h2.header {
    rounding, body padding, and dark-theme fallbacks to anything that opts
    into the .panel-card class. */
 .panel-card {
-  border-radius: 14px !important;
+  border-radius: 12px !important;
   overflow: hidden;
   background: #ffffff;
   border: 0;
@@ -78,8 +93,17 @@ h2.header {
 .panel-card .panel-body {
   padding: 1.25rem 1.4rem 1.5rem;
 }
+@media (max-width: 575.98px) {
+  .panel-card .panel-body { padding: 0.9rem 1rem 1rem; }
+}
 body[data-theme="dark"] .panel-card {
-  background: rgb(45, 45, 45);
+  background: var(--bg-surface);
+}
+
+/* Tighten container gutters on mobile so cards don't crowd the edge */
+@media (max-width: 575.98px) {
+  .container,
+  .container-fluid { padding-left: 0.75rem; padding-right: 0.75rem; }
 }
 
 /* Soft section subtitle/eyebrow used in the page header */

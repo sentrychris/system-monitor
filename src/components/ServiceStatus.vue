@@ -369,32 +369,32 @@ onBeforeUnmount(() => {
 }
 
 /* ---------- Dark theme ---------- */
-body[data-theme="dark"] .service-list { background: rgb(45, 45, 45); }
-body[data-theme="dark"] .service-row { border-bottom-color: rgba(255, 255, 255, 0.06); }
-body[data-theme="dark"] .service-row:hover { background: rgba(255, 255, 255, 0.035); }
-body[data-theme="dark"] .service-name { color: #e5e7eb; }
-body[data-theme="dark"] .service-url { color: #8b8d8f; }
-body[data-theme="dark"] .service-url:hover { color: #60a5fa; }
+body[data-theme="dark"] .service-list { background: var(--bg-surface); }
+body[data-theme="dark"] .service-row { border-bottom-color: var(--border-subtle); }
+body[data-theme="dark"] .service-row:hover { background: var(--bg-hover); }
+body[data-theme="dark"] .service-name { color: var(--text-primary); }
+body[data-theme="dark"] .service-url { color: var(--text-muted); }
+body[data-theme="dark"] .service-url:hover { color: var(--accent-blue); }
 
-body[data-theme="dark"] .status-label              { color: #9ca3af; }
-body[data-theme="dark"] .is-online   .status-label { color: #34d399; }
-body[data-theme="dark"] .is-slow     .status-label { color: #fbbf24; }
-body[data-theme="dark"] .is-offline  .status-label { color: #fca5a5; }
+body[data-theme="dark"] .status-label              { color: var(--text-muted); }
+body[data-theme="dark"] .is-online   .status-label { color: var(--status-ok); }
+body[data-theme="dark"] .is-slow     .status-label { color: var(--status-warn); }
+body[data-theme="dark"] .is-offline  .status-label { color: var(--status-crit); }
 
-body[data-theme="dark"] .code-2xx { background: rgba(16, 185, 129, 0.18); color: #34d399; }
-body[data-theme="dark"] .code-3xx { background: rgba(59, 130, 246, 0.20); color: #60a5fa; }
-body[data-theme="dark"] .code-4xx { background: rgba(245, 158, 11, 0.20); color: #fbbf24; }
-body[data-theme="dark"] .code-5xx { background: rgba(239, 68, 68, 0.20);  color: #fca5a5; }
+body[data-theme="dark"] .code-2xx { background: rgba(52, 211, 153, 0.16); color: var(--status-ok); }
+body[data-theme="dark"] .code-3xx { background: rgba(96, 165, 250, 0.18); color: var(--accent-blue); }
+body[data-theme="dark"] .code-4xx { background: rgba(251, 191, 36, 0.18); color: var(--status-warn); }
+body[data-theme="dark"] .code-5xx { background: rgba(248, 113, 113, 0.18); color: var(--status-crit); }
 
-body[data-theme="dark"] .latency-value   { color: #f9fafb; }
-body[data-theme="dark"] .latency-unit    { color: #8b8d8f; }
-body[data-theme="dark"] .latency-pending { color: #6b7280; }
-body[data-theme="dark"] .latency-error   { color: #fca5a5; }
-body[data-theme="dark"] .latency-bar     { background: rgba(255, 255, 255, 0.08); }
-body[data-theme="dark"] .checked-at      { color: #6b7280; }
+body[data-theme="dark"] .latency-value   { color: var(--text-primary); }
+body[data-theme="dark"] .latency-unit    { color: var(--text-muted); }
+body[data-theme="dark"] .latency-pending { color: var(--text-dim); }
+body[data-theme="dark"] .latency-error   { color: var(--status-crit); }
+body[data-theme="dark"] .latency-bar     { background: var(--border-default); }
+body[data-theme="dark"] .checked-at      { color: var(--text-dim); }
 
 body[data-theme="dark"] .service-row.is-offline .indicator-bar {
-  box-shadow: 0 0 22px rgba(239, 68, 68, 0.55);
+  box-shadow: 0 0 22px rgba(248, 113, 113, 0.5);
 }
 body[data-theme="dark"] .dot-online {
   box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.55);

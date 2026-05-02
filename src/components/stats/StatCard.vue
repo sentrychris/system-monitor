@@ -42,21 +42,34 @@ const loader = useLoadingStore();
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.85rem 1.1rem;
-  background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
-  color: #f9fafb;
+  padding: 0.75rem 1rem;
+  background: linear-gradient(135deg, #111827 0%, #1e293b 100%);
+  color: #f1f5f9;
   position: relative;
   overflow: hidden;
+  border-bottom: 1px solid rgba(96, 165, 250, 0.22);
+}
+.stat-header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(96, 165, 250, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(96, 165, 250, 0.04) 1px, transparent 1px);
+  background-size: 28px 28px;
+  pointer-events: none;
+  opacity: 0.5;
 }
 .stat-header::after {
   content: "";
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(500px circle at 0% 0%, rgba(59, 130, 246, 0.10), transparent 40%),
-    radial-gradient(400px circle at 100% 100%, rgba(168, 85, 247, 0.08), transparent 40%);
+    radial-gradient(500px circle at 0% 0%, rgba(59, 130, 246, 0.12), transparent 50%),
+    radial-gradient(400px circle at 100% 100%, rgba(34, 211, 238, 0.08), transparent 50%);
   pointer-events: none;
 }
+.stat-header > * { position: relative; z-index: 1; }
 
 .stat-icon {
   width: 34px;
@@ -76,15 +89,23 @@ const loader = useLoadingStore();
 .stat-icon.tone-slate  { background: rgba(148, 163, 184, 0.12); color: #cbd5e1; box-shadow: inset 0 0 0 1px rgba(148,163,184,0.2); }
 
 .stat-title {
-  font-weight: 700;
-  font-size: 1rem;
-  letter-spacing: 0.2px;
+  font-family: "Orbitron", "Exo 2", sans-serif;
+  font-weight: 600;
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
 }
 
 .stat-body {
   flex: 1;
   padding: 1rem 1.1rem 1.1rem;
   background: #ffffff;
+}
+@media (max-width: 575.98px) {
+  .stat-header { padding: 0.65rem 0.85rem; }
+  .stat-icon { width: 30px; height: 30px; font-size: 0.85rem; }
+  .stat-title { font-size: 0.75rem; }
+  .stat-body { padding: 0.85rem 0.95rem 1rem; }
 }
 
 .stat-loading {
@@ -93,9 +114,9 @@ const loader = useLoadingStore();
 }
 
 body[data-theme="dark"] .stat-body {
-  background: rgb(45, 45, 45);
+  background: var(--bg-surface);
 }
 body[data-theme="dark"] .stat-loading {
-  color: #6b7280;
+  color: var(--text-dim);
 }
 </style>

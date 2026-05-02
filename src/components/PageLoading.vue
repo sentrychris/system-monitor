@@ -33,7 +33,7 @@ const loader = useLoadingStore();
   background: #eeeeee;
 }
 body[data-theme="dark"] #loading {
-  background: #1c1a1a;
+  background: var(--bg-page);
 }
 
 .mask {

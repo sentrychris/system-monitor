@@ -34,19 +34,32 @@ withDefaults(
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1.1rem 1.4rem;
-  background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
-  color: #f9fafb;
+  padding: 0.95rem 1.25rem;
+  background: linear-gradient(135deg, #111827 0%, #1e293b 100%);
+  color: #f1f5f9;
   position: relative;
   overflow: hidden;
+  border-bottom: 1px solid rgba(96, 165, 250, 0.22);
+  gap: 0.75rem;
+}
+.section-header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(96, 165, 250, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(96, 165, 250, 0.04) 1px, transparent 1px);
+  background-size: 32px 32px;
+  pointer-events: none;
+  opacity: 0.6;
 }
 .section-header::after {
   content: "";
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(800px circle at 0% 0%, rgba(59, 130, 246, 0.12), transparent 40%),
-    radial-gradient(600px circle at 100% 100%, rgba(168, 85, 247, 0.1), transparent 40%);
+    radial-gradient(800px circle at 0% 0%, rgba(59, 130, 246, 0.14), transparent 50%),
+    radial-gradient(600px circle at 100% 100%, rgba(34, 211, 238, 0.08), transparent 50%);
   pointer-events: none;
 }
 
@@ -92,17 +105,19 @@ withDefaults(
 }
 
 .header-title {
-  font-weight: 700;
-  font-size: 1.05rem;
-  letter-spacing: 0.2px;
+  font-family: "Orbitron", "Exo 2", sans-serif;
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: 0.06em;
   line-height: 1.1;
+  text-transform: uppercase;
 }
 .header-sub {
-  font-size: 0.72rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.68rem;
   color: #9ca3af;
-  text-transform: uppercase;
   letter-spacing: 0.08em;
-  margin-top: 2px;
+  margin-top: 3px;
 }
 
 .header-right {
@@ -111,6 +126,9 @@ withDefaults(
 }
 
 @media (max-width: 575.98px) {
-  .section-header { padding: 0.9rem 1rem; }
+  .section-header { padding: 0.75rem 0.9rem; }
+  .header-icon { width: 32px; height: 32px; font-size: 0.85rem; }
+  .header-title { font-size: 0.85rem; }
+  .header-sub { font-size: 0.6rem; }
 }
 </style>
