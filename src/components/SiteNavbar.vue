@@ -18,7 +18,7 @@ const node = computed(() => {
 
 <template>
   <nav class="navbar navbar-expand-lg site-navbar shadow-lg">
-    <div class="container py-2 nav-container">
+    <div class="container-fluid py-2 nav-container">
       <a class="navbar-brand d-flex align-items-center gap-3" href="#">
         <PageHeader
           :decor-title="config.app.name"

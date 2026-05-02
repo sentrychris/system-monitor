@@ -27,7 +27,7 @@ onBeforeMount(() => {
 
 <template>
   <Transition name="fade">
-    <div v-if="loader.loaded" class="container py-0 py-md-2 dashboard-root">
+    <div v-if="loader.loaded" class="container-fluid py-0 dashboard-root">
       <!-- Top stat cards -->
       <section id="statistics" class="page-section mt-0">
         <div class="row mt-0 mt-md-3 g-3">

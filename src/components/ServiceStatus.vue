@@ -208,10 +208,40 @@ onBeforeUnmount(() => {
   flex: 1 1 auto;
   display: flex;
   flex-direction: column;
+  /* Container query context — rows restack based on the card's own width,
+     not the viewport width, so the layout adapts whether the card is in a
+     col-lg-4 slot or full-width on mobile. */
+  container-type: inline-size;
+  container-name: services;
 }
 .service-list .service-row {
-  flex: 1 1 0;
-  min-height: 0;
+  /* Basis = content size, so a row never shrinks below what it needs to
+     render. flex-grow is still 1 so if the card is taller than the sum of
+     content heights, the surplus is distributed evenly across rows. */
+  flex: 1 1 auto;
+}
+
+/* Narrow card: stack the row vertically so info/metrics don't squeeze. */
+@container services (max-width: 480px) {
+  .service-list .service-row {
+    /* Override the equal-share flex from the wide layout so each row sizes
+       to its (now taller) content instead of clipping. */
+    flex: 0 0 auto;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.6rem;
+    padding: 0.85rem 1rem 0.85rem 1.25rem;
+  }
+  .service-metrics {
+    text-align: left;
+    min-width: 0;
+  }
+  .latency-bar {
+    margin-left: 0;
+    width: 100%;
+  }
+  .latency-value { font-size: var(--fs-heading); }
+  .service-url { margin-left: 0; }
 }
 
 /* ---------- Overall pill (header right) ---------- */
