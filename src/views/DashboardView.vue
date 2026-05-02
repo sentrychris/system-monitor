@@ -10,6 +10,7 @@ import CpuDetail from "@/components/stats/CpuDetail.vue";
 import UsageDetail from "@/components/stats/UsageDetail.vue";
 import GaugeChart from "@/components/charts/GaugeChart.vue";
 import RealtimeLineChart from "@/components/charts/RealtimeLineChart.vue";
+import NetworkTrafficChart from "@/components/charts/NetworkTrafficChart.vue";
 import BarChart from "@/components/charts/BarChart.vue";
 import PieChart from "@/components/charts/PieChart.vue";
 import ServiceStatus from "@/components/ServiceStatus.vue";
@@ -70,11 +71,27 @@ onBeforeMount(() => {
         </div>
       </section>
 
-      <!-- Service status -->
+      <!-- Service status + live network traffic -->
       <section id="services" class="page-section">
-        <div class="row">
-          <div class="col">
-            <ServiceStatus />
+        <div class="row g-4">
+          <div class="col-sm-12 col-lg-6 d-flex">
+            <ServiceStatus class="flex-fill" />
+          </div>
+          <div class="col-sm-12 col-lg-6 d-flex">
+            <div class="card panel-card border-0 shadow-lg flex-fill">
+              <SectionHeader
+                title="Network Traffic"
+                subtitle="Live in/out · last 30 seconds"
+                icon="fa-solid fa-tower-broadcast"
+                tone="blue"
+              />
+              <div class="panel-body p-0">
+                <NetworkTrafficChart
+                  :rx="system.realtime.network?.rx_bytes_per_sec ?? 0"
+                  :tx="system.realtime.network?.tx_bytes_per_sec ?? 0"
+                />
+              </div>
+            </div>
           </div>
         </div>
       </section>

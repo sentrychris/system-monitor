@@ -29,6 +29,10 @@ export const staticMockData: SystemResponse = {
       percent: 44.4,
     },
   ],
+  network: {
+    rx_bytes_per_sec: 0,
+    tx_bytes_per_sec: 0,
+  },
   platform: {
     distro: "Raspbian GNU/Linux 11 (bullseye)",
     kernel: "5.15.61-v7l+",

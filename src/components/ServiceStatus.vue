@@ -199,6 +199,21 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped>
+/* ---------- Card fills column height; rows distribute evenly ---------- */
+.card.panel-card {
+  display: flex;
+  flex-direction: column;
+}
+.service-list {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+}
+.service-list .service-row {
+  flex: 1 1 0;
+  min-height: 0;
+}
+
 /* ---------- Overall pill (header right) ---------- */
 .overall-pill {
   display: inline-flex;

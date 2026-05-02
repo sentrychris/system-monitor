@@ -19,6 +19,11 @@ export interface DiskUsageInformation extends UsageInformation {
   fstype: string;
 }
 
+export interface NetworkRateInformation {
+  rx_bytes_per_sec: number;
+  tx_bytes_per_sec: number;
+}
+
 export interface PlatformInformation {
   distro: string;
   kernel: string;

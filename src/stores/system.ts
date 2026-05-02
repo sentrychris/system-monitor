@@ -27,6 +27,10 @@ export const useSystemStore = defineStore("system", {
         free: 0,
         percent: 0,
       },
+      network: {
+        rx_bytes_per_sec: 0,
+        tx_bytes_per_sec: 0,
+      },
       uptime: null,
       processes: [],
     },
