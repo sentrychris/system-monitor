@@ -5,7 +5,7 @@ const loader = useLoadingStore();
 
 <template>
   <div
-    class="h-100 d-flex flex-column align-items-center justify-content-center"
+    class="d-flex flex-column align-items-center justify-content-center"
     id="loading"
     v-if="!loader.loaded"
   >
@@ -26,6 +26,16 @@ const loader = useLoadingStore();
 </template>
 
 <style scoped>
+#loading {
+  position: fixed;
+  inset: 0;
+  z-index: 1050;
+  background: #eeeeee;
+}
+body[data-theme="dark"] #loading {
+  background: #1c1a1a;
+}
+
 .mask {
   display: flex;
   align-items: center;

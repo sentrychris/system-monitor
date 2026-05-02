@@ -3,7 +3,6 @@ import { onBeforeMount } from "vue";
 import { config } from "@/config";
 import { useLoadingStore } from "@/stores/loading";
 import { useSystemStore } from "@/stores/system";
-import PageHeader from "@/components/PageHeader.vue";
 import SectionHeader from "@/components/SectionHeader.vue";
 import StatCard from "@/components/stats/StatCard.vue";
 import PlatformDetail from "@/components/stats/PlatformDetail.vue";
@@ -27,8 +26,6 @@ onBeforeMount(() => {
 <template>
   <Transition name="fade">
     <div v-if="loader.loaded" class="container py-4">
-      <PageHeader :decor-title="config.app.name" :title="config.app.title" />
-
       <!-- Top stat cards -->
       <section id="statistics" class="page-section mt-0">
         <div class="row mt-3 g-3">
@@ -68,6 +65,15 @@ onBeforeMount(() => {
                 />
               </template>
             </StatCard>
+          </div>
+        </div>
+      </section>
+
+      <!-- Service status -->
+      <section id="services" class="page-section">
+        <div class="row">
+          <div class="col">
+            <ServiceStatus />
           </div>
         </div>
       </section>
@@ -124,15 +130,6 @@ onBeforeMount(() => {
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Service status -->
-      <section id="services" class="page-section">
-        <div class="row">
-          <div class="col">
-            <ServiceStatus />
           </div>
         </div>
       </section>

@@ -18,7 +18,7 @@ defineProps<{
 }
 .page-title {
   font-weight: 200;
-  font-size: 2.25rem;
+  font-size: 1.5rem;
   letter-spacing: -0.5px;
   color: #111827;
   margin: 0.15rem 0 0;

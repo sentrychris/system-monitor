@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import { config } from "@/config";
 import { useThemeStore } from "@/stores/theme";
 import { useSystemStore } from "@/stores/system";
-import SiteLogo from "./SiteLogo.vue";
+import PageHeader from "@/components/PageHeader.vue";
 
 const theme = useThemeStore();
 const system = useSystemStore();
@@ -11,7 +12,7 @@ const system = useSystemStore();
   <nav class="navbar navbar-expand-lg site-navbar shadow-lg">
     <div class="container py-2">
       <a class="navbar-brand d-flex align-items-center gap-3" href="#">
-        <SiteLogo />
+        <PageHeader :decor-title="config.app.name" :title="config.app.title" />
       </a>
       <button
         class="navbar-toggler"
