@@ -79,13 +79,13 @@ h2.header {
 }
 
 .page-section {
-  margin-top: 1.25rem;
-  margin-bottom: 1.25rem;
+  margin-top: 0.7rem;
+  margin-bottom: 0.7rem;
 }
 @media (max-width: 575.98px) {
   .page-section {
-    margin-top: 0.85rem;
-    margin-bottom: 0.85rem;
+    margin-top: 0.55rem;
+    margin-bottom: 0.55rem;
   }
 }
 
@@ -146,10 +146,22 @@ h2.header {
     0 32px 64px -20px rgba(15, 23, 42, 0.22) !important;
 }
 .panel-card .panel-body {
-  padding: 1.25rem 1.4rem 1.5rem;
+  padding: 0.85rem 1rem 0.95rem;
 }
 @media (max-width: 575.98px) {
-  .panel-card .panel-body { padding: 0.9rem 1rem 1rem; }
+  .panel-card .panel-body { padding: 0.7rem 0.85rem 0.8rem; }
+}
+
+/* When a panel-card is `.flex-fill` (stretched to its column's height by a
+   parent `d-flex` row), turn it into a flex column and let the body grow
+   so things like chart wrappers can use `height: 100%` to fill. */
+.panel-card.flex-fill {
+  display: flex;
+  flex-direction: column;
+}
+.panel-card.flex-fill > .panel-body {
+  flex: 1 1 auto;
+  min-height: 0;
 }
 body[data-theme="dark"] .panel-card {
   background: rgba(15, 23, 42, 0.55) !important;

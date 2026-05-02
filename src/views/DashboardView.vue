@@ -27,10 +27,10 @@ onBeforeMount(() => {
 
 <template>
   <Transition name="fade">
-    <div v-if="loader.loaded" class="container-fluid py-0 dashboard-root">
+    <div v-if="loader.loaded" class="container-fluid py-0 py-md-2 dashboard-root">
       <!-- Top stat cards -->
       <section id="statistics" class="page-section mt-0">
-        <div class="row mt-0 mt-md-3 g-3">
+        <div class="row g-2">
           <div class="col-sm-12 col-md-6 col-lg-3 d-flex align-items-stretch">
             <StatCard title="Platform" icon="fa-solid fa-server" tone="blue">
               <template #detail>
@@ -71,17 +71,17 @@ onBeforeMount(() => {
         </div>
       </section>
 
-      <!-- Service status + live network traffic -->
-      <section id="services" class="page-section">
-        <div class="row g-4">
-          <div class="col-sm-12 col-lg-6 d-flex">
+      <!-- Row 2: services / network traffic / compact resource gauges -->
+      <section id="status-row" class="page-section">
+        <div class="row g-2">
+          <div class="col-sm-12 col-lg-4 d-flex">
             <ServiceStatus class="flex-fill" />
           </div>
-          <div class="col-sm-12 col-lg-6 d-flex">
+          <div class="col-sm-12 col-lg-4 d-flex">
             <div class="card panel-card border-0 shadow-lg flex-fill">
               <SectionHeader
                 title="Network Traffic"
-                subtitle="Live in/out · last 30 seconds"
+                subtitle="Live in/out · 30s"
                 icon="fa-solid fa-tower-broadcast"
                 tone="blue"
               />
@@ -93,58 +93,50 @@ onBeforeMount(() => {
               </div>
             </div>
           </div>
-        </div>
-      </section>
-
-      <!-- Resource gauges -->
-      <section id="usage" class="page-section">
-        <div class="row">
-          <div class="col">
-            <div class="card panel-card border-0 shadow-lg">
+          <div class="col-sm-12 col-lg-4 d-flex">
+            <div class="card panel-card border-0 shadow-lg flex-fill">
               <SectionHeader
                 title="System Resources"
                 subtitle="Real-time utilization"
                 icon="fa-solid fa-gauge-high"
                 tone="blue"
               />
-              <div class="panel-body">
-                <div class="row">
-                  <div class="col-sm-12 col-md-6 col-lg-4 mt-3 mt-md-0">
-                    <GaugeChart
-                      title="CPU Usage"
-                      id="cpu"
-                      :metric="
-                        system.live
-                          ? system.realtime.cpu.usage
-                          : system.data.cpu.usage
-                      "
-                      format="{y}%"
-                    />
-                  </div>
-                  <div class="col-sm-12 col-md-6 col-lg-4 mt-3 mt-md-0">
-                    <GaugeChart
-                      title="Memory Usage"
-                      id="mem"
-                      :metric="
-                        system.live
-                          ? system.realtime.mem.percent
-                          : system.data.mem.percent
-                      "
-                      format="{y}%"
-                    />
-                  </div>
-                  <div class="col-sm-12 col-md-6 col-lg-4 mt-3 mt-md-0">
-                    <GaugeChart
-                      title="Disk Space Used"
-                      id="disk"
-                      :metric="
-                        system.live
-                          ? system.realtime.disk.percent
-                          : system.data.disk.percent
-                      "
-                      format="{y}%"
-                    />
-                  </div>
+              <div class="panel-body resource-gauges-body">
+                <div class="resource-gauge-cell">
+                  <GaugeChart
+                    title="CPU"
+                    id="cpu"
+                    :metric="
+                      system.live
+                        ? system.realtime.cpu.usage
+                        : system.data.cpu.usage
+                    "
+                    format="{y}%"
+                  />
+                </div>
+                <div class="resource-gauge-cell">
+                  <GaugeChart
+                    title="Memory"
+                    id="mem"
+                    :metric="
+                      system.live
+                        ? system.realtime.mem.percent
+                        : system.data.mem.percent
+                    "
+                    format="{y}%"
+                  />
+                </div>
+                <div class="resource-gauge-cell">
+                  <GaugeChart
+                    title="Disk"
+                    id="disk"
+                    :metric="
+                      system.live
+                        ? system.realtime.disk.percent
+                        : system.data.disk.percent
+                    "
+                    format="{y}%"
+                  />
                 </div>
               </div>
             </div>
@@ -152,74 +144,11 @@ onBeforeMount(() => {
         </div>
       </section>
 
-      <!-- Storage breakdown -->
-      <section id="storage" class="page-section">
-        <div class="row">
-          <div class="col">
-            <div class="card panel-card border-0 shadow-lg">
-              <SectionHeader
-                title="Storage"
-                subtitle="All mounted partitions"
-                icon="fa-solid fa-hard-drive"
-                tone="green"
-              />
-              <div class="panel-body">
-                <DiskList :disks="system.data.disks ?? []" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Realtime line charts (live mode only) -->
-      <section id="d3-line-charts" v-if="system.live" class="page-section">
-        <div class="row g-4">
-          <div class="col-sm-12 col-md-6">
-            <div class="card panel-card border-0 shadow-lg">
-              <SectionHeader
-                title="CPU Usage"
-                subtitle="Last 60 seconds · %"
-                icon="fa-solid fa-wave-square"
-                tone="purple"
-              />
-              <div class="panel-body p-0">
-                <RealtimeLineChart
-                  :data-point="system.realtime.cpu.usage"
-                  :y-axis-range="[0, 100]"
-                  tone="purple"
-                  unit="%"
-                  :decimals="0"
-                />
-              </div>
-            </div>
-          </div>
-          <div class="col-sm-12 col-md-6">
-            <div class="card panel-card border-0 shadow-lg">
-              <SectionHeader
-                title="Memory Usage"
-                subtitle="System total · last 60 seconds · GiB"
-                icon="fa-solid fa-wave-square"
-                tone="amber"
-              />
-              <div class="panel-body p-0">
-                <RealtimeLineChart
-                  :data-point="system.realtime.mem.used"
-                  :y-axis-range="[0, 16]"
-                  tone="amber"
-                  unit="GiB"
-                  :decimals="1"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Top processes -->
-      <section id="processes-information" class="page-section">
-        <div class="row">
-          <div class="col">
-            <div class="card panel-card border-0 shadow-lg">
+      <!-- Row 3: top processes (wide) + storage breakdown -->
+      <section id="processes-and-storage" class="page-section">
+        <div class="row g-2">
+          <div class="col-sm-12 col-lg-8 d-flex">
+            <div class="card panel-card border-0 shadow-lg flex-fill">
               <SectionHeader
                 title="Top Processes"
                 subtitle="Per-process RSS · top 10"
@@ -227,7 +156,7 @@ onBeforeMount(() => {
                 tone="green"
               />
               <div class="panel-body">
-                <div class="row align-items-center">
+                <div class="row align-items-center g-2">
                   <div class="col-sm-12 col-md-6 col-lg-8">
                     <BarChart
                       metric="system"
@@ -269,6 +198,63 @@ onBeforeMount(() => {
               </div>
             </div>
           </div>
+          <div class="col-sm-12 col-lg-4 d-flex">
+            <div class="card panel-card border-0 shadow-lg flex-fill">
+              <SectionHeader
+                title="Storage"
+                subtitle="Mounted partitions"
+                icon="fa-solid fa-hard-drive"
+                tone="green"
+              />
+              <div class="panel-body">
+                <DiskList :disks="system.data.disks ?? []" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Row 4: realtime line charts (live mode only) -->
+      <section id="d3-line-charts" v-if="system.live" class="page-section">
+        <div class="row g-2">
+          <div class="col-sm-12 col-md-6">
+            <div class="card panel-card border-0 shadow-lg">
+              <SectionHeader
+                title="CPU Usage"
+                subtitle="Last 60s · %"
+                icon="fa-solid fa-wave-square"
+                tone="purple"
+              />
+              <div class="panel-body p-0">
+                <RealtimeLineChart
+                  :data-point="system.realtime.cpu.usage"
+                  :y-axis-range="[0, 100]"
+                  tone="purple"
+                  unit="%"
+                  :decimals="0"
+                />
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-12 col-md-6">
+            <div class="card panel-card border-0 shadow-lg">
+              <SectionHeader
+                title="Memory Usage"
+                subtitle="System total · 60s · GiB"
+                icon="fa-solid fa-wave-square"
+                tone="amber"
+              />
+              <div class="panel-body p-0">
+                <RealtimeLineChart
+                  :data-point="system.realtime.mem.used"
+                  :y-axis-range="[0, 16]"
+                  tone="amber"
+                  unit="GiB"
+                  :decimals="1"
+                />
+              </div>
+            </div>
+          </div>
         </div>
       </section>
     </div>
@@ -278,5 +264,27 @@ onBeforeMount(() => {
 <style scoped>
 @media (max-width: 575.98px) {
   .dashboard-root { padding-top: 1rem !important; padding-bottom: 1rem !important; }
+}
+
+/* Compact gauge row inside the row-2 "System Resources" panel.
+   Three gauges share the panel-body horizontally; each cell is a CSS
+   container so gauge-value text scales fluidly with the gauge size. */
+.resource-gauges-body {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  justify-content: space-around;
+  gap: 0.4rem;
+  height: 100%;
+}
+.resource-gauge-cell {
+  flex: 1 1 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+}
+.resource-gauge-cell :deep(.gauge-svg-wrap) {
+  max-width: 130px;
 }
 </style>

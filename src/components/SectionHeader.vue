@@ -34,13 +34,13 @@ withDefaults(
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.95rem 1.25rem;
+  padding: 0.6rem 1rem;
   background: linear-gradient(135deg, #111827 0%, #1e293b 100%);
   color: #f1f5f9;
   position: relative;
   overflow: hidden;
   border-bottom: 1px solid rgba(96, 165, 250, 0.22);
-  gap: 0.75rem;
+  gap: 0.6rem;
 }
 .section-header::before {
   content: "";
@@ -64,13 +64,13 @@ withDefaults(
 }
 
 .header-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: var(--fs-heading);
+  font-size: var(--fs-body);
   flex-shrink: 0;
 }
 .header-icon.tone-blue {
@@ -107,7 +107,7 @@ withDefaults(
 .header-title {
   font-family: "IBM Plex Sans", "Inter", system-ui, sans-serif;
   font-weight: 600;
-  font-size: var(--fs-heading);
+  font-size: var(--fs-body);
   letter-spacing: 0.06em;
   line-height: 1.15;
   text-transform: uppercase;
@@ -116,8 +116,8 @@ withDefaults(
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   font-size: var(--fs-micro);
   color: #9ca3af;
-  letter-spacing: 0.1em;
-  margin-top: 4px;
+  letter-spacing: 0.08em;
+  margin-top: 2px;
   text-transform: uppercase;
 }
 

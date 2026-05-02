@@ -65,7 +65,7 @@ const draw = () => {
   svg.selectAll("*").remove();
   data = [];
 
-  const margin = { top: 18, bottom: 26, left: 38, right: 16 };
+  const margin = { top: 10, bottom: 28, left: 34, right: 10 };
   const width = resizeState.dimensions.width - margin.left - margin.right;
   const height = resizeState.dimensions.height - margin.top - margin.bottom;
   if (width <= 0 || height <= 0) return;
@@ -321,7 +321,11 @@ onUnmounted(teardown);
 .realtime-line-wrapper {
   position: relative;
   width: 100%;
-  height: 300px;
+  /* Fill the panel-body when the card is stretched (flex-fill column);
+     otherwise fall back to the 180px floor so non-flex contexts still
+     render at a sensible size. */
+  height: 100%;
+  min-height: 180px;
 }
 .realtime-line-wrapper svg {
   height: 100%;

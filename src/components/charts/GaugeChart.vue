@@ -222,9 +222,9 @@ const gradId = computed(() => `gauge-grad-${props.id}`);
   font-size: var(--fs-micro);
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.16em;
   color: #6b7280;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.25rem;
 }
 .gauge-svg-wrap {
   position: relative;
@@ -233,6 +233,9 @@ const gradId = computed(() => `gauge-grad-${props.id}`);
   aspect-ratio: 1 / 1;
   margin: 0 auto;
   color: #0f172a;
+  /* Container query so gauge text scales sensibly when used in compact
+     contexts (3-up inside a col-lg-4 panel) vs full-size standalone. */
+  container-type: inline-size;
 }
 .gauge-svg {
   width: 100%;
@@ -257,7 +260,9 @@ const gradId = computed(() => `gauge-grad-${props.id}`);
 .gauge-value {
   font-family: "Lato", system-ui, sans-serif;
   font-weight: 200;
-  font-size: 3rem;
+  /* Scales with the gauge's own width (5-50% range) so a 140px compact
+     gauge gets ~28px text while a 240px hero gauge still hits ~48px. */
+  font-size: clamp(1.25rem, 22cqi, 3rem);
   line-height: 1;
   letter-spacing: -0.02em;
   transition: color 0.3s ease, text-shadow 0.3s ease;
@@ -265,19 +270,19 @@ const gradId = computed(() => `gauge-grad-${props.id}`);
   align-items: baseline;
 }
 .gauge-suffix {
-  font-size: 1.1rem;
+  font-size: clamp(0.65rem, 8cqi, 1.1rem);
   font-weight: 400;
   margin-left: 0.15rem;
   opacity: 0.8;
 }
 .gauge-status {
-  margin-top: 0.6rem;
+  margin-top: 0.35rem;
   display: flex;
   align-items: center;
-  gap: 0.4rem;
-  font-size: var(--fs-micro);
+  gap: 0.3rem;
+  font-size: clamp(0.55rem, 5cqi, 0.625rem);
   font-weight: 700;
-  letter-spacing: 0.22em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   opacity: 0.9;
   transition: color 0.3s ease;
