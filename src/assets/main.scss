@@ -65,6 +65,35 @@ h2.header {
   margin-bottom: 1.5rem;
 }
 
+/* Shared "panel" card chrome used by every dashboard section. The header
+   itself is rendered by <SectionHeader/>; this just gives consistent
+   rounding, body padding, and dark-theme fallbacks to anything that opts
+   into the .panel-card class. */
+.panel-card {
+  border-radius: 14px !important;
+  overflow: hidden;
+  background: #ffffff;
+  border: 0;
+}
+.panel-card .panel-body {
+  padding: 1.25rem 1.4rem 1.5rem;
+}
+body[data-theme="dark"] .panel-card {
+  background: rgb(45, 45, 45);
+}
+
+/* Soft section subtitle/eyebrow used in the page header */
+.eyebrow {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: #6b7280;
+}
+body[data-theme="dark"] .eyebrow {
+  color: #8b8d8f;
+}
+
 svg.d3-svg {
   /* important for responsiveness */
   display: block;

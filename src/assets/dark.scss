@@ -129,4 +129,9 @@ body[data-theme="dark"] {
     stroke: #9fa0a1;
     opacity: 0.2;
   }
+
+  .axis text,
+  .tick text {
+    fill: #9fa0a1;
+  }
 }

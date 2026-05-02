@@ -20,4 +20,10 @@ export const config: Configuration = {
       websocket: import.meta.env.VITE_WEBSOCKET_URL,
     },
   },
+  services: {
+    pollInterval: 30_000,
+    thresholds: {
+      slow: 800,
+    },
+  },
 };

@@ -4,6 +4,7 @@ import { config } from "@/config";
 import { useLoadingStore } from "@/stores/loading";
 import { useSystemStore } from "@/stores/system";
 import PageHeader from "@/components/PageHeader.vue";
+import SectionHeader from "@/components/SectionHeader.vue";
 import StatCard from "@/components/stats/StatCard.vue";
 import PlatformDetail from "@/components/stats/PlatformDetail.vue";
 import CpuDetail from "@/components/stats/CpuDetail.vue";
@@ -12,7 +13,7 @@ import GaugeChart from "@/components/charts/GaugeChart.vue";
 import RealtimeLineChart from "@/components/charts/RealtimeLineChart.vue";
 import BarChart from "@/components/charts/BarChart.vue";
 import PieChart from "@/components/charts/PieChart.vue";
-import DataTable from "@/components/DataTable.vue";
+import ServiceStatus from "@/components/ServiceStatus.vue";
 
 const loader = useLoadingStore();
 const system = useSystemStore();
@@ -27,10 +28,12 @@ onBeforeMount(() => {
   <Transition name="fade">
     <div v-if="loader.loaded" class="container py-4">
       <PageHeader :decor-title="config.app.name" :title="config.app.title" />
+
+      <!-- Top stat cards -->
       <section id="statistics" class="page-section mt-0">
-        <div class="row mt-3">
+        <div class="row mt-3 g-3">
           <div class="col-sm-12 col-md-6 col-lg-3 d-flex align-items-stretch">
-            <StatCard title="Platform" bg="dark" icon="fa-solid fa-server">
+            <StatCard title="Platform" icon="fa-solid fa-server" tone="blue">
               <template #detail>
                 <PlatformDetail
                   :detail="system.data.platform"
@@ -39,10 +42,8 @@ onBeforeMount(() => {
               </template>
             </StatCard>
           </div>
-          <div
-            class="col-sm-12 col-md-6 col-lg-3 d-flex align-items-stretch mt-4 mt-md-0"
-          >
-            <StatCard title="CPU" bg="dark" icon="fa-solid fa-tachometer-alt">
+          <div class="col-sm-12 col-md-6 col-lg-3 d-flex align-items-stretch">
+            <StatCard title="CPU" icon="fa-solid fa-microchip" tone="purple">
               <template #detail>
                 <CpuDetail
                   :detail="system.live ? system.realtime.cpu : system.data.cpu"
@@ -50,10 +51,8 @@ onBeforeMount(() => {
               </template>
             </StatCard>
           </div>
-          <div
-            class="col-sm-12 col-md-6 col-lg-3 d-flex align-items-stretch mt-4 mt-lg-0"
-          >
-            <StatCard title="Memory" bg="dark" icon="fa-solid fa-server">
+          <div class="col-sm-12 col-md-6 col-lg-3 d-flex align-items-stretch">
+            <StatCard title="Memory" icon="fa-solid fa-memory" tone="amber">
               <template #detail>
                 <UsageDetail
                   :detail="system.live ? system.realtime.mem : system.data.mem"
@@ -61,15 +60,11 @@ onBeforeMount(() => {
               </template>
             </StatCard>
           </div>
-          <div
-            class="col-sm-12 col-md-6 col-lg-3 d-flex align-items-stretch mt-4 mt-lg-0"
-          >
-            <StatCard title="Disk" bg="dark" icon="fa-solid fa-hard-drive">
+          <div class="col-sm-12 col-md-6 col-lg-3 d-flex align-items-stretch">
+            <StatCard title="Disk" icon="fa-solid fa-hard-drive" tone="green">
               <template #detail>
                 <UsageDetail
-                  :detail="
-                    system.live ? system.realtime.disk : system.data.disk
-                  "
+                  :detail="system.live ? system.realtime.disk : system.data.disk"
                 />
               </template>
             </StatCard>
@@ -77,11 +72,18 @@ onBeforeMount(() => {
         </div>
       </section>
 
+      <!-- Resource gauges -->
       <section id="usage" class="page-section">
         <div class="row">
           <div class="col">
-            <div class="card border-0 shadow-lg">
-              <div class="card-body pt-4">
+            <div class="card panel-card border-0 shadow-lg">
+              <SectionHeader
+                title="System Resources"
+                subtitle="Real-time utilization"
+                icon="fa-solid fa-gauge-high"
+                tone="blue"
+              />
+              <div class="panel-body">
                 <div class="row">
                   <div class="col-sm-12 col-md-6 col-lg-4 mt-3 mt-md-0">
                     <GaugeChart
@@ -126,16 +128,27 @@ onBeforeMount(() => {
         </div>
       </section>
 
-      <section id="d3-line-charts" v-if="system.live">
+      <!-- Service status -->
+      <section id="services" class="page-section">
         <div class="row">
+          <div class="col">
+            <ServiceStatus />
+          </div>
+        </div>
+      </section>
+
+      <!-- Realtime line charts (live mode only) -->
+      <section id="d3-line-charts" v-if="system.live" class="page-section">
+        <div class="row g-4">
           <div class="col-sm-12 col-md-6">
-            <div class="card border-0 shadow-lg">
-              <div
-                class="card-header pb-0 bg-transparent border-0 d-flex justify-content-center py-4"
-              >
-                <h3 class="lead header">CPU Usage %</h3>
-              </div>
-              <div class="card-body p-0">
+            <div class="card panel-card border-0 shadow-lg">
+              <SectionHeader
+                title="CPU Usage"
+                subtitle="Last 60 seconds · %"
+                icon="fa-solid fa-wave-square"
+                tone="purple"
+              />
+              <div class="panel-body p-0">
                 <RealtimeLineChart
                   :data-point="system.realtime.cpu.usage"
                   :y-axis-range="[0, 100]"
@@ -143,14 +156,15 @@ onBeforeMount(() => {
               </div>
             </div>
           </div>
-          <div class="col-sm-12 col-md-6 mt-4 mt-md-0">
-            <div class="card border-0 shadow-lg">
-              <div
-                class="card-header pb-0 bg-transparent border-0 d-flex justify-content-center py-4"
-              >
-                <h3 class="lead header">Memory Usage GB</h3>
-              </div>
-              <div class="card-body p-0">
+          <div class="col-sm-12 col-md-6">
+            <div class="card panel-card border-0 shadow-lg">
+              <SectionHeader
+                title="Memory Usage"
+                subtitle="Last 60 seconds · GB"
+                icon="fa-solid fa-wave-square"
+                tone="amber"
+              />
+              <div class="panel-body p-0">
                 <RealtimeLineChart
                   :data-point="system.realtime.mem.used"
                   :y-axis-range="[0, 16]"
@@ -161,16 +175,18 @@ onBeforeMount(() => {
         </div>
       </section>
 
+      <!-- Top processes -->
       <section id="processes-information" class="page-section">
         <div class="row">
           <div class="col">
-            <div class="card border-0 shadow-lg">
-              <div
-                class="card-header bg-transparent border-0 d-flex justify-content-center py-4"
-              >
-                <h3 class="lead header">Top Processes by Memory</h3>
-              </div>
-              <div class="card-body pt-0">
+            <div class="card panel-card border-0 shadow-lg">
+              <SectionHeader
+                title="Top Processes"
+                subtitle="By memory usage"
+                icon="fa-solid fa-list-ul"
+                tone="green"
+              />
+              <div class="panel-body">
                 <div class="row">
                   <div class="col-sm-12 col-md-6 col-lg-8">
                     <BarChart
@@ -210,15 +226,6 @@ onBeforeMount(() => {
                     />
                   </div>
                 </div>
-                <!-- <DataTable
-                  type="horizontal"
-                  :data="
-                    system.live && system.realtime.processes.length > 0
-                      ? system.realtime.processes
-                      : system.data.processes
-                  "
-                  :exclude-columns="['memory_info']"
-                /> -->
               </div>
             </div>
           </div>

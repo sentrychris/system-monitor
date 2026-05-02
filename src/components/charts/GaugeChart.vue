@@ -29,7 +29,7 @@ onMounted(() => {
 
 <template>
   <div class="highcharts-gauge">
-    <div class="chart-legend text-center text-muted" v-if="title">
+    <div class="chart-legend text-center" v-if="title">
       {{ title }}
     </div>
     <div :id="id" class="gauge"></div>
@@ -37,9 +37,20 @@ onMounted(() => {
 </template>
 
 <style scoped>
+.chart-legend {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #6b7280;
+}
 .gauge {
   max-width: 400px;
   height: 200px;
   margin: 0 auto;
+}
+
+body[data-theme="dark"] .chart-legend {
+  color: #8b8d8f;
 }
 </style>

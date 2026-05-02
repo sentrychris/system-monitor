@@ -15,49 +15,63 @@ const loader = useLoadingStore();
         icon="fa-solid fa-exclamation-triangle"
         class="text-danger fa-4x"
       />
-      <div class="load" v-else></div>
+      <div class="loader" v-else>
+        <div class="ring ring-1"></div>
+        <div class="ring ring-2"></div>
+        <div class="ring ring-3"></div>
+      </div>
     </div>
-    <p class="mt-3 lead text-muted">{{ loader.message }}</p>
+    <p class="mt-4 loading-message">{{ loader.message }}</p>
   </div>
 </template>
 
 <style scoped>
-* {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  padding: 0;
-  overflow-y: hidden;
-}
-
 .mask {
-  overflow-y: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.load {
-  height: 50px;
-  width: 50px;
-  border-radius: 15px;
-  background: #41b883;
-  animation: loading 2s linear infinite;
+.loader {
+  position: relative;
+  width: 64px;
+  height: 64px;
 }
 
-@keyframes loading {
-  0% {
-    transform: rotateX(0deg) rotateY(0deg);
-  }
+.ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid transparent;
+}
+.ring-1 {
+  border-top-color: #34d399;
+  animation: spin 1.4s linear infinite;
+}
+.ring-2 {
+  inset: 8px;
+  border-right-color: #60a5fa;
+  animation: spin 1.8s linear infinite reverse;
+}
+.ring-3 {
+  inset: 16px;
+  border-bottom-color: #c084fc;
+  animation: spin 2.2s linear infinite;
+}
 
-  50% {
-    transform: rotateX(0deg) rotateY(180deg);
-  }
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
 
-  100% {
-    transform: rotateX(180deg) rotateY(180deg);
-  }
+.loading-message {
+  font-size: 0.9rem;
+  letter-spacing: 0.04em;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+body[data-theme="dark"] .loading-message {
+  color: #8b8d8f;
 }
 </style>

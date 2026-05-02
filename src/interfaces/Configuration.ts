@@ -20,7 +20,15 @@ interface ApiConfiguration {
   };
 }
 
+export interface ServicesConfiguration {
+  pollInterval: number;
+  thresholds: {
+    slow: number;
+  };
+}
+
 export interface Configuration {
   app: BaseConfiguration;
   api: ApiConfiguration;
+  services: ServicesConfiguration;
 }
