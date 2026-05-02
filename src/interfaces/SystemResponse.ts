@@ -1,6 +1,7 @@
 import type {
   CpuInformation,
   UsageInformation,
+  DiskUsageInformation,
   PlatformInformation,
   ProcessInformation,
 } from "./SystemInformation";
@@ -9,6 +10,7 @@ export interface SystemResponse {
   cpu: CpuInformation;
   mem: UsageInformation;
   disk: UsageInformation;
+  disks: DiskUsageInformation[];
   platform: PlatformInformation;
   processes: ProcessInformation[];
   user: string;

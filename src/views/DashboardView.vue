@@ -13,6 +13,7 @@ import RealtimeLineChart from "@/components/charts/RealtimeLineChart.vue";
 import BarChart from "@/components/charts/BarChart.vue";
 import PieChart from "@/components/charts/PieChart.vue";
 import ServiceStatus from "@/components/ServiceStatus.vue";
+import DiskList from "@/components/stats/DiskList.vue";
 
 const loader = useLoadingStore();
 const system = useSystemStore();
@@ -134,6 +135,25 @@ onBeforeMount(() => {
         </div>
       </section>
 
+      <!-- Storage breakdown -->
+      <section id="storage" class="page-section">
+        <div class="row">
+          <div class="col">
+            <div class="card panel-card border-0 shadow-lg">
+              <SectionHeader
+                title="Storage"
+                subtitle="All mounted partitions"
+                icon="fa-solid fa-hard-drive"
+                tone="green"
+              />
+              <div class="panel-body">
+                <DiskList :disks="system.data.disks ?? []" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- Realtime line charts (live mode only) -->
       <section id="d3-line-charts" v-if="system.live" class="page-section">
         <div class="row g-4">
@@ -160,7 +180,7 @@ onBeforeMount(() => {
             <div class="card panel-card border-0 shadow-lg">
               <SectionHeader
                 title="Memory Usage"
-                subtitle="System total · last 60 seconds · GB"
+                subtitle="System total · last 60 seconds · GiB"
                 icon="fa-solid fa-wave-square"
                 tone="amber"
               />
@@ -169,7 +189,7 @@ onBeforeMount(() => {
                   :data-point="system.realtime.mem.used"
                   :y-axis-range="[0, 16]"
                   tone="amber"
-                  unit="GB"
+                  unit="GiB"
                   :decimals="1"
                 />
               </div>

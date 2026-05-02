@@ -27,11 +27,11 @@ defineProps<{
   <div class="metric-rows">
     <div class="metric-row">
       <span class="row-label">FREE</span>
-      <span class="row-value mono">{{ detail.free }} <span class="row-unit">GB</span></span>
+      <span class="row-value mono">{{ detail.free }} <span class="row-unit">GiB</span></span>
     </div>
     <div class="metric-row">
       <span class="row-label">TOTAL</span>
-      <span class="row-value mono">{{ detail.total }} <span class="row-unit">GB</span></span>
+      <span class="row-value mono">{{ detail.total }} <span class="row-unit">GiB</span></span>
     </div>
   </div>
 </template>

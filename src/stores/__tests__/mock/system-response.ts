@@ -18,6 +18,17 @@ export const staticMockData: SystemResponse = {
     free: 15.43,
     percent: 44.4,
   },
+  disks: [
+    {
+      device: "/dev/root",
+      mountpoint: "/",
+      fstype: "ext4",
+      total: 28.99,
+      used: 12.35,
+      free: 15.43,
+      percent: 44.4,
+    },
+  ],
   platform: {
     distro: "Raspbian GNU/Linux 11 (bullseye)",
     kernel: "5.15.61-v7l+",

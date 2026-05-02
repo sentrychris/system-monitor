@@ -8,7 +8,7 @@ import { config } from "@/config";
 
 export const useSystemStore = defineStore("system", {
   state: () => ({
-    data: <SystemResponse>{},
+    data: { disks: [] } as unknown as SystemResponse,
     realtime: <RealtimeSystemResponse>{
       cpu: {
         freq: 0,

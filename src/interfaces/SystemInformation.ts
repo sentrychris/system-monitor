@@ -13,6 +13,12 @@ export interface UsageInformation {
   percent: number; // (total - free) / total * 100
 }
 
+export interface DiskUsageInformation extends UsageInformation {
+  device: string;
+  mountpoint: string;
+  fstype: string;
+}
+
 export interface PlatformInformation {
   distro: string;
   kernel: string;
