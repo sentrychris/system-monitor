@@ -15,8 +15,8 @@ import { config } from "@/config";
           {{ config.app.name }}</a
         >
         - Made with ❤️ by
-        <a class="text-success text-decoration-none" href="https://versyx.dev"
-          >Versyx</a
+        <a class="text-success text-decoration-none" href="https://github.com/sentrychris"
+          >Chris</a
         >
       </span>
       <span class="d-flex items-center justify-between flex-wrap gap-1">

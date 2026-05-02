@@ -222,6 +222,6 @@ export const useSystemStore = defineStore("system", {
   },
   persist: {
     storage: localStorage,
-    paths: ["type"],
+    pick: ["connectionType"],
   },
 });

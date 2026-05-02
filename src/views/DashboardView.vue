@@ -210,7 +210,7 @@ onBeforeMount(() => {
                     />
                   </div>
                 </div>
-                <DataTable
+                <!-- <DataTable
                   type="horizontal"
                   :data="
                     system.live && system.realtime.processes.length > 0
@@ -218,7 +218,7 @@ onBeforeMount(() => {
                       : system.data.processes
                   "
                   :exclude-columns="['memory_info']"
-                />
+                /> -->
               </div>
             </div>
           </div>

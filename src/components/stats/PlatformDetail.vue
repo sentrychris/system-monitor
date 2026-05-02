@@ -8,7 +8,7 @@ defineProps<{
 </script>
 
 <template>
-  <p class="small"><strong>OS:</strong> {{ detail.distro }}</p>
-  <p class="small"><strong>Kernel:</strong> {{ detail.kernel }}</p>
-  <p class="small"><strong>Uptime:</strong> {{ uptime ?? detail.uptime }}</p>
+  <p class="small"><strong>ED:CS</strong> v1.0.0</p>
+  <p class="small"><a style="color:#eeeeee" href="https://edcs.app">https://edcs.app</a></p>
+  <p class="small"><strong>Up</strong> {{ uptime ?? detail.uptime }}</p>
 </template>

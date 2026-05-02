@@ -96,7 +96,7 @@ export const gauge: Gauge = {
       this.updateTheme(id, color());
     });
 
-    observer.observe(theme.body, {
+    observer.observe(document.body, {
       attributes: true,
       childList: false,
       subtree: false,
