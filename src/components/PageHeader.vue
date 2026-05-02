@@ -23,8 +23,8 @@ withDefaults(
 }
 
 .eyebrow {
-  font-family: "Orbitron", "Exo 2", sans-serif;
-  font-size: 0.62rem;
+  font-family: "IBM Plex Sans", "Inter", system-ui, sans-serif;
+  font-size: var(--fs-micro);
   font-weight: 700;
   letter-spacing: 0.22em;
   text-transform: uppercase;
@@ -32,12 +32,12 @@ withDefaults(
 }
 
 .page-title {
-  font-family: "Orbitron", "Exo 2", sans-serif;
+  font-family: "IBM Plex Sans", "Inter", system-ui, sans-serif;
   font-weight: 600;
-  font-size: 1.15rem;
+  font-size: var(--fs-heading);
   letter-spacing: 0.04em;
   color: #f9fafb;
-  margin: 0.2rem 0 0;
+  margin: 0.25rem 0 0;
   line-height: 1.1;
 }
 
@@ -49,9 +49,9 @@ withDefaults(
   color: #6b7280;
 }
 .page-header:not(.is-compact) .page-title {
-  font-weight: 200;
-  font-size: 2rem;
-  letter-spacing: -0.5px;
+  font-weight: 300;
+  font-size: var(--fs-hero);
+  letter-spacing: -0.01em;
   color: #111827;
 }
 body[data-theme="dark"] .page-header:not(.is-compact) .page-title {
@@ -62,8 +62,7 @@ body[data-theme="dark"] .page-header:not(.is-compact) .eyebrow {
 }
 
 @media (max-width: 575.98px) {
-  .page-title { font-size: 1rem; }
-  .eyebrow { font-size: 0.55rem; letter-spacing: 0.2em; }
-  .page-header:not(.is-compact) .page-title { font-size: 1.5rem; }
+  .page-title { font-size: var(--fs-body); }
+  .page-header:not(.is-compact) .page-title { font-size: var(--fs-display); }
 }
 </style>

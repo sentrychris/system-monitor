@@ -68,7 +68,7 @@ import { config } from "@/config";
 }
 
 .footer-text {
-  font-size: 0.78rem;
+  font-size: var(--fs-caption);
   color: #9ca3af;
   display: inline-flex;
   align-items: center;
@@ -106,9 +106,9 @@ import { config } from "@/config";
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.08);
   color: #94a3b8;
-  font-size: 0.65rem;
+  font-size: var(--fs-micro);
   font-weight: 600;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
   white-space: nowrap;
 }
 .footer-pill.mono {
@@ -127,6 +127,6 @@ import { config } from "@/config";
   }
   .footer-text { justify-content: center; }
   .footer-meta { justify-content: center; }
-  .footer-pill { font-size: 0.6rem; padding: 0.15rem 0.45rem; }
+  .footer-pill { padding: 0.15rem 0.45rem; }
 }
 </style>

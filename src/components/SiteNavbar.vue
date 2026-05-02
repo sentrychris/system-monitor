@@ -45,7 +45,7 @@ const node = computed(() => {
           <span class="status-chip" :class="`status-${system.connectionType}`">
             <span class="status-dot"></span>
             <span class="status-text">{{
-              system.connectionType === "websocket" ? "MONITORING" : "STANDBY"
+              system.connectionType === "websocket" ? "LIVE" : "STATIC"
             }}</span>
           </span>
 
@@ -174,8 +174,8 @@ const node = computed(() => {
   gap: 0.45rem;
   padding: 0.32rem 0.7rem;
   border-radius: 6px;
-  font-family: "Orbitron", "Exo 2", monospace;
-  font-size: 0.62rem;
+  font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: var(--fs-micro);
   font-weight: 700;
   letter-spacing: 0.16em;
   background: rgba(255, 255, 255, 0.04);
@@ -203,16 +203,16 @@ const node = computed(() => {
   padding: 0.32rem 0.7rem;
   border-radius: 6px;
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-size: 0.65rem;
+  font-size: var(--fs-micro);
   font-weight: 600;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
   color: #cbd5e1;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.06);
   max-width: 220px;
   overflow: hidden;
 }
-.node-icon { font-size: 0.7rem; color: #60a5fa; flex-shrink: 0; }
+.node-icon { font-size: var(--fs-caption); color: #60a5fa; flex-shrink: 0; }
 .node-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 /* ---------- Toggle switches ---------- */
@@ -248,7 +248,7 @@ const node = computed(() => {
 }
 
 .track-icon {
-  font-size: 0.6rem;
+  font-size: var(--fs-micro);
   z-index: 1;
   transition: color 0.2s ease;
 }
@@ -293,8 +293,8 @@ const node = computed(() => {
   .navbar-brand { gap: 0 !important; }
   .status-chip,
   .node-chip {
-    font-size: 0.55rem;
     padding: 0.28rem 0.55rem;
+    letter-spacing: 0.1em;
   }
 }
 </style>

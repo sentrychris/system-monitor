@@ -206,9 +206,9 @@ onBeforeUnmount(() => {
   gap: 0.5rem;
   padding: 0.4rem 0.85rem;
   border-radius: 999px;
-  font-size: 0.72rem;
+  font-size: var(--fs-micro);
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -290,13 +290,13 @@ onBeforeUnmount(() => {
   50%      { opacity: 0.55; transform: scale(0.85); }
 }
 
-.service-name { font-weight: 600; font-size: 0.95rem; color: #1f2937; }
+.service-name { font-weight: 600; font-size: var(--fs-body); color: #1f2937; }
 
 .code-badge {
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-size: 0.7rem; font-weight: 600;
+  font-size: var(--fs-micro); font-weight: 600;
   padding: 2px 7px; border-radius: 5px;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.04em;
 }
 .code-2xx { background: rgba(16, 185, 129, 0.12); color: #047857; }
 .code-3xx { background: rgba(59, 130, 246, 0.12); color: #1d4ed8; }
@@ -304,9 +304,9 @@ onBeforeUnmount(() => {
 .code-5xx { background: rgba(239, 68, 68, 0.12);  color: #b91c1c; }
 
 .status-label {
-  font-size: 0.7rem; font-weight: 600;
+  font-size: var(--fs-micro); font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.12em;
   color: #6b7280;
 }
 .is-online   .status-label { color: #047857; }
@@ -317,7 +317,7 @@ onBeforeUnmount(() => {
   display: inline-block;
   margin-top: 4px;
   margin-left: 18px;
-  font-size: 0.75rem;
+  font-size: var(--fs-caption);
   color: #6b7280;
   text-decoration: none;
   word-break: break-all;
@@ -332,11 +332,11 @@ onBeforeUnmount(() => {
   font-variant-numeric: tabular-nums;
   line-height: 1;
 }
-.latency-value { font-size: 1.4rem; font-weight: 700; color: #111827; }
-.latency-unit { font-size: 0.72rem; color: #6b7280; font-weight: 500; margin-left: 3px; }
-.latency-pending { font-size: 1.2rem; color: #9ca3af; font-weight: 600; }
+.latency-value { font-size: var(--fs-display); font-weight: 400; color: #111827; }
+.latency-unit { font-size: var(--fs-caption); color: #6b7280; font-weight: 500; margin-left: 3px; }
+.latency-pending { font-size: var(--fs-heading); color: #9ca3af; font-weight: 600; }
 .latency-error {
-  font-size: 0.78rem; color: #b91c1c; font-weight: 500;
+  font-size: var(--fs-caption); color: #b91c1c; font-weight: 500;
   display: inline-block; max-width: 180px;
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
@@ -356,16 +356,16 @@ onBeforeUnmount(() => {
 
 .checked-at {
   margin-top: 6px;
-  font-size: 0.68rem;
+  font-size: var(--fs-micro);
   color: #9ca3af;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.04em;
 }
 
 @media (max-width: 575.98px) {
   .service-row { padding: 0.85rem 1rem 0.85rem 1.25rem; gap: 0.75rem; }
   .service-metrics { min-width: 100px; }
   .latency-bar { width: 100px; }
-  .latency-value { font-size: 1.2rem; }
+  .latency-value { font-size: var(--fs-heading); }
 }
 
 /* ---------- Dark theme ---------- */

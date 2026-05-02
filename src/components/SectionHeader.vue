@@ -64,13 +64,13 @@ withDefaults(
 }
 
 .header-icon {
-  width: 38px;
-  height: 38px;
+  width: 36px;
+  height: 36px;
   border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.05rem;
+  font-size: var(--fs-heading);
   flex-shrink: 0;
 }
 .header-icon.tone-blue {
@@ -105,19 +105,20 @@ withDefaults(
 }
 
 .header-title {
-  font-family: "Orbitron", "Exo 2", sans-serif;
+  font-family: "IBM Plex Sans", "Inter", system-ui, sans-serif;
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: var(--fs-heading);
   letter-spacing: 0.06em;
-  line-height: 1.1;
+  line-height: 1.15;
   text-transform: uppercase;
 }
 .header-sub {
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-size: 0.68rem;
+  font-size: var(--fs-micro);
   color: #9ca3af;
-  letter-spacing: 0.08em;
-  margin-top: 3px;
+  letter-spacing: 0.1em;
+  margin-top: 4px;
+  text-transform: uppercase;
 }
 
 .header-right {
@@ -127,8 +128,7 @@ withDefaults(
 
 @media (max-width: 575.98px) {
   .section-header { padding: 0.75rem 0.9rem; }
-  .header-icon { width: 32px; height: 32px; font-size: 0.85rem; }
-  .header-title { font-size: 0.85rem; }
-  .header-sub { font-size: 0.6rem; }
+  .header-icon { width: 30px; height: 30px; font-size: var(--fs-body); }
+  .header-title { font-size: var(--fs-body); }
 }
 </style>

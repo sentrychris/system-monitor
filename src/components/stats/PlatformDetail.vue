@@ -27,8 +27,8 @@ defineProps<{
 <style scoped>
 .metric-block { margin-bottom: 0.65rem; }
 .distro {
-  font-size: 1.1rem;
-  font-weight: 700;
+  font-size: var(--fs-heading);
+  font-weight: 400;
   color: #111827;
   line-height: 1.2;
   white-space: nowrap;
@@ -36,18 +36,18 @@ defineProps<{
   text-overflow: ellipsis;
 }
 .metric-label {
-  font-family: "Orbitron", "Exo 2", monospace;
-  font-size: 0.62rem;
+  font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: var(--fs-micro);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.18em;
   color: #6b7280;
-  margin-top: 4px;
+  margin-top: 6px;
 }
 .row-label {
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-size: 0.68rem;
-  letter-spacing: 0.08em;
+  font-size: var(--fs-micro);
+  letter-spacing: 0.12em;
 }
 
 .metric-rows {
@@ -62,7 +62,7 @@ defineProps<{
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  font-size: 0.8rem;
+  font-size: var(--fs-caption);
   gap: 0.5rem;
 }
 .row-label { color: #6b7280; flex-shrink: 0; }
@@ -77,7 +77,7 @@ defineProps<{
 }
 .row-value.mono {
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-size: 0.75rem;
+  font-size: var(--fs-caption);
 }
 
 body[data-theme="dark"] .distro       { color: var(--text-primary); }

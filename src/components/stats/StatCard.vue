@@ -72,13 +72,13 @@ const loader = useLoadingStore();
 .stat-header > * { position: relative; z-index: 1; }
 
 .stat-icon {
-  width: 34px;
-  height: 34px;
-  border-radius: 9px;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.95rem;
+  font-size: var(--fs-body);
   flex-shrink: 0;
 }
 .stat-icon.tone-blue   { background: rgba(59, 130, 246, 0.15);  color: #60a5fa; box-shadow: inset 0 0 0 1px rgba(59,130,246,0.25); }
@@ -89,9 +89,9 @@ const loader = useLoadingStore();
 .stat-icon.tone-slate  { background: rgba(148, 163, 184, 0.12); color: #cbd5e1; box-shadow: inset 0 0 0 1px rgba(148,163,184,0.2); }
 
 .stat-title {
-  font-family: "Orbitron", "Exo 2", sans-serif;
+  font-family: "IBM Plex Sans", "Inter", system-ui, sans-serif;
   font-weight: 600;
-  font-size: 0.85rem;
+  font-size: var(--fs-body);
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
@@ -103,14 +103,14 @@ const loader = useLoadingStore();
 }
 @media (max-width: 575.98px) {
   .stat-header { padding: 0.65rem 0.85rem; }
-  .stat-icon { width: 30px; height: 30px; font-size: 0.85rem; }
-  .stat-title { font-size: 0.75rem; }
+  .stat-icon { width: 28px; height: 28px; font-size: var(--fs-caption); }
+  .stat-title { font-size: var(--fs-caption); }
   .stat-body { padding: 0.85rem 0.95rem 1rem; }
 }
 
 .stat-loading {
   color: #9ca3af;
-  font-size: 0.85rem;
+  font-size: var(--fs-caption);
 }
 
 body[data-theme="dark"] .stat-body {

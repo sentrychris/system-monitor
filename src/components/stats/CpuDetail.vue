@@ -34,33 +34,33 @@ defineProps<{
   line-height: 1;
 }
 .metric-value {
-  font-size: 2rem;
-  font-weight: 700;
+  font-size: var(--fs-hero);
+  font-weight: 400;
   color: #111827;
 }
 .metric-unit {
-  font-size: 0.95rem;
+  font-size: var(--fs-body);
   color: #6b7280;
   font-weight: 500;
   margin-left: 4px;
 }
 .metric-label {
-  font-family: "Orbitron", "Exo 2", monospace;
-  font-size: 0.62rem;
+  font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: var(--fs-micro);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.18em;
   color: #6b7280;
-  margin-top: 4px;
+  margin-top: 6px;
 }
 .row-value.mono {
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-size: 0.75rem;
+  font-size: var(--fs-caption);
 }
 .row-label {
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-size: 0.68rem;
-  letter-spacing: 0.08em;
+  font-size: var(--fs-micro);
+  letter-spacing: 0.12em;
 }
 
 .metric-rows {
@@ -74,7 +74,7 @@ defineProps<{
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  font-size: 0.8rem;
+  font-size: var(--fs-caption);
 }
 .row-label { color: #6b7280; }
 .row-value {
@@ -83,7 +83,7 @@ defineProps<{
   font-feature-settings: "tnum";
   font-variant-numeric: tabular-nums;
 }
-.row-unit { color: #9ca3af; font-weight: 500; font-size: 0.72rem; margin-left: 2px; }
+.row-unit { color: #9ca3af; font-weight: 500; font-size: var(--fs-micro); margin-left: 3px; }
 
 body[data-theme="dark"] .metric-value { color: var(--text-primary); }
 body[data-theme="dark"] .metric-unit  { color: var(--text-muted); }

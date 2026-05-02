@@ -25,10 +25,10 @@ onBeforeMount(() => {
 
 <template>
   <Transition name="fade">
-    <div v-if="loader.loaded" class="container py-4 py-sm-4 dashboard-root">
+    <div v-if="loader.loaded" class="container py-0 py-md-2 dashboard-root">
       <!-- Top stat cards -->
       <section id="statistics" class="page-section mt-0">
-        <div class="row mt-3 g-3">
+        <div class="row mt-0 mt-md-3 g-3">
           <div class="col-sm-12 col-md-6 col-lg-3 d-flex align-items-stretch">
             <StatCard title="Platform" icon="fa-solid fa-server" tone="blue">
               <template #detail>
@@ -149,6 +149,9 @@ onBeforeMount(() => {
                 <RealtimeLineChart
                   :data-point="system.realtime.cpu.usage"
                   :y-axis-range="[0, 100]"
+                  tone="purple"
+                  unit="%"
+                  :decimals="0"
                 />
               </div>
             </div>
@@ -165,6 +168,9 @@ onBeforeMount(() => {
                 <RealtimeLineChart
                   :data-point="system.realtime.mem.used"
                   :y-axis-range="[0, 16]"
+                  tone="amber"
+                  unit="GB"
+                  :decimals="1"
                 />
               </div>
             </div>
@@ -184,7 +190,7 @@ onBeforeMount(() => {
                 tone="green"
               />
               <div class="panel-body">
-                <div class="row">
+                <div class="row align-items-center">
                   <div class="col-sm-12 col-md-6 col-lg-8">
                     <BarChart
                       metric="system"

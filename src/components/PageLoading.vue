@@ -75,8 +75,8 @@ body[data-theme="dark"] #loading {
 }
 
 .loading-message {
-  font-size: 0.9rem;
-  letter-spacing: 0.04em;
+  font-size: var(--fs-body);
+  letter-spacing: 0.06em;
   color: #6b7280;
   font-weight: 500;
 }

@@ -3,6 +3,8 @@
 
 @import url("https://fonts.googleapis.com/css2?family=Lato:wght@200;300;400&family=Noto+Sans:wght@200;300;400&family=Nunito:wght@200;300;400&family=Open+Sans&family=Oxygen&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&family=Orbitron:wght@400..900&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap');
 
 @import "./dark.scss";
 
@@ -12,8 +14,24 @@ body {
 }
 
 body {
-  font-family: "Exo 2", "Open Sans", sans-serif;
+  font-family: "Montserrat", "Open Sans", sans-serif;
   background: #eeeeee;
+  position: relative;
+}
+
+/* Ambient glow gradient — soft blobs in the dashboard accent tones, fixed to
+   the viewport so it doesn't scroll with content. Sits behind everything. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(900px circle at 12% 8%,  rgba(96, 165, 250, 0.22), transparent 65%),
+    radial-gradient(800px circle at 88% 22%, rgba(167, 139, 250, 0.18), transparent 65%),
+    radial-gradient(1000px circle at 55% 110%, rgba(34, 211, 238, 0.18), transparent 65%),
+    radial-gradient(700px circle at 30% 85%, rgba(16, 185, 129, 0.10), transparent 60%);
 }
 
 #app {
@@ -57,7 +75,7 @@ h1.header {
 }
 
 h2.header {
-  font-size: 1.75rem;
+  font-size: var(--fs-display);
 }
 
 .page-section {
@@ -71,10 +89,32 @@ h2.header {
   }
 }
 
+/* ─────────────────────────────────────────────────────────────────────────
+   Type scale — single source of truth for font sizing across the app.
+   Six steps total. Components reference these via var(--fs-…) where
+   convenient; raw values are in line below for SCSS-scoped places where
+   custom properties don't compose cleanly with media queries.
+
+   --fs-micro    10px  — chips, badges, eyebrows, technical labels
+   --fs-caption  12px  — URLs, mono data rows, secondary labels
+   --fs-body     14px  — primary body text, list-item names
+   --fs-heading  16px  — section / stat card titles
+   --fs-display 24px  — large metric values
+   --fs-hero    30px  — primary "instrument" numbers
+   ───────────────────────────────────────────────────────────────────────── */
+:root {
+  --fs-micro:   0.625rem;
+  --fs-caption: 0.75rem;
+  --fs-body:    0.875rem;
+  --fs-heading: 1rem;
+  --fs-display: 1.5rem;
+  --fs-hero:    1.875rem;
+}
+
 /* SOC dashboard utility class — applies a tight Orbitron number rendering
    style for primary metrics that should feel "instrument cluster" technical. */
 .metric-num {
-  font-family: "Orbitron", "Exo 2", monospace;
+  font-family: "Montserrat", "Exo 2", monospace;
   font-feature-settings: "tnum";
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.01em;
@@ -108,10 +148,10 @@ body[data-theme="dark"] .panel-card {
 
 /* Soft section subtitle/eyebrow used in the page header */
 .eyebrow {
-  font-size: 0.72rem;
-  font-weight: 700;
+  font-size: var(--fs-micro);
+  font-weight: 400;
   text-transform: uppercase;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.22em;
   color: #6b7280;
 }
 body[data-theme="dark"] .eyebrow {
