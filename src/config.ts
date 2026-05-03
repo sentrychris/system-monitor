@@ -13,7 +13,7 @@ export const config: Configuration = {
     },
   },
   api: {
-    connection: import.meta.env.VITE_CONNECTION_TYPE,
+    connectionType: import.meta.env.VITE_CONNECTION_TYPE,
     urls: {
       http: import.meta.env.VITE_API_URL,
       worker: import.meta.env.VITE_WORKER_URL,

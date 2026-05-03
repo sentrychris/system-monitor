@@ -12,7 +12,7 @@ interface BaseConfiguration {
 }
 
 interface ApiConfiguration {
-  connection: ConnectionTypes;
+  connectionType: ConnectionTypes;
   urls: {
     http: string;
     worker: string;

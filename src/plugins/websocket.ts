@@ -1,6 +1,6 @@
 import type { App } from "vue";
 import { config } from "@/config";
-import { websocketInjectionSymbol } from "@/injection";
+import { injectWebsocket } from "@/injection";
 import { WebsocketStatus } from "@/enums/StatusCodes";
 
 export class WebsocketMaker {
@@ -53,6 +53,6 @@ const websocket = new WebsocketMaker();
 
 export const useWebsocket = {
   install(app: App) {
-    app.provide(websocketInjectionSymbol, websocket);
+    app.provide(injectWebsocket, websocket);
   },
 };

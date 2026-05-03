@@ -1,7 +1,7 @@
 import type { App } from "vue";
 import axios, { type AxiosInstance, type AxiosRequestConfig, type AxiosResponse } from "axios";
 import { config } from "@/config";
-import { httpInjectionSymbol } from "@/injection";
+import { injectHttp } from "@/injection";
 import { HttpStatus } from "@/enums/StatusCodes";
 
 export class HttpMaker {
@@ -115,6 +115,6 @@ export const http = new HttpMaker();
 
 export const useHttp = {
   install(app: App) {
-    app.provide(httpInjectionSymbol, http);
+    app.provide(injectHttp, http);
   },
 };
