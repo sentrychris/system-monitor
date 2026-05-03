@@ -4,7 +4,7 @@ A lightweight monitoring dashboard for your server.
 
 View a [live example here](https://status.edcs.app).
 
-![image](./screenshot.png)
+![image](./README.png)
 
 ## Quick Start
 
