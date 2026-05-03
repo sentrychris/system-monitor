@@ -4,6 +4,17 @@ A lightweight monitoring dashboard for your server.
 
 View a [live example here](https://status.versyx.net).
 
+## Dashboard
+
+The dashboard renders four rows on a single screen:
+
+- **Stats row** — Platform, CPU, Memory, Disk summary cards.
+- **Status row** — Service Status (probes pulled from `/probes`, with online/slow/offline classification and latency bars), live Network Traffic chart (in/out bytes/sec from `/system.network`, auto-scaling Y axis with smoothed transitions), and a compact System Resources gauge stack.
+- **Processes + Storage** — top-10 process bar + pie (live RSS/PSS aggregation), plus a per-partition Storage list with gradient usage bars.
+- **Live time-series** (when in WebSocket mode) — CPU and Memory line charts.
+
+The container-query-based components scale cleanly between full-width and narrow-card placements, so widgets stay readable on mobile and dense on desktop without scrolling.
+
 ## Quick Start
 
 ### Requirements
@@ -49,6 +60,8 @@ The application is designed to work with either static data served from standard
 - If you set `VITE_CONNECTION_TYPE` to `http`, the dashboard will load with data requested from an HTTP endpoint and will poll for updates every 30 seconds.
 
 There is a control switch provided at the top-right on the navbar to toggle the connection type between HTTP and Websocket.
+
+The dashboard consumes three endpoints from psmonitor: `GET /system` (single-fetch snapshot — also drives the `/connect` WebSocket stream), `GET /network` (interface counters and Wi-Fi info), and `GET /probes` (configurable external service health checks). Multi-disk and live network throughput data are populated by the `disks` and `network` fields on `/system`.
 
 I hope you find this project useful, if you have any questions or feedback, please feel free to raise an [issue here](https://github.com/sentrychris/system-monitor/issues).
 
