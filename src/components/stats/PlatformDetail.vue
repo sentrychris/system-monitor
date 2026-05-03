@@ -1,15 +1,29 @@
 <script setup lang="ts">
+import { computed } from "vue";
 import type { PlatformInformation } from "@/interfaces/SystemInformation";
 
-defineProps<{
+const props = defineProps<{
   detail: PlatformInformation;
   uptime?: string | null;
 }>();
+
+const platformLogo = computed(() => {
+  const isWindows = /windows/i.test(props.detail?.distro ?? "");
+  const file = isWindows ? "windows.png" : "linux.png";
+  return `${import.meta.env.BASE_URL}images/${file}`;
+});
 </script>
 
 <template>
   <div class="metric-block">
-    <div class="distro" :title="detail.distro">{{ detail.distro || "—" }}</div>
+    <div class="distro-row">
+      <img
+        class="platform-logo"
+        :src="platformLogo"
+        :alt="detail.distro || 'platform'"
+      />
+      <div class="distro" :title="detail.distro">{{ detail.distro || "—" }}</div>
+    </div>
     <div class="metric-label">SYSTEM</div>
   </div>
   <div class="metric-rows">
@@ -26,6 +40,18 @@ defineProps<{
 
 <style scoped>
 .metric-block { margin-bottom: 0.65rem; }
+.distro-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+.platform-logo {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
 .distro {
   font-size: var(--fs-heading);
   font-weight: 400;
@@ -34,6 +60,7 @@ defineProps<{
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  min-width: 0;
 }
 .metric-label {
   font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
