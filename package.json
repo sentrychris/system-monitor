@@ -15,21 +15,17 @@
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.6",
-    "@fortawesome/free-brands-svg-icons": "^6.6",
-    "@fortawesome/free-regular-svg-icons": "^6.6",
     "@fortawesome/free-solid-svg-icons": "^6.6",
     "@fortawesome/vue-fontawesome": "^3.0",
     "@popperjs/core": "^2.11",
     "axios": "^1.7",
     "bootstrap": "^5.3",
     "d3": "^7.9",
-    "highcharts": "^11.4",
     "lodash": "^4.17",
     "pinia": "^2.2",
     "pinia-plugin-persistedstate": "^4.0.1",
     "vue": "^3.5",
-    "vue-router": "^4.4",
-    "vuedraggable": "^4.1.0"
+    "vue-router": "^4.4"
   },
   "devDependencies": {
     "@pinia/testing": "0.1.5",
