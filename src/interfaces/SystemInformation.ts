@@ -25,6 +25,13 @@ export interface NetworkRateInformation {
   tx_bytes_per_sec: number;
 }
 
+export interface DiskIoInformation {
+  read_bytes_per_sec: number;
+  write_bytes_per_sec: number;
+  read_iops: number;
+  write_iops: number;
+}
+
 export interface PlatformInformation {
   distro: string;
   kernel: string;

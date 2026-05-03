@@ -34,6 +34,12 @@ export const staticMockData: SystemResponse = {
     rx_bytes_per_sec: 0,
     tx_bytes_per_sec: 0,
   },
+  disk_io: {
+    read_bytes_per_sec: 0,
+    write_bytes_per_sec: 0,
+    read_iops: 0,
+    write_iops: 0,
+  },
   platform: {
     distro: "Raspbian GNU/Linux 11 (bullseye)",
     kernel: "5.15.61-v7l+",

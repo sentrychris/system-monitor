@@ -11,6 +11,7 @@ import UsageDetail from "@/components/stats/UsageDetail.vue";
 import GaugeChart from "@/components/charts/GaugeChart.vue";
 import RealtimeLineChart from "@/components/charts/RealtimeLineChart.vue";
 import NetworkTrafficChart from "@/components/charts/NetworkTrafficChart.vue";
+import DiskIoChart from "@/components/charts/DiskIoChart.vue";
 import BarChart from "@/components/charts/BarChart.vue";
 import PieChart from "@/components/charts/PieChart.vue";
 import ServiceStatus from "@/components/ServiceStatus.vue";
@@ -131,7 +132,7 @@ onBeforeMount(() => {
       <!-- Row 3: realtime line charts (live mode only) -->
       <section id="d3-line-charts" v-if="system.live" class="page-section">
         <div class="row g-2">
-          <div class="col-sm-12 col-md-4">
+          <div class="col-sm-12 col-md-6 col-lg-3">
             <div class="card panel-card border-0 shadow-lg">
               <SectionHeader
                 title="Network Traffic"
@@ -147,7 +148,25 @@ onBeforeMount(() => {
               </div>
             </div>
           </div>
-          <div class="col-sm-12 col-md-4">
+          <div class="col-sm-12 col-md-6 col-lg-3">
+            <div class="card panel-card border-0 shadow-lg">
+              <SectionHeader
+                title="Disk I/O"
+                subtitle="Live read/write · 30s"
+                icon="fa-solid fa-hard-drive"
+                tone="green"
+              />
+              <div class="panel-body p-0">
+                <DiskIoChart
+                  :read="system.realtime.disk_io?.read_bytes_per_sec ?? 0"
+                  :write="system.realtime.disk_io?.write_bytes_per_sec ?? 0"
+                  :read-iops="system.realtime.disk_io?.read_iops ?? 0"
+                  :write-iops="system.realtime.disk_io?.write_iops ?? 0"
+                />
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-12 col-md-6 col-lg-3">
             <div class="card panel-card border-0 shadow-lg">
               <SectionHeader
                 title="CPU Usage"
@@ -166,7 +185,7 @@ onBeforeMount(() => {
               </div>
             </div>
           </div>
-          <div class="col-sm-12 col-md-4">
+          <div class="col-sm-12 col-md-6 col-lg-3">
             <div class="card panel-card border-0 shadow-lg">
               <SectionHeader
                 title="Memory Usage"

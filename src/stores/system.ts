@@ -32,6 +32,12 @@ export const useSystemStore = defineStore("system", {
         rx_bytes_per_sec: 0,
         tx_bytes_per_sec: 0,
       },
+      disk_io: {
+        read_bytes_per_sec: 0,
+        write_bytes_per_sec: 0,
+        read_iops: 0,
+        write_iops: 0,
+      },
       uptime: null,
       processes: [],
     },
