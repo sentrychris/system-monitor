@@ -328,15 +328,73 @@
         z-index: -1;
       }
       .browser {
+        --mx: 50%;
+        --my: 50%;
+        --rx: 0deg;
+        --ry: 2deg;
+        position: relative;
         border-radius: var(--r-lg);
         overflow: hidden;
         background: var(--bg-1);
         border: 1px solid var(--line-strong);
         box-shadow: var(--shadow-lg);
-        transform: perspective(1800px) rotateX(2deg);
-        transition: transform 600ms cubic-bezier(.2,.8,.2,1);
+        transform: perspective(1400px) rotateX(var(--ry)) rotateY(var(--rx));
+        transition:
+          transform 220ms cubic-bezier(.2,.8,.2,1),
+          box-shadow 260ms ease;
+        will-change: transform;
       }
-      .browser:hover { transform: perspective(1800px) rotateX(0deg); }
+      .browser:hover {
+        cursor: grab;
+        box-shadow:
+          0 40px 100px -20px rgba(2, 6, 23, 0.85),
+          0 0 0 1px rgba(96, 165, 250, 0.18) inset,
+          0 0 60px -10px rgba(34, 211, 238, 0.45);
+      }
+      /* Holographic diagonal sheen, position shifts with the cursor. */
+      .browser::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        border-radius: inherit;
+        background:
+          linear-gradient(
+            105deg,
+            transparent 38%,
+            rgba(96, 165, 250, 0.18) 46%,
+            rgba(192, 132, 252, 0.14) 50%,
+            rgba(34, 211, 238, 0.18) 54%,
+            transparent 62%
+          );
+        background-size: 220% 220%;
+        background-position: var(--mx) var(--my);
+        mix-blend-mode: screen;
+        opacity: 0;
+        transition: opacity 220ms ease;
+        z-index: 3;
+      }
+      /* Spotlight glare that tracks the cursor. */
+      .browser::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        border-radius: inherit;
+        background:
+          radial-gradient(
+            210px circle at var(--mx) var(--my),
+            rgba(255, 255, 255, 0.02),
+            rgba(255, 255, 255, 0.06) 28%,
+            transparent 90%
+          );
+        mix-blend-mode: screen;
+        opacity: 0;
+        transition: opacity 220ms ease;
+        z-index: 3;
+      }
+      .browser:hover::before,
+      .browser:hover::after { opacity: 1; }
       .browser-bar {
         display: flex;
         align-items: center;
@@ -536,12 +594,12 @@
       .quickstart {
         margin-top: 3rem;
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 2fr 1fr;
         gap: 2rem;
         align-items: start;
       }
       @media (max-width: 820px) {
-        .quickstart { grid-template-columns: 1fr; }
+        .quickstart { grid-template-columns: 2fr; }
       }
       .terminal {
         border-radius: var(--r-md);
@@ -748,7 +806,8 @@
         .atmosphere::after { animation: none; }
         .hero-eyebrow .dot { animation: none; }
         .reveal { opacity: 1; transform: none; transition: none; }
-        .browser { transform: none; }
+        .browser { transform: none; transition: none; }
+        .browser::before, .browser::after { display: none; }
       }
 
       /* Mobile nav */
@@ -947,6 +1006,12 @@
           <p class="section-lede">
             Run Vigil Collector on the host you want to watch, then point Vigil at it. That is the whole setup.
           </p>
+          <p class="section-lede">
+            Grab the prebuilt single-file Vigil Collector binary — no Python install required on the target host.
+          </p>
+          <p class="section-lede">
+            <a class="btn btn-primary" href="https://github.com/sentrychris/vigil-collector/releases/download/v1.0.0/vigil-collector">Download v1.0.0</a>
+          </p>
         </div>
 
         <div class="quickstart">
@@ -957,10 +1022,10 @@
               <span class="browser-dot g"></span>
               <span class="label">~/vigil — bash</span>
             </div>
-            <pre><span class="term-comment"># 1. Get Vigil Collector running on the host</span>
-<span class="term-prompt">$</span> <span class="term-cmd">git clone</span> https://github.com/sentrychris/vigil-collector
-<span class="term-prompt">$</span> <span class="term-cmd">cd</span> Vigil Collector &amp;&amp; <span class="term-cmd">pip install</span> <span class="term-flag">-e</span> .
-<span class="term-prompt">$</span> <span class="term-cmd">Vigil Collector</span> <span class="term-flag">--address</span>=0.0.0.0 <span class="term-flag">--port</span>=4500
+            <pre><span class="term-comment"># 1. Drop the binary on PATH and start the collector</span>
+<span class="term-prompt">$</span> <span class="term-cmd">chmod</span> +x vigil-collector
+<span class="term-prompt">$</span> <span class="term-cmd">mv</span> vigil-collector ~/.local/bin/   <span class="term-comment"># or: sudo mv ... /usr/local/bin/</span>
+<span class="term-prompt">$</span> <span class="term-cmd">vigil-collector</span> <span class="term-flag">--address</span>=0.0.0.0 <span class="term-flag">--port</span>=4500
 
 <span class="term-comment"># 2. Clone Vigil and point it at Vigil Collector</span>
 <span class="term-prompt">$</span> <span class="term-cmd">git clone</span> https://github.com/sentrychris/vigil
@@ -977,7 +1042,7 @@
             <div class="qs-step">
               <span class="num">1</span>
               <h4>Install Vigil Collector on the host</h4>
-              <p>The Python sampler runs the heavy psutil work and exposes HTTP + WebSocket endpoints. <a href="https://github.com/sentrychris/vigil-collector" target="_blank" rel="noopener">Repo →</a></p>
+              <p>Place the downloaded binary somewhere on your <code style="color:var(--amber)">PATH</code> — <code style="color:var(--amber)">~/.local/bin/</code> for a single user, <code style="color:var(--amber)">/usr/local/bin/</code> system-wide. It runs the sampler and exposes HTTP + WebSocket endpoints. <a href="https://github.com/sentrychris/vigil-collector" target="_blank" rel="noopener">Repo →</a></p>
             </div>
             <div class="qs-step">
               <span class="num">2</span>
@@ -995,6 +1060,29 @@
               <p>The navbar switch flips between WebSocket (1 Hz live) and HTTP polling (30 s). Both speak the same payload shape.</p>
             </div>
           </div>
+        </div>
+
+        <h3 style="margin-top: 4rem; font-size: 0.95rem; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-dim); font-family: 'IBM Plex Mono', monospace;">Build Vigil Collector from source</h3>
+        <p class="section-lede" style="margin-top: 0.8rem;">
+          Prefer to build it yourself? Clone the repo and install with pip, or roll your own one-file binary with PyInstaller.
+        </p>
+
+        <div class="terminal reveal" style="margin-top: 1.5rem;">
+          <div class="terminal-bar">
+            <span class="browser-dot r"></span>
+            <span class="browser-dot y"></span>
+            <span class="browser-dot g"></span>
+            <span class="label">~/vigil-collector — bash</span>
+          </div>
+          <pre><span class="term-comment"># Run from a checkout (requires Python 3.10+)</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git clone</span> https://github.com/sentrychris/vigil-collector
+<span class="term-prompt">$</span> <span class="term-cmd">cd</span> vigil-collector &amp;&amp; <span class="term-cmd">pip install</span> <span class="term-flag">-e</span> .
+<span class="term-prompt">$</span> <span class="term-cmd">vigil-collector</span> <span class="term-flag">--address</span>=0.0.0.0 <span class="term-flag">--port</span>=4500
+
+<span class="term-comment"># Or produce a standalone binary with PyInstaller</span>
+<span class="term-prompt">$</span> <span class="term-cmd">pip install</span> <span class="term-flag">-e</span> <span class="term-string">".[build]"</span>
+<span class="term-prompt">$</span> <span class="term-cmd">pyinstaller</span> vigil-collector.spec
+  ➜  Output: <span class="term-string">dist/vigil-collector</span></pre>
         </div>
 
         <h3 style="margin-top: 4rem; font-size: 0.95rem; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-dim); font-family: 'IBM Plex Mono', monospace;">Stack</h3>
@@ -1076,6 +1164,33 @@
         { threshold: 0.12, rootMargin: "0px 0px -60px 0px" },
       );
       document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
+
+      // Holographic-card tilt + cursor-tracked shine for the screenshot.
+      // Only on hover-capable, motion-friendly devices — touch & reduced-motion get the static frame.
+      const canTilt =
+        window.matchMedia("(hover: hover)").matches &&
+        !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (canTilt) {
+        document.querySelectorAll(".browser").forEach((el) => {
+          const onMove = (e) => {
+            const r = el.getBoundingClientRect();
+            const x = (e.clientX - r.left) / r.width;
+            const y = (e.clientY - r.top) / r.height;
+            el.style.setProperty("--mx", `${x * 100}%`);
+            el.style.setProperty("--my", `${y * 100}%`);
+            el.style.setProperty("--rx", `${(x - 0.5) * 10}deg`);
+            el.style.setProperty("--ry", `${(0.5 - y) * 8}deg`);
+          };
+          const reset = () => {
+            el.style.removeProperty("--mx");
+            el.style.removeProperty("--my");
+            el.style.removeProperty("--rx");
+            el.style.removeProperty("--ry");
+          };
+          el.addEventListener("pointermove", onMove);
+          el.addEventListener("pointerleave", reset);
+        });
+      }
     </script>
   </body>
 </html>
