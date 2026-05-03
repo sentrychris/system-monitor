@@ -698,6 +698,193 @@
         border: 1px solid var(--line);
       }
 
+      /* ───────────── Pricing ───────────── */
+      .pricing-grid {
+        margin-top: 3rem;
+        display: flex;
+        justify-content: center;
+      }
+      .pricing-card {
+        position: relative;
+        max-width: 540px;
+        width: 100%;
+        padding: 2.4rem 2rem 1.8rem;
+        border-radius: var(--r-lg);
+        background:
+          radial-gradient(80% 100% at 50% 0%, rgba(96, 165, 250, 0.14), transparent 60%),
+          linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.015));
+        border: 1px solid var(--line-strong);
+        box-shadow: var(--shadow-lg);
+        overflow: hidden;
+        transition: transform 280ms ease, border-color 280ms ease, box-shadow 280ms ease;
+      }
+      .pricing-card::before {
+        /* Accent gradient top edge */
+        content: "";
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, var(--cyan), var(--blue), var(--purple));
+        opacity: 0.85;
+      }
+      .pricing-card::after {
+        /* Subtle grid overlay */
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image:
+          linear-gradient(rgba(96, 165, 250, 0.04) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(96, 165, 250, 0.04) 1px, transparent 1px);
+        background-size: 28px 28px;
+        opacity: 0.45;
+        pointer-events: none;
+        mask-image: radial-gradient(ellipse at center top, black 30%, transparent 80%);
+        -webkit-mask-image: radial-gradient(ellipse at center top, black 30%, transparent 80%);
+      }
+      .pricing-card:hover {
+        transform: translateY(-3px);
+        border-color: rgba(96, 165, 250, 0.55);
+        box-shadow:
+          var(--shadow-lg),
+          0 0 60px -12px rgba(34, 211, 238, 0.4);
+      }
+      .pricing-card > * { position: relative; z-index: 1; }
+
+      .pricing-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.55rem;
+        padding: 0.32rem 0.8rem;
+        border-radius: 999px;
+        background: rgba(34, 211, 238, 0.08);
+        border: 1px solid rgba(34, 211, 238, 0.28);
+        color: var(--cyan);
+        font-family: "IBM Plex Mono", ui-monospace, monospace;
+        font-size: 0.7rem;
+        font-weight: 500;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+      }
+
+      .pricing-amount {
+        margin-top: 1.1rem;
+        display: flex;
+        align-items: baseline;
+        gap: 0.35rem;
+        font-family: "IBM Plex Sans", system-ui, sans-serif;
+        font-feature-settings: "tnum";
+        font-variant-numeric: tabular-nums;
+        line-height: 1;
+      }
+      .pricing-currency {
+        font-size: 1.6rem;
+        font-weight: 500;
+        color: var(--text-mute);
+        align-self: flex-start;
+        margin-top: 0.6rem;
+      }
+      .pricing-num {
+        font-size: clamp(3.2rem, 7vw, 4.6rem);
+        font-weight: 700;
+        letter-spacing: -0.04em;
+        background: linear-gradient(120deg, var(--cyan) 10%, var(--blue) 60%, var(--purple) 95%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .pricing-cadence {
+        margin-left: 0.4rem;
+        font-family: "IBM Plex Mono", ui-monospace, monospace;
+        font-size: 0.78rem;
+        font-weight: 500;
+        color: var(--text-dim);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .pricing-tagline {
+        margin-top: 0.6rem;
+        color: var(--text-mute);
+        font-weight: 300;
+        font-size: 1rem;
+      }
+
+      .pricing-features {
+        margin: 1.6rem 0 1.8rem;
+        padding: 0;
+        list-style: none;
+        display: grid;
+        gap: 0.55rem;
+      }
+      .pricing-features li {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.7rem;
+        font-size: 0.93rem;
+        color: var(--text);
+        font-weight: 300;
+        line-height: 1.5;
+      }
+      .pricing-features li svg {
+        flex-shrink: 0;
+        width: 18px;
+        height: 18px;
+        margin-top: 0.15rem;
+        color: var(--emerald);
+        filter: drop-shadow(0 0 6px rgba(52, 211, 153, 0.45));
+      }
+
+      .pricing-cta {
+        width: 100%;
+        justify-content: center;
+        padding: 0.85rem 1.2rem;
+        font-size: 0.95rem;
+      }
+      .pricing-cta .ico { width: 18px; height: 18px; }
+
+      .pricing-secure {
+        margin-top: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.55rem;
+        font-family: "IBM Plex Mono", ui-monospace, monospace;
+        font-size: 0.7rem;
+        color: var(--text-dim);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+      .pricing-secure svg {
+        width: 12px; height: 12px;
+        color: var(--emerald);
+      }
+      .pricing-secure .stripe-mark {
+        color: var(--text-mute);
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-transform: none;
+        font-size: 0.78rem;
+      }
+
+      .pricing-fineprint {
+        margin: 1.4rem auto 0;
+        text-align: center;
+        max-width: 520px;
+        font-size: 0.82rem;
+        color: var(--text-dim);
+        font-weight: 300;
+        line-height: 1.6;
+      }
+      .pricing-fineprint a {
+        color: var(--text-mute);
+        border-bottom: 1px solid transparent;
+        transition: border-color 160ms ease, color 160ms ease;
+      }
+      .pricing-fineprint a:hover {
+        color: var(--text);
+        border-bottom-color: var(--text-mute);
+      }
+
       /* ───────────── CTA card ───────────── */
       .cta-card {
         margin-top: 3rem;
@@ -831,6 +1018,7 @@
           <a class="nav-link text" href="#features">Features</a>
           <a class="nav-link text" href="#architecture">How it works</a>
           <a class="nav-link text" href="#start">Get started</a>
+          <a class="nav-link text" href="#pricing">Pricing</a>
           <a class="btn" href="https://github.com/sentrychris/vigil" target="_blank" rel="noopener">
             <svg class="ico" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
               <path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56v-2.16c-3.2.7-3.87-1.36-3.87-1.36-.52-1.34-1.28-1.69-1.28-1.69-1.05-.72.08-.71.08-.71 1.16.08 1.77 1.2 1.77 1.2 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.18-3.1-.12-.29-.51-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.78 0c2.21-1.49 3.18-1.18 3.18-1.18.62 1.59.23 2.76.11 3.05.74.81 1.18 1.84 1.18 3.1 0 4.43-2.69 5.41-5.25 5.69.41.36.78 1.06.78 2.13v3.16c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z"/>
@@ -1098,6 +1286,90 @@
           <span class="pill">Playwright</span>
           <span class="pill">Vitest</span>
         </div>
+      </div>
+    </section>
+
+    <!-- ───────────── Pricing ─────────────
+         To activate Stripe checkout: replace the href on .pricing-cta with the
+         Payment Link URL from your Stripe dashboard
+         (https://dashboard.stripe.com/payment-links). No keys live in this
+         file — Stripe-hosted checkout handles the entire transaction.
+    -->
+    <section id="pricing" class="section" style="padding-top: 0;">
+      <div class="wrap">
+        <div class="reveal">
+          <div class="section-eyebrow">Premium support</div>
+          <h2 class="section-title">Don't want to set it up yourself?</h2>
+          <p class="section-lede">
+            Get Vigil installed and configured on your host in under an hour. TLS, systemd, your service probes — all included. One-time payment, no subscription.
+          </p>
+        </div>
+
+        <div class="pricing-grid">
+          <div class="pricing-card reveal">
+            <span class="pricing-eyebrow">Full-supported install</span>
+
+            <div class="pricing-amount">
+              <span class="pricing-currency">$</span>
+              <span class="pricing-num">99</span>
+              <span class="pricing-cadence">one-time</span>
+            </div>
+            <p class="pricing-tagline">One host, end-to-end install, supported by the author.</p>
+
+            <ul class="pricing-features">
+              <li>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                <span>Vigil Collector deployed and running as a systemd service</span>
+              </li>
+              <li>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                <span>Vigil dashboard built and served behind your domain</span>
+              </li>
+              <li>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                <span>HTTPS / TLS termination configured (Caddy or nginx)</span>
+              </li>
+              <li>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                <span>Up to 5 service probes wired to your endpoints</span>
+              </li>
+              <li>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                <span>30 days of support for follow-up issues</span>
+              </li>
+              <li>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                <span>1-business-day turnaround once we have SSH access</span>
+              </li>
+            </ul>
+
+            <a
+              class="btn btn-primary pricing-cta"
+              href="https://buy.stripe.com/fZu14neiJeoL2C1gLQ2Ry00"
+              target="_blank"
+              rel="noopener"
+              data-stripe-link
+            >
+              <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/>
+              </svg>
+              Pay $99 — get installed
+            </a>
+
+            <div class="pricing-secure">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>
+              </svg>
+              Secure checkout via <span class="stripe-mark">Stripe</span>
+            </div>
+          </div>
+        </div>
+
+        <p class="pricing-fineprint">
+          Linux hosts only (Ubuntu, Debian, Fedora, RHEL/Rocky/Alma). After payment you'll receive an email with an onboarding form to share SSH credentials and your service probe endpoints. Refundable in full if I can't complete the install.
+          <br />
+          Have a different requirement? <a href="mailto:christopher.rowles@outlook.com?subject=Vigil%20install%20—%20custom%20scope">Email me first</a>.
+        </p>
       </div>
     </section>
 
