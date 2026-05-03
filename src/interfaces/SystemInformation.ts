@@ -4,6 +4,7 @@ export interface CpuInformation {
   freq: number;
   temp: number;
   usage: number;
+  cores: number;
 }
 
 export interface UsageInformation {

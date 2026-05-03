@@ -14,6 +14,7 @@ export const useSystemStore = defineStore("system", {
         freq: 0,
         temp: 0,
         usage: 0,
+        cores: 0,
       },
       mem: {
         total: 0,

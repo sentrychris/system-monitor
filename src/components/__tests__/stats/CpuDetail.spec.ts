@@ -8,6 +8,7 @@ describe("CpuDetail", () => {
       temp: 25,
       usage: 15,
       freq: 1500,
+      cores: 4,
     },
   };
 

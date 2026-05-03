@@ -5,6 +5,7 @@ export const staticMockData: SystemResponse = {
     usage: 11.2,
     temp: 56.97,
     freq: 1500,
+    cores: 4,
   },
   mem: {
     total: 3.75,

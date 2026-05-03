@@ -21,7 +21,7 @@ defineProps<{
     </div>
     <div class="metric-row">
       <span class="row-label">CORES</span>
-      <span class="row-value mono">12 <span class="row-unit">vCPU</span></span>
+      <span class="row-value mono">{{ detail.cores }} <span class="row-unit">vCPU</span></span>
     </div>
   </div>
 </template>
