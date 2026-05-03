@@ -71,29 +71,13 @@ onBeforeMount(() => {
         </div>
       </section>
 
-      <!-- Row 2: services / network traffic / compact resource gauges -->
+      <!-- Row 2: services / compact resource gauges -->
       <section id="status-row" class="page-section">
         <div class="row g-2">
-          <div class="col-sm-12 col-lg-4 d-flex">
+          <div class="col-sm-12 col-lg-6 d-flex">
             <ServiceStatus class="flex-fill" />
           </div>
-          <div class="col-sm-12 col-lg-4 d-flex">
-            <div class="card panel-card border-0 shadow-lg flex-fill">
-              <SectionHeader
-                title="Network Traffic"
-                subtitle="Live in/out · 30s"
-                icon="fa-solid fa-tower-broadcast"
-                tone="blue"
-              />
-              <div class="panel-body p-0">
-                <NetworkTrafficChart
-                  :rx="system.realtime.network?.rx_bytes_per_sec ?? 0"
-                  :tx="system.realtime.network?.tx_bytes_per_sec ?? 0"
-                />
-              </div>
-            </div>
-          </div>
-          <div class="col-sm-12 col-lg-4 d-flex">
+          <div class="col-sm-12 col-lg-6 d-flex">
             <div class="card panel-card border-0 shadow-lg flex-fill">
               <SectionHeader
                 title="System Resources"
@@ -144,7 +128,67 @@ onBeforeMount(() => {
         </div>
       </section>
 
-      <!-- Row 3: top processes (wide) + storage breakdown -->
+      <!-- Row 3: realtime line charts (live mode only) -->
+      <section id="d3-line-charts" v-if="system.live" class="page-section">
+        <div class="row g-2">
+          <div class="col-sm-12 col-md-4">
+            <div class="card panel-card border-0 shadow-lg">
+              <SectionHeader
+                title="Network Traffic"
+                subtitle="Live in/out · 30s"
+                icon="fa-solid fa-tower-broadcast"
+                tone="blue"
+              />
+              <div class="panel-body p-0">
+                <NetworkTrafficChart
+                  :rx="system.realtime.network?.rx_bytes_per_sec ?? 0"
+                  :tx="system.realtime.network?.tx_bytes_per_sec ?? 0"
+                />
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-12 col-md-4">
+            <div class="card panel-card border-0 shadow-lg">
+              <SectionHeader
+                title="CPU Usage"
+                subtitle="Last 60s · %"
+                icon="fa-solid fa-wave-square"
+                tone="purple"
+              />
+              <div class="panel-body p-0">
+                <RealtimeLineChart
+                  :data-point="system.realtime.cpu.usage"
+                  :y-axis-range="[0, 100]"
+                  tone="purple"
+                  unit="%"
+                  :decimals="0"
+                />
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-12 col-md-4">
+            <div class="card panel-card border-0 shadow-lg">
+              <SectionHeader
+                title="Memory Usage"
+                subtitle="System total · 60s · GiB"
+                icon="fa-solid fa-wave-square"
+                tone="amber"
+              />
+              <div class="panel-body p-0">
+                <RealtimeLineChart
+                  :data-point="system.realtime.mem.used"
+                  :y-axis-range="[0, 16]"
+                  tone="amber"
+                  unit="GiB"
+                  :decimals="1"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Row 4: top processes (wide) + storage breakdown -->
       <section id="processes-and-storage" class="page-section">
         <div class="row g-2">
           <div class="col-sm-12 col-lg-8 d-flex">
@@ -208,50 +252,6 @@ onBeforeMount(() => {
               />
               <div class="panel-body">
                 <DiskList :disks="system.data.disks ?? []" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Row 4: realtime line charts (live mode only) -->
-      <section id="d3-line-charts" v-if="system.live" class="page-section">
-        <div class="row g-2">
-          <div class="col-sm-12 col-md-6">
-            <div class="card panel-card border-0 shadow-lg">
-              <SectionHeader
-                title="CPU Usage"
-                subtitle="Last 60s · %"
-                icon="fa-solid fa-wave-square"
-                tone="purple"
-              />
-              <div class="panel-body p-0">
-                <RealtimeLineChart
-                  :data-point="system.realtime.cpu.usage"
-                  :y-axis-range="[0, 100]"
-                  tone="purple"
-                  unit="%"
-                  :decimals="0"
-                />
-              </div>
-            </div>
-          </div>
-          <div class="col-sm-12 col-md-6">
-            <div class="card panel-card border-0 shadow-lg">
-              <SectionHeader
-                title="Memory Usage"
-                subtitle="System total · 60s · GiB"
-                icon="fa-solid fa-wave-square"
-                tone="amber"
-              />
-              <div class="panel-body p-0">
-                <RealtimeLineChart
-                  :data-point="system.realtime.mem.used"
-                  :y-axis-range="[0, 16]"
-                  tone="amber"
-                  unit="GiB"
-                  :decimals="1"
-                />
               </div>
             </div>
           </div>
