@@ -730,13 +730,15 @@
 
       /* ───────────── Pricing ───────────── */
       .pricing-grid {
-        margin-top: 3rem;
-        display: flex;
-        justify-content: center;
+        margin: 3rem auto 0;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.4rem;
+        max-width: 1180px;
+        align-items: stretch;
       }
       .pricing-card {
         position: relative;
-        max-width: 540px;
         width: 100%;
         padding: 2.4rem 2rem 1.8rem;
         border-radius: var(--r-lg);
@@ -746,6 +748,8 @@
         border: 1px solid var(--line-strong);
         box-shadow: var(--shadow-lg);
         overflow: hidden;
+        display: flex;
+        flex-direction: column;
         transition: transform 280ms ease, border-color 280ms ease, box-shadow 280ms ease;
       }
       .pricing-card::before {
@@ -894,6 +898,94 @@
         letter-spacing: 0.04em;
         text-transform: none;
         font-size: 0.78rem;
+      }
+
+      /* Push the CTA + secure row to the bottom so cards of different
+         feature counts still align their buttons. */
+      .pricing-card .pricing-cta { margin-top: auto; }
+
+      /* Pro tier — purple/emerald accent variant */
+      .pricing-card.tier-pro::before {
+        background: linear-gradient(90deg, var(--purple), var(--cyan), var(--emerald));
+      }
+      .pricing-card.tier-pro:hover {
+        border-color: rgba(192, 132, 252, 0.55);
+        box-shadow:
+          var(--shadow-lg),
+          0 0 60px -12px rgba(192, 132, 252, 0.4);
+      }
+      .pricing-card.tier-pro .pricing-eyebrow {
+        background: rgba(192, 132, 252, 0.1);
+        border-color: rgba(192, 132, 252, 0.32);
+        color: var(--purple);
+      }
+      .pricing-card.tier-pro .pricing-num {
+        background: linear-gradient(120deg, var(--purple) 10%, var(--blue) 60%, var(--emerald) 95%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      /* Custom tier — amber/rose/purple accent variant (bespoke / per-project) */
+      .pricing-card.tier-custom::before {
+        background: linear-gradient(90deg, var(--amber), var(--rose), var(--purple));
+      }
+      .pricing-card.tier-custom:hover {
+        border-color: rgba(251, 191, 36, 0.55);
+        box-shadow:
+          var(--shadow-lg),
+          0 0 60px -12px rgba(251, 191, 36, 0.4);
+      }
+      .pricing-card.tier-custom .pricing-eyebrow {
+        background: rgba(251, 191, 36, 0.08);
+        border-color: rgba(251, 191, 36, 0.32);
+        color: var(--amber);
+      }
+      .pricing-card.tier-custom .pricing-num {
+        background: linear-gradient(120deg, var(--amber) 10%, var(--rose) 60%, var(--purple) 95%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      /* "WAITLIST" ribbon used on the Pro tier */
+      .pricing-tag {
+        position: absolute;
+        top: 1.3rem;
+        right: 1.3rem;
+        z-index: 2;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.28rem 0.65rem;
+        border-radius: 999px;
+        background: rgba(251, 191, 36, 0.08);
+        border: 1px solid rgba(251, 191, 36, 0.32);
+        color: var(--amber);
+        font-family: "IBM Plex Mono", ui-monospace, monospace;
+        font-size: 0.6rem;
+        font-weight: 600;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+      }
+      .pricing-tag .dot {
+        width: 5px; height: 5px;
+        border-radius: 50%;
+        background: currentColor;
+        box-shadow: 0 0 8px currentColor;
+      }
+
+      /* "Starting at" prefix that sits before the price */
+      .pricing-starts {
+        font-family: "IBM Plex Mono", ui-monospace, monospace;
+        font-size: 0.7rem;
+        font-weight: 500;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--text-dim);
+        align-self: flex-start;
+        margin-top: 1rem;
+        margin-right: 0.15rem;
       }
 
       .pricing-fineprint {
@@ -1352,15 +1444,15 @@
     <section id="pricing" class="section" style="padding-top: 0;">
       <div class="wrap">
         <div class="reveal">
-          <div class="section-eyebrow">Premium support</div>
-          <h2 class="section-title">Don't want to set it up yourself?</h2>
+          <div class="section-eyebrow">Pricing</div>
+          <h2 class="section-title">Three ways to go further.</h2>
           <p class="section-lede">
-            Get Vigil installed and configured on your host in under an hour. TLS, systemd, your service probes — all included. One-time payment, no subscription.
+            Skip the setup with a one-time supported install, unlock multi-host dashboards and alerting with Vigil Pro, or commission a bespoke probe for the system that doesn't have one yet.
           </p>
         </div>
 
         <div class="pricing-grid">
-          <div class="pricing-card reveal">
+          <div class="pricing-card tier-install reveal">
             <span class="pricing-eyebrow">Full-supported install</span>
 
             <div class="pricing-amount">
@@ -1417,12 +1509,134 @@
               Secure checkout via <span class="stripe-mark">Stripe</span>
             </div>
           </div>
+
+          <!-- ─── Vigil Pro (waitlist) ─── -->
+          <div class="pricing-card tier-pro reveal">
+            <span class="pricing-tag"><span class="dot"></span>Waitlist</span>
+            <span class="pricing-eyebrow">Vigil Pro</span>
+
+            <div class="pricing-amount">
+              <span class="pricing-starts">From</span>
+              <span class="pricing-currency">$</span>
+              <span class="pricing-num">149</span>
+              <span class="pricing-cadence">one-time</span>
+            </div>
+            <p class="pricing-tagline">Self-hosted, fleet-aware, with alerting.</p>
+
+            <ul class="pricing-features">
+              <li>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                <span><b style="font-weight: 500;">Multi-host hub</b> — every collector on one dashboard</span>
+              </li>
+              <li>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                <span><b style="font-weight: 500;">Alerting</b> via Slack, Discord, email and webhooks</span>
+              </li>
+              <li>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                <span><b style="font-weight: 500;">Extended retention</b> — 24 h, 7 d, 30 d historical</span>
+              </li>
+              <li>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                <span><b style="font-weight: 500;">Auth</b> — basic auth + OAuth / OIDC</span>
+              </li>
+              <li>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                <span><b style="font-weight: 500;">Probe templates</b> — Postgres, Redis, MySQL, Docker, k8s</span>
+              </li>
+              <li>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                <span><b style="font-weight: 500;">Lifetime use</b> + 12 months of updates included</span>
+              </li>
+            </ul>
+
+            <a
+              class="btn pricing-cta"
+              href="mailto:christopher.rowles@outlook.com?subject=Vigil%20Pro%20—%20waitlist&body=Hi%20—%20add%20me%20to%20the%20Vigil%20Pro%20waitlist.%0A%0AHosts%20I'd%20be%20monitoring:%20%0AAlerting%20channels%20I'd%20want:%20%0A"
+              aria-label="Join the Vigil Pro waitlist"
+            >
+              <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                <polyline points="22,6 12,13 2,6"/>
+              </svg>
+              Join the waitlist
+            </a>
+
+            <div class="pricing-secure">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
+              </svg>
+              In development — no payment yet
+            </div>
+          </div>
+
+          <!-- ─── Custom integration (per-project) ─── -->
+          <div class="pricing-card tier-custom reveal">
+            <span class="pricing-eyebrow">Custom integration</span>
+
+            <div class="pricing-amount">
+              <span class="pricing-starts">From</span>
+              <span class="pricing-currency">$</span>
+              <span class="pricing-num">250</span>
+              <span class="pricing-cadence">per probe</span>
+            </div>
+            <p class="pricing-tagline">When you need a probe that doesn't exist yet — Postgres replication lag, Redis fragmentation, an internal API.</p>
+
+            <ul class="pricing-features">
+              <li>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                <span><b style="font-weight: 500;">Bespoke probe</b> in Python or Bash</span>
+              </li>
+              <li>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                <span>Plugs into the Vigil Collector probe API</span>
+              </li>
+              <li>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                <span>Source delivered, MIT-licensed — yours to fork</span>
+              </li>
+              <li>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                <span>One round of revisions included</span>
+              </li>
+              <li>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                <span>3–5 business-day turnaround</span>
+              </li>
+              <li>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                <span>Larger scope billed hourly at $75/h</span>
+              </li>
+            </ul>
+
+            <a
+              class="btn pricing-cta"
+              href="mailto:christopher.rowles@outlook.com?subject=Vigil%20—%20custom%20probe%20quote&body=Hi%20—%20I'd%20like%20a%20quote%20for%20a%20custom%20probe.%0A%0AWhat%20I%20want%20to%20monitor:%20%0AHow%20I'd%20check%20it%20today%20(if%20at%20all):%20%0A%0AAnything%20else%20worth%20knowing:%20%0A"
+              aria-label="Request a quote for custom probe work"
+            >
+              <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/>
+              </svg>
+              Request a quote
+            </a>
+
+            <div class="pricing-secure">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+              </svg>
+              Email scoping first — invoice on agreement
+            </div>
+          </div>
         </div>
 
         <p class="pricing-fineprint">
-          Linux hosts only (Ubuntu, Debian, Fedora, RHEL/Rocky/Alma). After payment you'll receive an email with an onboarding form to share SSH credentials and your service probe endpoints. Refundable in full if I can't complete the install.
+          <b style="color: var(--text); font-weight: 500;">Install</b> — Linux hosts only (Ubuntu, Debian, Fedora, RHEL/Rocky/Alma). After payment you'll receive an email with an onboarding form to share SSH credentials and your service probe endpoints. Refundable in full if I can't complete the install.
           <br />
-          Have a different requirement? <a href="mailto:christopher.rowles@outlook.com?subject=Vigil%20install%20—%20custom%20scope">Email me first</a>.
+          <b style="color: var(--text); font-weight: 500;">Pro</b> — early-bird pricing for waitlist members; final price confirmed at launch. No charge until you opt in.
+          <br />
+          <b style="color: var(--text); font-weight: 500;">Custom</b> — $250–500 typical for a single probe; complex integrations scoped after a 30-minute call. Stripe invoice once we agree on spec.
+          <br />
+          Something else entirely? <a href="mailto:christopher.rowles@outlook.com?subject=Vigil%20—%20other">Email me</a>.
         </p>
       </div>
     </section>
