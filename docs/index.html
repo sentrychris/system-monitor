@@ -1,0 +1,1063 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vigil — Real-time system monitoring</title>
+    <meta
+      name="description"
+      content="Vigil is a lightweight, real-time system monitoring dashboard. Live WebSocket metrics, D3 visualizations, and a polished UI for psmonitor."
+    />
+    <meta property="og:title" content="Vigil — Real-time system monitoring" />
+    <meta
+      property="og:description"
+      content="Lightweight, real-time system monitoring for your servers. WebSocket-streamed metrics, D3 visualizations, drop-in dashboard for psmonitor."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="dashboard.png" />
+    <meta name="theme-color" content="#0b1220" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@500;600;700&family=Lato:wght@200;300;400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      /* ───────────── Tokens ───────────── */
+      :root {
+        --bg-0: #060a14;
+        --bg-1: #0b1220;
+        --bg-2: #111827;
+        --bg-3: #1e293b;
+        --line: rgba(96, 165, 250, 0.14);
+        --line-strong: rgba(96, 165, 250, 0.32);
+        --text: #f1f5f9;
+        --text-mute: #94a3b8;
+        --text-dim: #64748b;
+
+        --blue: #60a5fa;
+        --cyan: #22d3ee;
+        --emerald: #34d399;
+        --purple: #c084fc;
+        --amber: #fbbf24;
+        --rose: #f43f5e;
+        --fuchsia: #d946ef;
+
+        --r-sm: 8px;
+        --r-md: 12px;
+        --r-lg: 18px;
+
+        --shadow-lg: 0 30px 80px -20px rgba(2, 6, 23, 0.7),
+          0 0 0 1px rgba(96, 165, 250, 0.06) inset;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Lato", system-ui, sans-serif;
+        font-weight: 300;
+        font-size: 16px;
+        line-height: 1.55;
+        color: var(--text);
+        background: var(--bg-0);
+        overflow-x: hidden;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      h1,
+      h2,
+      h3,
+      h4 {
+        font-family: "IBM Plex Sans", system-ui, sans-serif;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+        margin: 0;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      code,
+      kbd,
+      pre {
+        font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      }
+
+      /* ───────────── Atmosphere ───────────── */
+      .atmosphere {
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+        pointer-events: none;
+        background: var(--bg-0);
+      }
+      .atmosphere::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image:
+          linear-gradient(rgba(96, 165, 250, 0.05) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(96, 165, 250, 0.05) 1px, transparent 1px);
+        background-size: 48px 48px;
+        mask-image: radial-gradient(ellipse at center top, black 30%, transparent 75%);
+        -webkit-mask-image: radial-gradient(ellipse at center top, black 30%, transparent 75%);
+        opacity: 0.55;
+      }
+      .atmosphere::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+          radial-gradient(60vw 60vw at 12% -10%, rgba(59, 130, 246, 0.22), transparent 60%),
+          radial-gradient(50vw 50vw at 100% 0%, rgba(34, 211, 238, 0.18), transparent 60%),
+          radial-gradient(80vw 80vw at 50% 110%, rgba(168, 85, 247, 0.12), transparent 60%);
+        animation: atmoShift 24s ease-in-out infinite alternate;
+      }
+      @keyframes atmoShift {
+        0% { transform: translate3d(0, 0, 0); }
+        100% { transform: translate3d(0, -2%, 0); }
+      }
+
+      /* ───────────── Container ───────────── */
+      .wrap {
+        width: min(1180px, 92%);
+        margin: 0 auto;
+      }
+
+      /* ───────────── Nav ───────────── */
+      .nav {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        background: linear-gradient(180deg, rgba(11, 18, 32, 0.85), rgba(11, 18, 32, 0.55));
+        border-bottom: 1px solid var(--line);
+      }
+      .nav-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.9rem 0;
+      }
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.7rem;
+        font-family: "IBM Plex Sans", system-ui, sans-serif;
+      }
+      .brand-mark {
+        position: relative;
+        width: 30px;
+        height: 30px;
+        border-radius: 8px;
+        background: linear-gradient(135deg, var(--blue), var(--cyan));
+        box-shadow: 0 8px 24px -8px rgba(34, 211, 238, 0.55),
+          inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+      }
+      .brand-mark::after {
+        content: "";
+        position: absolute;
+        inset: 6px;
+        border-radius: 4px;
+        background:
+          linear-gradient(0deg, transparent 49%, rgba(255, 255, 255, 0.6) 49%, rgba(255, 255, 255, 0.6) 51%, transparent 51%),
+          linear-gradient(0deg, transparent 49%, rgba(255, 255, 255, 0.4) 49%, rgba(255, 255, 255, 0.4) 51%, transparent 51%);
+        background-size: 100% 50%, 100% 100%;
+        background-repeat: no-repeat, no-repeat;
+        background-position: 0 30%, 0 70%;
+        opacity: 0.85;
+      }
+      .brand-name {
+        font-weight: 700;
+        font-size: 1.1rem;
+        letter-spacing: -0.01em;
+      }
+      .brand-pill {
+        margin-left: 0.4rem;
+        padding: 0.18rem 0.45rem;
+        border-radius: 999px;
+        font-family: "IBM Plex Mono", ui-monospace, monospace;
+        font-size: 0.65rem;
+        font-weight: 500;
+        color: var(--cyan);
+        background: rgba(34, 211, 238, 0.08);
+        border: 1px solid rgba(34, 211, 238, 0.25);
+        letter-spacing: 0.06em;
+      }
+
+      .nav-links {
+        display: inline-flex;
+        align-items: center;
+        gap: 1.2rem;
+      }
+      .nav-link {
+        font-family: "IBM Plex Sans", system-ui, sans-serif;
+        font-size: 0.88rem;
+        color: var(--text-mute);
+        font-weight: 500;
+        letter-spacing: 0.01em;
+        transition: color 160ms ease;
+      }
+      .nav-link:hover { color: var(--text); }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.55rem 1rem;
+        border-radius: 999px;
+        font-family: "IBM Plex Sans", system-ui, sans-serif;
+        font-weight: 600;
+        font-size: 0.85rem;
+        letter-spacing: 0.02em;
+        cursor: pointer;
+        transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease, border-color 180ms ease;
+        border: 1px solid var(--line-strong);
+        background: rgba(255, 255, 255, 0.03);
+        color: var(--text);
+      }
+      .btn:hover {
+        transform: translateY(-1px);
+        background: rgba(255, 255, 255, 0.06);
+        border-color: rgba(96, 165, 250, 0.5);
+      }
+      .btn-primary {
+        background: linear-gradient(135deg, var(--blue), var(--cyan));
+        border-color: transparent;
+        color: #0b1220;
+        box-shadow:
+          0 12px 30px -12px rgba(34, 211, 238, 0.55),
+          inset 0 0 0 1px rgba(255, 255, 255, 0.25);
+      }
+      .btn-primary:hover {
+        box-shadow:
+          0 16px 40px -12px rgba(34, 211, 238, 0.7),
+          inset 0 0 0 1px rgba(255, 255, 255, 0.35);
+      }
+      .btn .ico { width: 16px; height: 16px; }
+
+      /* ───────────── Hero ───────────── */
+      .hero {
+        padding: 6rem 0 4rem;
+        position: relative;
+      }
+      .hero-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.55rem;
+        padding: 0.35rem 0.75rem;
+        border-radius: 999px;
+        background: rgba(52, 211, 153, 0.08);
+        border: 1px solid rgba(52, 211, 153, 0.28);
+        color: var(--emerald);
+        font-family: "IBM Plex Mono", ui-monospace, monospace;
+        font-size: 0.7rem;
+        font-weight: 500;
+        letter-spacing: 0.18em;
+      }
+      .hero-eyebrow .dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--emerald);
+        box-shadow: 0 0 10px var(--emerald);
+        animation: pulse 1.6s ease-in-out infinite;
+      }
+      @keyframes pulse {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.5; transform: scale(0.9); }
+      }
+
+      .hero h1 {
+        margin-top: 1.4rem;
+        font-size: clamp(2.4rem, 5.6vw, 4.4rem);
+        line-height: 1.04;
+        letter-spacing: -0.03em;
+        font-weight: 700;
+      }
+      .hero h1 .accent {
+        background: linear-gradient(120deg, var(--cyan) 10%, var(--blue) 50%, var(--purple) 95%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .hero p.lede {
+        margin-top: 1.4rem;
+        max-width: 680px;
+        font-size: 1.15rem;
+        line-height: 1.6;
+        color: var(--text-mute);
+        font-weight: 300;
+      }
+      .hero-cta {
+        margin-top: 2rem;
+        display: flex;
+        gap: 0.7rem;
+        flex-wrap: wrap;
+      }
+      .hero-meta {
+        margin-top: 2.4rem;
+        display: flex;
+        gap: 2rem;
+        flex-wrap: wrap;
+        color: var(--text-dim);
+        font-family: "IBM Plex Mono", ui-monospace, monospace;
+        font-size: 0.78rem;
+        letter-spacing: 0.06em;
+      }
+      .hero-meta b {
+        color: var(--text);
+        font-weight: 500;
+        margin-right: 0.4rem;
+      }
+
+      /* ───────────── Browser frame for screenshot ───────────── */
+      .preview {
+        margin: 4rem 0;
+        position: relative;
+      }
+      .preview::before {
+        content: "";
+        position: absolute;
+        inset: -10% -5% -10% -5%;
+        background:
+          radial-gradient(50% 50% at 50% 50%, rgba(34, 211, 238, 0.15), transparent 70%);
+        filter: blur(40px);
+        z-index: -1;
+      }
+      .browser {
+        border-radius: var(--r-lg);
+        overflow: hidden;
+        background: var(--bg-1);
+        border: 1px solid var(--line-strong);
+        box-shadow: var(--shadow-lg);
+        transform: perspective(1800px) rotateX(2deg);
+        transition: transform 600ms cubic-bezier(.2,.8,.2,1);
+      }
+      .browser:hover { transform: perspective(1800px) rotateX(0deg); }
+      .browser-bar {
+        display: flex;
+        align-items: center;
+        gap: 0.55rem;
+        padding: 0.7rem 1rem;
+        background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
+        border-bottom: 1px solid var(--line);
+      }
+      .browser-dot {
+        width: 11px;
+        height: 11px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.18);
+      }
+      .browser-dot.r { background: rgba(244, 63, 94, 0.5); }
+      .browser-dot.y { background: rgba(251, 191, 36, 0.5); }
+      .browser-dot.g { background: rgba(52, 211, 153, 0.5); }
+      .browser-url {
+        margin-left: 0.7rem;
+        flex: 1;
+        padding: 0.3rem 0.7rem;
+        border-radius: 6px;
+        background: rgba(255,255,255,0.04);
+        color: var(--text-mute);
+        font-family: "IBM Plex Mono", ui-monospace, monospace;
+        font-size: 0.72rem;
+        letter-spacing: 0.04em;
+      }
+      .browser-url .lock { color: var(--emerald); margin-right: 0.4rem; }
+      .browser-shot {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
+
+      /* ───────────── Section header ───────────── */
+      .section { padding: 5rem 0; }
+      .section-eyebrow {
+        font-family: "IBM Plex Mono", ui-monospace, monospace;
+        font-size: 0.72rem;
+        letter-spacing: 0.22em;
+        color: var(--cyan);
+        text-transform: uppercase;
+      }
+      .section-title {
+        margin-top: 0.6rem;
+        font-size: clamp(1.7rem, 3.2vw, 2.4rem);
+        letter-spacing: -0.02em;
+      }
+      .section-lede {
+        margin-top: 0.8rem;
+        max-width: 620px;
+        color: var(--text-mute);
+        font-weight: 300;
+        font-size: 1rem;
+      }
+
+      /* ───────────── Feature grid ───────────── */
+      .features {
+        margin-top: 3rem;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1rem;
+      }
+      .feature {
+        position: relative;
+        padding: 1.4rem 1.4rem 1.5rem;
+        border-radius: var(--r-md);
+        background: linear-gradient(180deg, rgba(255,255,255,0.025), rgba(255,255,255,0.01));
+        border: 1px solid var(--line);
+        transition: transform 220ms ease, border-color 220ms ease, background 220ms ease;
+        overflow: hidden;
+      }
+      .feature::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        transition: opacity 220ms ease;
+        pointer-events: none;
+        background:
+          radial-gradient(120% 80% at 0% 0%, rgba(96, 165, 250, 0.08), transparent 60%);
+      }
+      .feature:hover {
+        transform: translateY(-3px);
+        border-color: var(--line-strong);
+        background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.015));
+      }
+      .feature:hover::before { opacity: 1; }
+
+      .feature-ico {
+        width: 38px;
+        height: 38px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        margin-bottom: 0.9rem;
+        font-size: 1rem;
+      }
+      .feature-ico svg { width: 18px; height: 18px; }
+      .ico-blue    { color: var(--blue);    background: rgba(96, 165, 250, 0.12);  box-shadow: inset 0 0 0 1px rgba(96, 165, 250, 0.28); }
+      .ico-cyan    { color: var(--cyan);    background: rgba(34, 211, 238, 0.12);  box-shadow: inset 0 0 0 1px rgba(34, 211, 238, 0.28); }
+      .ico-emerald { color: var(--emerald); background: rgba(52, 211, 153, 0.12);  box-shadow: inset 0 0 0 1px rgba(52, 211, 153, 0.28); }
+      .ico-purple  { color: var(--purple);  background: rgba(192, 132, 252, 0.12); box-shadow: inset 0 0 0 1px rgba(192, 132, 252, 0.28); }
+      .ico-amber   { color: var(--amber);   background: rgba(251, 191, 36, 0.12);  box-shadow: inset 0 0 0 1px rgba(251, 191, 36, 0.28); }
+      .ico-rose    { color: var(--rose);    background: rgba(244, 63, 94, 0.12);   box-shadow: inset 0 0 0 1px rgba(244, 63, 94, 0.28); }
+
+      .feature h3 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+      }
+      .feature p {
+        margin: 0.55rem 0 0;
+        color: var(--text-mute);
+        font-size: 0.9rem;
+        line-height: 1.55;
+        font-weight: 300;
+      }
+
+      /* ───────────── Architecture ───────────── */
+      .arch {
+        margin-top: 3rem;
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        gap: 1rem;
+        align-items: stretch;
+      }
+      @media (max-width: 720px) {
+        .arch { grid-template-columns: 1fr; }
+        .arch-arrow { transform: rotate(90deg); }
+      }
+      .arch-node {
+        padding: 1.5rem 1.4rem;
+        border-radius: var(--r-md);
+        background: linear-gradient(180deg, rgba(255,255,255,0.025), rgba(255,255,255,0.01));
+        border: 1px solid var(--line);
+        position: relative;
+        overflow: hidden;
+      }
+      .arch-node h4 {
+        font-size: 1.05rem;
+        font-weight: 600;
+      }
+      .arch-tag {
+        display: inline-block;
+        margin-bottom: 0.6rem;
+        font-family: "IBM Plex Mono", ui-monospace, monospace;
+        font-size: 0.66rem;
+        letter-spacing: 0.18em;
+        color: var(--text-dim);
+        text-transform: uppercase;
+      }
+      .arch-node ul {
+        margin: 0.8rem 0 0;
+        padding: 0;
+        list-style: none;
+      }
+      .arch-node li {
+        padding: 0.32rem 0;
+        font-size: 0.85rem;
+        color: var(--text-mute);
+        font-weight: 300;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .arch-node li::before {
+        content: "";
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: currentColor;
+        opacity: 0.5;
+      }
+      .arch-arrow {
+        align-self: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        min-width: 50px;
+      }
+      .arch-arrow svg { color: var(--cyan); filter: drop-shadow(0 0 8px var(--cyan)); }
+      .arch-pulse {
+        position: absolute;
+        font-family: "IBM Plex Mono", ui-monospace, monospace;
+        font-size: 0.62rem;
+        color: var(--cyan);
+        letter-spacing: 0.18em;
+        bottom: -1rem;
+        white-space: nowrap;
+      }
+
+      /* ───────────── Quick start ───────────── */
+      .quickstart {
+        margin-top: 3rem;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        align-items: start;
+      }
+      @media (max-width: 820px) {
+        .quickstart { grid-template-columns: 1fr; }
+      }
+      .terminal {
+        border-radius: var(--r-md);
+        overflow: hidden;
+        background: #0a0e18;
+        border: 1px solid var(--line-strong);
+        box-shadow: var(--shadow-lg);
+      }
+      .terminal-bar {
+        display: flex;
+        align-items: center;
+        gap: 0.55rem;
+        padding: 0.7rem 1rem;
+        background: rgba(255,255,255,0.03);
+        border-bottom: 1px solid var(--line);
+        font-family: "IBM Plex Mono", ui-monospace, monospace;
+        font-size: 0.7rem;
+        color: var(--text-dim);
+        letter-spacing: 0.08em;
+      }
+      .terminal-bar .browser-dot { width: 10px; height: 10px; }
+      .terminal-bar .label { margin-left: 0.5rem; }
+      .terminal pre {
+        margin: 0;
+        padding: 1.4rem 1.3rem;
+        font-size: 0.83rem;
+        line-height: 1.75;
+        color: #cbd5e1;
+        overflow-x: auto;
+      }
+      .term-prompt { color: var(--cyan); }
+      .term-cmd { color: #f1f5f9; }
+      .term-flag { color: var(--amber); }
+      .term-comment { color: var(--text-dim); font-style: italic; }
+      .term-string { color: var(--emerald); }
+
+      .qs-steps {
+        display: flex;
+        flex-direction: column;
+        gap: 1.1rem;
+      }
+      .qs-step {
+        position: relative;
+        padding-left: 2.4rem;
+      }
+      .qs-step .num {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 28px;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: rgba(96, 165, 250, 0.12);
+        border: 1px solid rgba(96, 165, 250, 0.4);
+        color: var(--blue);
+        font-family: "IBM Plex Mono", ui-monospace, monospace;
+        font-size: 0.78rem;
+        font-weight: 600;
+      }
+      .qs-step h4 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        letter-spacing: -0.005em;
+      }
+      .qs-step p {
+        margin: 0.25rem 0 0;
+        color: var(--text-mute);
+        font-size: 0.88rem;
+        font-weight: 300;
+      }
+      .qs-step a {
+        color: var(--cyan);
+        border-bottom: 1px solid transparent;
+        transition: border-color 160ms ease;
+      }
+      .qs-step a:hover { border-color: var(--cyan); }
+
+      /* ───────────── Stack badges ───────────── */
+      .stack {
+        margin-top: 3rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.55rem;
+      }
+      .pill {
+        padding: 0.45rem 0.9rem;
+        border-radius: 999px;
+        font-family: "IBM Plex Mono", ui-monospace, monospace;
+        font-size: 0.74rem;
+        letter-spacing: 0.06em;
+        color: var(--text);
+        background: rgba(255,255,255,0.04);
+        border: 1px solid var(--line);
+      }
+
+      /* ───────────── CTA card ───────────── */
+      .cta-card {
+        margin-top: 3rem;
+        padding: 3rem 2.5rem;
+        border-radius: var(--r-lg);
+        background:
+          radial-gradient(60% 100% at 0% 0%, rgba(96, 165, 250, 0.18), transparent 65%),
+          radial-gradient(60% 100% at 100% 100%, rgba(192, 132, 252, 0.14), transparent 65%),
+          linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+        border: 1px solid var(--line-strong);
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+      }
+      .cta-card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image:
+          linear-gradient(rgba(96, 165, 250, 0.05) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(96, 165, 250, 0.05) 1px, transparent 1px);
+        background-size: 28px 28px;
+        opacity: 0.5;
+        pointer-events: none;
+      }
+      .cta-card > * { position: relative; z-index: 1; }
+      .cta-card h2 {
+        font-size: clamp(1.6rem, 3vw, 2.2rem);
+        letter-spacing: -0.02em;
+      }
+      .cta-card p {
+        margin: 0.8rem auto 1.6rem;
+        max-width: 520px;
+        color: var(--text-mute);
+        font-weight: 300;
+      }
+      .cta-card .actions {
+        display: inline-flex;
+        gap: 0.7rem;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      /* ───────────── Footer ───────────── */
+      footer {
+        padding: 3rem 0 4rem;
+        border-top: 1px solid var(--line);
+        margin-top: 4rem;
+      }
+      .foot-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+      .foot-meta {
+        display: flex;
+        align-items: center;
+        gap: 1.4rem;
+        font-family: "IBM Plex Mono", ui-monospace, monospace;
+        font-size: 0.74rem;
+        color: var(--text-dim);
+        letter-spacing: 0.08em;
+      }
+      .foot-meta a { color: var(--text-mute); transition: color 160ms ease; }
+      .foot-meta a:hover { color: var(--text); }
+
+      /* ───────────── Reveal ───────────── */
+      .reveal {
+        opacity: 0;
+        transform: translateY(18px);
+        transition: opacity 700ms ease, transform 700ms cubic-bezier(.2,.8,.2,1);
+      }
+      .reveal.in {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .atmosphere::after { animation: none; }
+        .hero-eyebrow .dot { animation: none; }
+        .reveal { opacity: 1; transform: none; transition: none; }
+        .browser { transform: none; }
+      }
+
+      /* Mobile nav */
+      @media (max-width: 640px) {
+        .nav-links .nav-link.text { display: none; }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="atmosphere"></div>
+
+    <header class="nav">
+      <div class="wrap nav-inner">
+        <a href="#" class="brand" aria-label="Vigil">
+          <span class="brand-mark" aria-hidden="true"></span>
+          <span class="brand-name">Vigil</span>
+          <span class="brand-pill">v1.2</span>
+        </a>
+        <nav class="nav-links">
+          <a class="nav-link text" href="#features">Features</a>
+          <a class="nav-link text" href="#architecture">How it works</a>
+          <a class="nav-link text" href="#start">Get started</a>
+          <a class="btn" href="https://github.com/sentrychris/vigil" target="_blank" rel="noopener">
+            <svg class="ico" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56v-2.16c-3.2.7-3.87-1.36-3.87-1.36-.52-1.34-1.28-1.69-1.28-1.69-1.05-.72.08-.71.08-.71 1.16.08 1.77 1.2 1.77 1.2 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.18-3.1-.12-.29-.51-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.78 0c2.21-1.49 3.18-1.18 3.18-1.18.62 1.59.23 2.76.11 3.05.74.81 1.18 1.84 1.18 3.1 0 4.43-2.69 5.41-5.25 5.69.41.36.78 1.06.78 2.13v3.16c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z"/>
+            </svg>
+            GitHub
+          </a>
+        </nav>
+      </div>
+    </header>
+
+    <!-- ───────────── Hero ───────────── -->
+    <section class="hero">
+      <div class="wrap">
+        <span class="hero-eyebrow"><span class="dot"></span> LIVE · 1Hz STREAMING</span>
+        <h1>
+          Real-time system monitoring,<br />
+          <span class="accent">finally beautiful.</span>
+        </h1>
+        <p class="lede">
+          Vigil is a lightweight, real-time monitoring dashboard for your servers. Live
+          metrics streamed over WebSocket, gauges, charts, service probes — all in
+          one polished UI that drops in front of <a style="color:var(--cyan); border-bottom:1px solid transparent;" href="https://github.com/sentrychris/psmonitor" target="_blank" rel="noopener">psmonitor</a>.
+        </p>
+        <div class="hero-cta">
+          <a class="btn btn-primary" href="https://status.edcs.app" target="_blank" rel="noopener">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polygon points="5 3 19 12 5 21 5 3"></polygon>
+            </svg>
+            Live demo
+          </a>
+          <a class="btn" href="https://github.com/sentrychris/vigil" target="_blank" rel="noopener">
+            <svg class="ico" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56v-2.16c-3.2.7-3.87-1.36-3.87-1.36-.52-1.34-1.28-1.69-1.28-1.69-1.05-.72.08-.71.08-.71 1.16.08 1.77 1.2 1.77 1.2 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.18-3.1-.12-.29-.51-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.78 0c2.21-1.49 3.18-1.18 3.18-1.18.62 1.59.23 2.76.11 3.05.74.81 1.18 1.84 1.18 3.1 0 4.43-2.69 5.41-5.25 5.69.41.36.78 1.06.78 2.13v3.16c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z"/>
+            </svg>
+            View source
+          </a>
+        </div>
+        <div class="hero-meta">
+          <span><b>Stack</b> Vue 3 · TypeScript · D3</span>
+          <span><b>Bundle</b> ~140 KB gzipped</span>
+          <span><b>License</b> MIT</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ───────────── Screenshot ───────────── -->
+    <section class="preview wrap reveal">
+      <div class="browser">
+        <div class="browser-bar">
+          <span class="browser-dot r"></span>
+          <span class="browser-dot y"></span>
+          <span class="browser-dot g"></span>
+          <span class="browser-url"><span class="lock">●</span> https://status.edcs.app</span>
+        </div>
+        <img class="browser-shot" src="dashboard.png" alt="Vigil dashboard screenshot showing CPU, memory, disk, network and process metrics" loading="lazy" />
+      </div>
+    </section>
+
+    <!-- ───────────── Features ───────────── -->
+    <section id="features" class="section">
+      <div class="wrap">
+        <div class="reveal">
+          <div class="section-eyebrow">Features</div>
+          <h2 class="section-title">Built for at-a-glance clarity.</h2>
+          <p class="section-lede">
+            Everything you need to know about a host, surfaced in a layout that prioritizes
+            signal over chrome. No setup wizards. No login walls.
+          </p>
+        </div>
+
+        <div class="features">
+          <div class="feature reveal">
+            <div class="feature-ico ico-emerald">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            </div>
+            <h3>Live WebSocket streaming</h3>
+            <p>Sub-second metric updates pushed from a single shared sampler. N dashboards do not equal N scans.</p>
+          </div>
+
+          <div class="feature reveal">
+            <div class="feature-ico ico-cyan">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 5-7"/></svg>
+            </div>
+            <h3>D3-powered visualizations</h3>
+            <p>Glowing line charts for CPU, memory, network, and disk I/O. Rolling 30s windows with smooth Y-axis transitions.</p>
+          </div>
+
+          <div class="feature reveal">
+            <div class="feature-ico ico-blue">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            </div>
+            <h3>Service probes</h3>
+            <p>Configurable HTTP health checks with status, latency, and inline failure reasons. Online · Slow · Offline at a glance.</p>
+          </div>
+
+          <div class="feature reveal">
+            <div class="feature-ico ico-purple">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+            </div>
+            <h3>Top processes</h3>
+            <p>Aggregated by name, sized by memory. Uses PSS where available so shared libraries are not double-counted.</p>
+          </div>
+
+          <div class="feature reveal">
+            <div class="feature-ico ico-amber">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="6" cy="12" r="1.5" fill="currentColor"/><circle cx="11" cy="12" r="1.5" fill="currentColor"/></svg>
+            </div>
+            <h3>Storage breakdown</h3>
+            <p>Per-partition usage, mountpoint, and fstype. Disk read/write throughput and IOPS as a live dual-series chart.</p>
+          </div>
+
+          <div class="feature reveal">
+            <div class="feature-ico ico-rose">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"/></svg>
+            </div>
+            <h3>Light & dark themes</h3>
+            <p>Seamless theme toggle with persisted preference. Charts re-tune their grid and axis colors automatically.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ───────────── Architecture ───────────── -->
+    <section id="architecture" class="section">
+      <div class="wrap">
+        <div class="reveal">
+          <div class="section-eyebrow">How it works</div>
+          <h2 class="section-title">A two-piece system.</h2>
+          <p class="section-lede">
+            Vigil is the polished frontend; <a style="color:var(--cyan)" href="https://github.com/sentrychris/psmonitor" target="_blank" rel="noopener">psmonitor</a> does the host-side work. They talk over HTTP and a WebSocket — that is it.
+          </p>
+        </div>
+
+        <div class="arch reveal">
+          <div class="arch-node">
+            <span class="arch-tag">Backend</span>
+            <h4>psmonitor</h4>
+            <ul style="color: var(--blue);">
+              <li>asyncio sampler · 1 Hz default</li>
+              <li>psutil + Tornado</li>
+              <li>HTTP /system, /network, /probes</li>
+              <li>WebSocket /connect</li>
+              <li>Linux &amp; Windows</li>
+            </ul>
+          </div>
+          <div class="arch-arrow" aria-hidden="true">
+            <svg width="46" height="22" viewBox="0 0 46 22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2 11h36M30 4l8 7-8 7"/>
+            </svg>
+            <span class="arch-pulse">JSON · 1 Hz</span>
+          </div>
+          <div class="arch-node">
+            <span class="arch-tag">Frontend</span>
+            <h4>Vigil</h4>
+            <ul style="color: var(--cyan);">
+              <li>Vue 3 · Pinia · TypeScript</li>
+              <li>D3 realtime charts</li>
+              <li>Bootstrap layout · Sass tokens</li>
+              <li>Dark + light theme</li>
+              <li>Static or live mode</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ───────────── Quick start ───────────── -->
+    <section id="start" class="section">
+      <div class="wrap">
+        <div class="reveal">
+          <div class="section-eyebrow">Quick start</div>
+          <h2 class="section-title">Up and running in under a minute.</h2>
+          <p class="section-lede">
+            Run psmonitor on the host you want to watch, then point Vigil at it. That is the whole setup.
+          </p>
+        </div>
+
+        <div class="quickstart">
+          <div class="terminal reveal">
+            <div class="terminal-bar">
+              <span class="browser-dot r"></span>
+              <span class="browser-dot y"></span>
+              <span class="browser-dot g"></span>
+              <span class="label">~/vigil — bash</span>
+            </div>
+            <pre><span class="term-comment"># 1. Get psmonitor running on the host</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git clone</span> https://github.com/sentrychris/psmonitor
+<span class="term-prompt">$</span> <span class="term-cmd">cd</span> psmonitor &amp;&amp; <span class="term-cmd">pip install</span> <span class="term-flag">-e</span> .
+<span class="term-prompt">$</span> <span class="term-cmd">psmonitor</span> <span class="term-flag">--address</span>=0.0.0.0 <span class="term-flag">--port</span>=4500
+
+<span class="term-comment"># 2. Clone Vigil and point it at psmonitor</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git clone</span> https://github.com/sentrychris/vigil
+<span class="term-prompt">$</span> <span class="term-cmd">cd</span> vigil &amp;&amp; <span class="term-cmd">npm install</span>
+<span class="term-prompt">$</span> <span class="term-cmd">cp</span> .env.example .env  <span class="term-comment"># edit URLs</span>
+
+<span class="term-comment"># 3. Build &amp; serve</span>
+<span class="term-prompt">$</span> <span class="term-cmd">npm run build</span>
+<span class="term-prompt">$</span> <span class="term-cmd">npm run preview</span>
+  ➜  Local: <span class="term-string">http://localhost:4173</span></pre>
+          </div>
+
+          <div class="qs-steps reveal">
+            <div class="qs-step">
+              <span class="num">1</span>
+              <h4>Install psmonitor on the host</h4>
+              <p>The Python sampler runs the heavy psutil work and exposes HTTP + WebSocket endpoints. <a href="https://github.com/sentrychris/psmonitor" target="_blank" rel="noopener">Repo →</a></p>
+            </div>
+            <div class="qs-step">
+              <span class="num">2</span>
+              <h4>Configure Vigil's environment</h4>
+              <p>Set <code style="color:var(--amber)">VITE_API_URL</code>, <code style="color:var(--amber)">VITE_WORKER_URL</code>, and <code style="color:var(--amber)">VITE_WEBSOCKET_URL</code> to point at your psmonitor instance.</p>
+            </div>
+            <div class="qs-step">
+              <span class="num">3</span>
+              <h4>Build &amp; deploy</h4>
+              <p>Vite emits a static <code style="color:var(--amber)">dist/</code> you can serve with anything — nginx, Caddy, GitHub Pages, an S3 bucket. No runtime needed.</p>
+            </div>
+            <div class="qs-step">
+              <span class="num">4</span>
+              <h4>Toggle live / static</h4>
+              <p>The navbar switch flips between WebSocket (1 Hz live) and HTTP polling (30 s). Both speak the same payload shape.</p>
+            </div>
+          </div>
+        </div>
+
+        <h3 style="margin-top: 4rem; font-size: 0.95rem; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-dim); font-family: 'IBM Plex Mono', monospace;">Stack</h3>
+        <div class="stack">
+          <span class="pill">Vue 3</span>
+          <span class="pill">TypeScript</span>
+          <span class="pill">Pinia</span>
+          <span class="pill">Vite</span>
+          <span class="pill">D3</span>
+          <span class="pill">Bootstrap 5</span>
+          <span class="pill">Sass</span>
+          <span class="pill">FontAwesome</span>
+          <span class="pill">Playwright</span>
+          <span class="pill">Vitest</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ───────────── Final CTA ───────────── -->
+    <section class="section" style="padding-top: 0;">
+      <div class="wrap">
+        <div class="cta-card reveal">
+          <div class="section-eyebrow" style="color: var(--blue);">Ready when you are</div>
+          <h2>Drop it in front of any host you already monitor.</h2>
+          <p>
+            Vigil is open-source under MIT. If you have an idea or hit a wall, the issue tracker is open.
+          </p>
+          <div class="actions">
+            <a class="btn btn-primary" href="https://github.com/sentrychris/vigil" target="_blank" rel="noopener">
+              <svg class="ico" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56v-2.16c-3.2.7-3.87-1.36-3.87-1.36-.52-1.34-1.28-1.69-1.28-1.69-1.05-.72.08-.71.08-.71 1.16.08 1.77 1.2 1.77 1.2 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.18-3.1-.12-.29-.51-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.78 0c2.21-1.49 3.18-1.18 3.18-1.18.62 1.59.23 2.76.11 3.05.74.81 1.18 1.84 1.18 3.1 0 4.43-2.69 5.41-5.25 5.69.41.36.78 1.06.78 2.13v3.16c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z"/>
+              </svg>
+              Star on GitHub
+            </a>
+            <a class="btn" href="https://github.com/sentrychris/vigil/issues" target="_blank" rel="noopener">
+              <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/>
+              </svg>
+              Open an issue
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ───────────── Footer ───────────── -->
+    <footer>
+      <div class="wrap foot-inner">
+        <a href="#" class="brand">
+          <span class="brand-mark" aria-hidden="true"></span>
+          <span class="brand-name">Vigil</span>
+        </a>
+        <div class="foot-meta">
+          <span>MIT</span>
+          <a href="https://github.com/sentrychris/vigil" target="_blank" rel="noopener">github</a>
+          <a href="https://github.com/sentrychris/psmonitor" target="_blank" rel="noopener">psmonitor</a>
+          <a href="https://status.edcs.app" target="_blank" rel="noopener">demo</a>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      // Lightweight scroll-reveal — opt-in via class="reveal"
+      const io = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("in");
+              io.unobserve(entry.target);
+            }
+          }
+        },
+        { threshold: 0.12, rootMargin: "0px 0px -60px 0px" },
+      );
+      document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
+    </script>
+  </body>
+</html>
