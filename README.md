@@ -53,8 +53,6 @@ There is a control switch provided at the top-right on the navbar to toggle the 
 
 I hope you find this project useful, if you have any questions or feedback, please feel free to raise an [issue here](https://github.com/sentrychris/system-monitor/issues).
 
----
-
 ## License
 
 MIT.
