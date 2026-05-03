@@ -6,11 +6,12 @@ import { config } from "@/config";
   <footer id="site-footer" class="site-footer">
     <div class="container-fluid py-3 footer-inner">
       <span class="footer-text">
-        <a class="footer-link" href="https://github.com/sentrychris/system-monitor">{{
+        Powered by
+        <a class="footer-link" href="https://vigil.edcs.app">{{
           config.app.name
         }}</a>
-        <span class="footer-sep">·</span>
-        <span class="footer-attr">
+        <span class="footer-sep d-none">·</span>
+        <span class="footer-attr d-none">
           Built by
           <a class="footer-link" href="https://github.com/sentrychris">Chris</a>
         </span>
