@@ -4,7 +4,7 @@ import { config } from "@/config";
 
 <template>
   <footer id="site-footer" class="site-footer">
-    <div class="container py-3 footer-inner">
+    <div class="container-fluid py-3 footer-inner">
       <span class="footer-text">
         <a class="footer-link" href="https://github.com/sentrychris/system-monitor">{{
           config.app.name
