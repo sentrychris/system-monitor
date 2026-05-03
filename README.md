@@ -14,9 +14,9 @@
 
 ### Requirements
 
-- [psmonitor](https://github.com/sentrychris/psmonitor)
+- [vigil-collector](https://github.com/sentrychris/vigil-collector)
 
-After downloading and running psmonitor, proceed with the setup.
+After downloading and running vigil-collector, proceed with the setup.
 
 1. Clone the repository
 
@@ -39,9 +39,9 @@ After downloading and running psmonitor, proceed with the setup.
    VITE_APP_DEPLOY_REGION=us-central1-a                  # (optional) visible in the footer
    VITE_APP_DEPLOY_INSTANCE=chris-web1                   # (optional) visible in the footer
 
-   VITE_API_URL="http://192.168.1.237:4500"              # URL for psmonitor
-   VITE_WORKER_URL="http://192.168.1.237:4500/worker"    # URL for psmonitor's endpoint for creating a new websocket connection
-   VITE_WEBSOCKET_URL="ws://192.168.1.237:4500/connect"  # URL for psmonitor's endpoint for connecting to the websocket
+   VITE_API_URL="http://192.168.1.237:4500"              # URL for vigil-collector
+   VITE_WORKER_URL="http://192.168.1.237:4500/worker"    # URL for vigil-collector's endpoint for creating a new websocket connection
+   VITE_WEBSOCKET_URL="ws://192.168.1.237:4500/connect"  # URL for vigil-collector's endpoint for connecting to the websocket
    VITE_CONNECTION_TYPE="websocket"                      # Set to "http" for static data, "websocket" for live data
    ```
 

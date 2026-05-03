@@ -6,12 +6,12 @@
     <title>Vigil — Real-time system monitoring</title>
     <meta
       name="description"
-      content="Vigil is a lightweight, real-time system monitoring dashboard. Live WebSocket metrics, D3 visualizations, and a polished UI for psmonitor."
+      content="Vigil is a lightweight, real-time system monitoring dashboard. Live WebSocket metrics, D3 visualizations, and a polished UI for Vigil Collector."
     />
     <meta property="og:title" content="Vigil — Real-time system monitoring" />
     <meta
       property="og:description"
-      content="Lightweight, real-time system monitoring for your servers. WebSocket-streamed metrics, D3 visualizations, drop-in dashboard for psmonitor."
+      content="Lightweight, real-time system monitoring for your servers. WebSocket-streamed metrics, D3 visualizations, drop-in dashboard for Vigil Collector."
     />
     <meta property="og:type" content="website" />
     <meta property="og:image" content="dashboard.png" />
@@ -793,7 +793,7 @@
         <p class="lede">
           Vigil is a lightweight, real-time monitoring dashboard for your servers. Live
           metrics streamed over WebSocket, gauges, charts, service probes — all in
-          one polished UI that drops in front of <a style="color:var(--cyan); border-bottom:1px solid transparent;" href="https://github.com/sentrychris/psmonitor" target="_blank" rel="noopener">psmonitor</a>.
+          one polished UI that drops in front of <a style="color:var(--cyan); border-bottom:1px solid transparent;" href="https://github.com/sentrychris/vigil-collector" target="_blank" rel="noopener">Vigil Collector</a>.
         </p>
         <div class="hero-cta">
           <a class="btn btn-primary" href="https://status.edcs.app" target="_blank" rel="noopener">
@@ -901,14 +901,14 @@
           <div class="section-eyebrow">How it works</div>
           <h2 class="section-title">A two-piece system.</h2>
           <p class="section-lede">
-            Vigil is the polished frontend; <a style="color:var(--cyan)" href="https://github.com/sentrychris/psmonitor" target="_blank" rel="noopener">psmonitor</a> does the host-side work. They talk over HTTP and a WebSocket — that is it.
+            Vigil is the polished frontend; <a style="color:var(--cyan)" href="https://github.com/sentrychris/vigil-collector" target="_blank" rel="noopener">Vigil Collector</a> does the host-side work. They talk over HTTP and a WebSocket — that is it.
           </p>
         </div>
 
         <div class="arch reveal">
           <div class="arch-node">
             <span class="arch-tag">Backend</span>
-            <h4>psmonitor</h4>
+            <h4>Vigil Collector</h4>
             <ul style="color: var(--blue);">
               <li>asyncio sampler · 1 Hz default</li>
               <li>psutil + Tornado</li>
@@ -945,7 +945,7 @@
           <div class="section-eyebrow">Quick start</div>
           <h2 class="section-title">Up and running in under a minute.</h2>
           <p class="section-lede">
-            Run psmonitor on the host you want to watch, then point Vigil at it. That is the whole setup.
+            Run Vigil Collector on the host you want to watch, then point Vigil at it. That is the whole setup.
           </p>
         </div>
 
@@ -957,12 +957,12 @@
               <span class="browser-dot g"></span>
               <span class="label">~/vigil — bash</span>
             </div>
-            <pre><span class="term-comment"># 1. Get psmonitor running on the host</span>
-<span class="term-prompt">$</span> <span class="term-cmd">git clone</span> https://github.com/sentrychris/psmonitor
-<span class="term-prompt">$</span> <span class="term-cmd">cd</span> psmonitor &amp;&amp; <span class="term-cmd">pip install</span> <span class="term-flag">-e</span> .
-<span class="term-prompt">$</span> <span class="term-cmd">psmonitor</span> <span class="term-flag">--address</span>=0.0.0.0 <span class="term-flag">--port</span>=4500
+            <pre><span class="term-comment"># 1. Get Vigil Collector running on the host</span>
+<span class="term-prompt">$</span> <span class="term-cmd">git clone</span> https://github.com/sentrychris/vigil-collector
+<span class="term-prompt">$</span> <span class="term-cmd">cd</span> Vigil Collector &amp;&amp; <span class="term-cmd">pip install</span> <span class="term-flag">-e</span> .
+<span class="term-prompt">$</span> <span class="term-cmd">Vigil Collector</span> <span class="term-flag">--address</span>=0.0.0.0 <span class="term-flag">--port</span>=4500
 
-<span class="term-comment"># 2. Clone Vigil and point it at psmonitor</span>
+<span class="term-comment"># 2. Clone Vigil and point it at Vigil Collector</span>
 <span class="term-prompt">$</span> <span class="term-cmd">git clone</span> https://github.com/sentrychris/vigil
 <span class="term-prompt">$</span> <span class="term-cmd">cd</span> vigil &amp;&amp; <span class="term-cmd">npm install</span>
 <span class="term-prompt">$</span> <span class="term-cmd">cp</span> .env.example .env  <span class="term-comment"># edit URLs</span>
@@ -976,13 +976,13 @@
           <div class="qs-steps reveal">
             <div class="qs-step">
               <span class="num">1</span>
-              <h4>Install psmonitor on the host</h4>
-              <p>The Python sampler runs the heavy psutil work and exposes HTTP + WebSocket endpoints. <a href="https://github.com/sentrychris/psmonitor" target="_blank" rel="noopener">Repo →</a></p>
+              <h4>Install Vigil Collector on the host</h4>
+              <p>The Python sampler runs the heavy psutil work and exposes HTTP + WebSocket endpoints. <a href="https://github.com/sentrychris/vigil-collector" target="_blank" rel="noopener">Repo →</a></p>
             </div>
             <div class="qs-step">
               <span class="num">2</span>
               <h4>Configure Vigil's environment</h4>
-              <p>Set <code style="color:var(--amber)">VITE_API_URL</code>, <code style="color:var(--amber)">VITE_WORKER_URL</code>, and <code style="color:var(--amber)">VITE_WEBSOCKET_URL</code> to point at your psmonitor instance.</p>
+              <p>Set <code style="color:var(--amber)">VITE_API_URL</code>, <code style="color:var(--amber)">VITE_WORKER_URL</code>, and <code style="color:var(--amber)">VITE_WEBSOCKET_URL</code> to point at your Vigil Collector instance.</p>
             </div>
             <div class="qs-step">
               <span class="num">3</span>
@@ -1051,7 +1051,7 @@
           <div class="foot-meta">
             <span>MIT</span>
             <a href="https://github.com/sentrychris/vigil" target="_blank" rel="noopener">github</a>
-            <a href="https://github.com/sentrychris/psmonitor" target="_blank" rel="noopener">psmonitor</a>
+            <a href="https://github.com/sentrychris/vigil-collector" target="_blank" rel="noopener">Vigil Collector</a>
             <a href="https://status.edcs.app" target="_blank" rel="noopener">demo</a>
           </div>
         </div>
