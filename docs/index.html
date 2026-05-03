@@ -705,6 +705,31 @@
       .foot-meta a { color: var(--text-mute); transition: color 160ms ease; }
       .foot-meta a:hover { color: var(--text); }
 
+      .foot-built {
+        margin-top: 1.4rem;
+        text-align: center;
+        font-family: "IBM Plex Mono", ui-monospace, monospace;
+        font-size: 0.72rem;
+        color: var(--text-dim);
+        letter-spacing: 0.08em;
+      }
+      .foot-built .heart {
+        color: var(--rose);
+        font-style: normal;
+        animation: heartbeat 2.4s ease-in-out infinite;
+        display: inline-block;
+      }
+      .foot-built a { color: var(--text-mute); transition: color 160ms ease; }
+      .foot-built a:hover { color: var(--text); }
+      @keyframes heartbeat {
+        0%, 60%, 100% { transform: scale(1); }
+        20% { transform: scale(1.18); }
+        40% { transform: scale(0.95); }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .foot-built .heart { animation: none; }
+      }
+
       /* ───────────── Reveal ───────────── */
       .reveal {
         opacity: 0;
@@ -1014,17 +1039,23 @@
 
     <!-- ───────────── Footer ───────────── -->
     <footer>
-      <div class="wrap foot-inner">
-        <a href="#" class="brand">
-          <img class="brand-mark" src="logo.svg" alt="" aria-hidden="true" />
-          <span class="brand-name">Vigil</span>
-        </a>
-        <div class="foot-meta">
-          <span>MIT</span>
-          <a href="https://github.com/sentrychris/vigil" target="_blank" rel="noopener">github</a>
-          <a href="https://github.com/sentrychris/psmonitor" target="_blank" rel="noopener">psmonitor</a>
-          <a href="https://status.edcs.app" target="_blank" rel="noopener">demo</a>
+      <div class="wrap">
+        <div class="foot-inner">
+          <a href="#" class="brand">
+            <img class="brand-mark" src="logo.svg" alt="" aria-hidden="true" />
+            <span class="brand-name">Vigil</span>
+          </a>
+          <div class="foot-meta">
+            <span>MIT</span>
+            <a href="https://github.com/sentrychris/vigil" target="_blank" rel="noopener">github</a>
+            <a href="https://github.com/sentrychris/psmonitor" target="_blank" rel="noopener">psmonitor</a>
+            <a href="https://status.edcs.app" target="_blank" rel="noopener">demo</a>
+          </div>
         </div>
+        <p class="foot-built">
+          Built with <span class="heart" aria-label="love">❤</span> by
+          <a href="https://github.com/sentrychris" target="_blank" rel="noopener">chris</a>
+        </p>
       </div>
     </footer>
 
