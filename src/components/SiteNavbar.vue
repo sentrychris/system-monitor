@@ -4,6 +4,7 @@ import { config } from "@/config";
 import { useThemeStore } from "@/stores/theme";
 import { useSystemStore } from "@/stores/system";
 import PageHeader from "@/components/PageHeader.vue";
+import SiteLogo from "@/components/SiteLogo.vue";
 
 const theme = useThemeStore();
 const system = useSystemStore();
@@ -20,6 +21,7 @@ const node = computed(() => {
   <nav class="navbar navbar-expand-lg site-navbar shadow-lg">
     <div class="container-fluid py-2 nav-container">
       <a class="navbar-brand d-flex align-items-center gap-3" href="#">
+        <SiteLogo />
         <PageHeader
           :decor-title="config.app.name"
           :title="config.app.title"

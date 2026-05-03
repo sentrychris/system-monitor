@@ -1,8 +1,12 @@
-# Vigil
+<p align="center">
+  <img src="./logo.svg" alt="Vigil" width="120" />
+</p>
 
-A lightweight monitoring dashboard for your server.
+<h1 align="center">Vigil</h1>
 
-View a [live example here](https://status.edcs.app).
+<p align="center">A lightweight monitoring dashboard for your server.</p>
+
+<p align="center">View a <a href="https://status.edcs.app">live example here</a>.</p>
 
 ![image](./README.png)
 
