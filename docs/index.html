@@ -123,7 +123,10 @@
       .atmosphere::after {
         content: "";
         position: absolute;
-        inset: 0;
+        /* Slightly oversize the gradient layer vertically so the
+           atmoShift translateY(-2%) animation never exposes a bare
+           strip of --bg-0 at the bottom of the viewport. */
+        inset: -4% 0;
         background:
           radial-gradient(60vw 60vw at 12% -10%, rgba(59, 130, 246, 0.22), transparent 60%),
           radial-gradient(50vw 50vw at 100% 0%, rgba(34, 211, 238, 0.18), transparent 60%),
