@@ -63,7 +63,9 @@ function tone(v: number | null): "ok" | "warn" | "crit" | "none" {
     </div>
 
     <!-- ─── Alerts ─── -->
-    <div class="tile" :class="firing ? 'tone-rose' : 'tone-emerald'">
+    <!-- Three-state tile: rose if anything's firing, amber if nothing
+         has fired but rules are breaching, otherwise emerald clear. -->
+    <div class="tile" :class="firing ? 'tone-rose' : (breaching ? 'tone-amber' : 'tone-emerald')">
       <div class="tile-eyebrow">
         <span class="dash"></span> ALERTS
       </div>
@@ -72,14 +74,22 @@ function tone(v: number | null): "ok" | "warn" | "crit" | "none" {
         {{ firing }}
         <span class="tile-suffix">firing</span>
       </div>
+      <div v-else-if="breaching" class="tile-value metric-num warn">
+        <span class="watch-dot"></span>
+        {{ breaching }}
+        <span class="tile-suffix">breaching</span>
+      </div>
       <div v-else class="tile-value metric-num clear">
         <font-awesome-icon icon="fa-solid fa-circle-check" class="clear-icon" />
-        Clear
+        All clear
       </div>
       <div class="tile-sub">
-        <span v-if="breaching" class="sub-pip pip-breaching">{{ breaching }} breaching</span>
+        <span v-if="firing && breaching" class="sub-pip pip-breaching">
+          + {{ breaching }} breaching
+        </span>
         <span v-else-if="firing"    class="sub-pip pip-mute">no breach</span>
-        <span v-else                class="sub-pip pip-mute">no breach</span>
+        <span v-else-if="breaching" class="sub-pip pip-mute">none firing yet</span>
+        <span v-else                class="sub-pip pip-mute">no breach · no fire</span>
       </div>
     </div>
 
@@ -166,6 +176,7 @@ body[data-theme="dark"] .tile {
 }
 .tile.tone-cyan      { --tone-edge: linear-gradient(90deg, #60a5fa, #22d3ee); }
 .tile.tone-emerald   { --tone-edge: linear-gradient(90deg, #10b981, #34d399); }
+.tile.tone-amber     { --tone-edge: linear-gradient(90deg, #f59e0b, #fbbf24); }
 .tile.tone-rose      { --tone-edge: linear-gradient(90deg, #f43f5e, #fb7185); }
 .tile.tone-ok-c      { --tone-edge: linear-gradient(90deg, #60a5fa, #22d3ee); }
 .tile.tone-warn-c    { --tone-edge: linear-gradient(90deg, #f59e0b, #fbbf24); }
@@ -224,6 +235,11 @@ body[data-theme="dark"] .tile-value { color: #f8fafc; }
 body[data-theme="dark"] .tile-value.clear { color: #34d399; }
 .clear-icon { font-size: 1.4rem; }
 
+/* Warn variant for "{n} breaching" — fleet is being watched but
+   nothing has fired yet. Amber to match the BREACHING state colour. */
+.tile-value.warn { color: #b45309; }
+body[data-theme="dark"] .tile-value.warn { color: #fbbf24; }
+
 /* Alarm dot — sits next to firing count */
 .alarm-dot {
   width: 12px; height: 12px;
@@ -234,12 +250,28 @@ body[data-theme="dark"] .tile-value.clear { color: #34d399; }
   margin-right: 0.05rem;
   align-self: center;
 }
+/* Watch dot — slower than alarm, amber, used for breaching count.
+   Different cadence so operators can distinguish the two states with
+   peripheral vision. */
+.watch-dot {
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: #fbbf24;
+  box-shadow: 0 0 12px #fbbf24;
+  animation: watch-pulse 2s ease-in-out infinite;
+  margin-right: 0.05rem;
+  align-self: center;
+}
 @keyframes alarm-pulse {
   0%, 100% { opacity: 1;   transform: scale(1); }
   50%      { opacity: 0.5; transform: scale(0.9); }
 }
+@keyframes watch-pulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.55; }
+}
 @media (prefers-reduced-motion: reduce) {
-  .alarm-dot { animation: none; }
+  .alarm-dot, .watch-dot { animation: none; }
 }
 
 /* ── Health bar (HOSTS tile) ──────────────────────────────────────────── */

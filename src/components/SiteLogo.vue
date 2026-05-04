@@ -207,8 +207,8 @@
 <style scoped>
 .site-logo {
   display: block;
-  width: 56px;
-  height: 56px;
+  width: 45px;
+  height: 45px;
   filter: drop-shadow(0 6px 18px rgba(34, 211, 238, 0.35));
   transition: filter 220ms ease, transform 320ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }

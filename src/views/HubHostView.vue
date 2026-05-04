@@ -255,13 +255,29 @@ onUnmounted(() => { hub.stopPolling(); });
                 <div class="ds-sub">ACTIVE ALERTS · LIVE STATE</div>
               </div>
               <div v-if="hostAlerts.length" class="alert-counts">
-                <span v-if="firingCount"    class="count-pill is-firing">
+                <span
+                  v-if="firingCount"
+                  class="count-pill is-firing"
+                  title="Threshold sustained ≥ for_seconds — channel was dispatched."
+                >
                   {{ firingCount }} <span class="count-label">firing</span>
                 </span>
-                <span v-if="breachingCount" class="count-pill is-breaching">
+                <span
+                  v-if="breachingCount"
+                  class="count-pill is-breaching"
+                  title="Threshold just tripped — hub is timing it. Recovers silently if it ends before for_seconds."
+                >
                   {{ breachingCount }} <span class="count-label">breach{{ breachingCount === 1 ? '' : 'es' }}</span>
                 </span>
               </div>
+              <RouterLink
+                to="/hub/help"
+                class="ds-help"
+                title="What do firing and breaching mean?"
+                aria-label="Open alerts help"
+              >
+                <font-awesome-icon icon="fa-solid fa-circle-question" />
+              </RouterLink>
             </header>
             <div class="ds-body">
               <div v-if="!hostAlerts.length" class="all-clear">
@@ -284,6 +300,24 @@ onUnmounted(() => { hub.stopPolling(); });
                   <span class="ar-state mono">{{ a.state.toUpperCase() }}</span>
                 </li>
               </ul>
+
+              <!-- State legend — always visible, hover for details. -->
+              <div class="state-legend" aria-label="Alert state legend">
+                <span class="sl-eyebrow" aria-hidden="true">STATES</span>
+                <span class="sl-pill is-ok"
+                      title="OK — threshold not violated. Nothing to do.">
+                  <span class="sl-dot"></span>OK
+                </span>
+                <span class="sl-pill is-breaching"
+                      title="BREACHING — threshold just tripped. Hub is timing it; recovers silently if it ends before for_seconds.">
+                  <span class="sl-dot"></span>BREACHING
+                </span>
+                <span class="sl-pill is-firing"
+                      title="FIRING — threshold sustained ≥ for_seconds. Channel was dispatched.">
+                  <span class="sl-dot"></span>FIRING
+                </span>
+                <RouterLink to="/hub/help" class="sl-more">Learn more →</RouterLink>
+              </div>
             </div>
           </section>
         </div>
@@ -855,6 +889,30 @@ body[data-theme="dark"] .ds-link { color: #67e8f9; border-bottom-color: rgba(34,
   margin-left: auto;
   flex-shrink: 0;
 }
+
+/* "?" link in the Health card header → /hub/help. */
+.ds-help {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  margin-left: 0.4rem;
+  color: #94a3b8;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  font-size: 0.78rem;
+  text-decoration: none;
+  transition: color 140ms ease, border-color 140ms ease, background 140ms ease;
+  flex-shrink: 0;
+}
+.ds-help:hover {
+  color: #22d3ee;
+  border-color: rgba(34, 211, 238, 0.4);
+  background: rgba(34, 211, 238, 0.08);
+}
+.alert-counts + .ds-help { margin-left: 0.4rem; }
 .count-pill {
   display: inline-flex;
   align-items: center;
@@ -976,6 +1034,67 @@ body[data-theme="dark"] .ar-meta { color: #94a3b8; }
 }
 .alert-row.is-firing    .ar-state { color: #f87171; }
 .alert-row.is-breaching .ar-state { color: #fbbf24; }
+
+/* State legend — always visible at the bottom of the Health card so the
+   colour vocabulary is on-screen even when nothing is firing. Hover any
+   pill for the one-line definition; click "Learn more →" for the docs. */
+.state-legend {
+  margin-top: 0.95rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(148, 163, 184, 0.14);
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.sl-eyebrow {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #94a3b8;
+  margin-right: 0.2rem;
+  user-select: none;
+}
+.sl-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.16rem 0.5rem;
+  border-radius: 999px;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  cursor: help;
+  border: 1px solid currentColor;
+}
+.sl-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 6px currentColor;
+}
+.sl-pill.is-ok        { color: #047857; background: rgba(52, 211, 153, 0.08);  border-color: rgba(52, 211, 153, 0.32); }
+.sl-pill.is-breaching { color: #b45309; background: rgba(251, 191, 36, 0.08);  border-color: rgba(251, 191, 36, 0.32); }
+.sl-pill.is-firing    { color: #b91c1c; background: rgba(244, 63, 94, 0.08);   border-color: rgba(244, 63, 94, 0.32); }
+body[data-theme="dark"] .sl-pill.is-ok        { color: #34d399; }
+body[data-theme="dark"] .sl-pill.is-breaching { color: #fbbf24; }
+body[data-theme="dark"] .sl-pill.is-firing    { color: #f87171; }
+
+.sl-more {
+  margin-left: auto;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 0.66rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #6b7280;
+  text-decoration: none;
+  transition: color 140ms ease;
+}
+.sl-more:hover { color: #22d3ee; }
+body[data-theme="dark"] .sl-more { color: #94a3b8; }
 
 /* ── Section groups ─────────────────────────────────────────────────── */
 .group {
