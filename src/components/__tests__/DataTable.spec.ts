@@ -35,13 +35,27 @@ describe("DataTable", () => {
 
     expect(testSubject.exists()).toBeTruthy();
     expect(testSubject.props()).toEqual(testProps);
+
     expect(testSubject.html()).toContain(`Pid</th>`);
-    expect(testSubject.html()).toContain(`<td>634</td>`);
     expect(testSubject.html()).toContain(`Username</th>`);
-    expect(testSubject.html()).toContain(`<td>pi</td>`);
     expect(testSubject.html()).toContain(`Name</th>`);
-    expect(testSubject.html()).toContain(`<td>Xorg</td>`);
     expect(testSubject.html()).toContain(`Mem</th>`);
-    expect(testSubject.html()).toContain(`<td>63.8</td>`);
+
+    const cells = testSubject.findAll("td");
+    expect(cells.map((c) => c.text())).toEqual([
+      "634",
+      "root",
+      "Xorg",
+      "71.37",
+      "1493",
+      "pi",
+      "node",
+      "63.8",
+    ]);
+
+    expect(cells[0].classes()).toContain("mono");
+    expect(cells[3].classes()).toContain("mono");
+    expect(cells[1].classes()).not.toContain("mono");
+    expect(cells[2].classes()).not.toContain("mono");
   });
 });

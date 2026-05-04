@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onBeforeMount } from "vue";
+import { computed, onBeforeMount, ref } from "vue";
 import { config } from "@/config";
 import { useLoadingStore } from "@/stores/loading";
 import { useSystemStore } from "@/stores/system";
@@ -17,11 +17,19 @@ import BarChart from "@/components/charts/BarChart.vue";
 import PieChart from "@/components/charts/PieChart.vue";
 import ServiceStatus from "@/components/ServiceStatus.vue";
 import DiskList from "@/components/stats/DiskList.vue";
+import DataTable from "@/components/DataTable.vue";
 
 useDocumentTitle("Host Overview");
 
 const loader = useLoadingStore();
 const system = useSystemStore();
+
+const processesView = ref<"charts" | "table">("charts");
+const processesData = computed(() =>
+  system.live && system.realtime.processes.length > 0
+    ? system.realtime.processes
+    : system.data.processes,
+);
 
 onBeforeMount(() => {
   const connectionType = system.connectionType ?? config.api.connectionType;
@@ -220,24 +228,51 @@ onBeforeMount(() => {
                 subtitle="Per-process RSS · top 10"
                 icon="fa-solid fa-list-ul"
                 tone="green"
-              />
+              >
+                <template #right>
+                  <div
+                    class="view-toggle btn-group btn-group-sm"
+                    role="group"
+                    aria-label="Top processes view"
+                  >
+                    <button
+                      type="button"
+                      class="btn"
+                      :class="{ active: processesView === 'charts' }"
+                      :aria-pressed="processesView === 'charts'"
+                      title="Charts view"
+                      @click="processesView = 'charts'"
+                    >
+                      <font-awesome-icon icon="fa-solid fa-chart-pie" />
+                    </button>
+                    <button
+                      type="button"
+                      class="btn"
+                      :class="{ active: processesView === 'table' }"
+                      :aria-pressed="processesView === 'table'"
+                      title="Table view"
+                      @click="processesView = 'table'"
+                    >
+                      <font-awesome-icon icon="fa-solid fa-table-list" />
+                    </button>
+                  </div>
+                </template>
+              </SectionHeader>
               <div class="panel-body">
-                <div class="row align-items-center g-2">
+                <div
+                  v-if="processesView === 'charts'"
+                  class="row align-items-center g-2"
+                >
                   <div class="col-sm-12 col-md-6 col-lg-8">
                     <BarChart
                       metric="system"
                       id="processes"
                       title=""
                       :series="
-                        system.live && system.realtime.processes.length > 0
-                          ? system.formatBarChartDataForSystem(
-                              system.realtime.processes,
-                              'mem',
-                            )
-                          : system.formatBarChartDataForSystem(
-                              system.data.processes,
-                              'mem',
-                            )
+                        system.formatBarChartDataForSystem(
+                          processesData,
+                          'mem',
+                        )
                       "
                       sort-key="data"
                       sort-order="desc"
@@ -249,18 +284,17 @@ onBeforeMount(() => {
                     <PieChart
                       id="system-processes"
                       title=""
-                      :series="
-                        system.live && system.realtime.processes.length > 0
-                          ? system.formatPieChartDataForProcesses(
-                              system.realtime.processes,
-                            )
-                          : system.formatPieChartDataForProcesses(
-                              system.data.processes,
-                            )
-                      "
+                      :series="system.formatPieChartDataForProcesses(processesData)"
                     />
                   </div>
                 </div>
+                <DataTable
+                  v-else
+                  type="horizontal"
+                  :data="processesData"
+                  sort-key="mem"
+                  sort-order="desc"
+                />
               </div>
             </div>
           </div>
@@ -308,5 +342,33 @@ onBeforeMount(() => {
 }
 .resource-gauge-cell :deep(.gauge-svg-wrap) {
   max-width: 130px;
+}
+
+/* View toggle in the Top Processes panel header */
+.view-toggle .btn {
+  background: rgba(148, 163, 184, 0.08);
+  color: #cbd5e1;
+  border: 1px solid rgba(96, 165, 250, 0.22);
+  padding: 0.25rem 0.55rem;
+  line-height: 1;
+  position: relative;
+  z-index: 1;
+}
+.view-toggle .btn + .btn {
+  border-left: none;
+}
+.view-toggle .btn:hover {
+  background: rgba(96, 165, 250, 0.14);
+  color: #f1f5f9;
+}
+.view-toggle .btn.active {
+  background: rgba(16, 185, 129, 0.18);
+  color: #34d399;
+  border-color: rgba(16, 185, 129, 0.4);
+  box-shadow: inset 0 0 0 1px rgba(16, 185, 129, 0.25);
+}
+.view-toggle .btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.35);
 }
 </style>
