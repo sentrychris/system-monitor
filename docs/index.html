@@ -460,6 +460,108 @@
         height: auto;
       }
 
+      /* ───────────── Card stack — 3 layered browser frames ─────────────
+         Stack mode: cards overlap with offset / scale / tilt.
+         Spread mode: cards fan out horizontally so all three are visible.
+         Click any card in stack mode to cycle the front card to the back. */
+      .card-stack {
+        position: relative;
+        margin: 0 auto 1.4rem;
+        /* No fixed aspect-ratio — the front card flows naturally and
+           dictates container height from its image. Back cards fill
+           that natural size via absolute positioning. */
+        overflow: visible;
+      }
+      .stack-card {
+        cursor: pointer;
+        transform-origin: 50% 50%;
+        transition:
+          transform 600ms cubic-bezier(.2, .8, .2, 1),
+          filter 400ms ease;
+        will-change: transform;
+      }
+      /* Front card flows naturally — its image's natural height
+         determines the stack height, so the .browser frame fits the
+         screenshot exactly with no letterbox bars on either side. */
+      .stack-card[data-pos="0"] {
+        position: relative;
+        z-index: 30;
+        transform: translate3d(0, 0, 0) scale(1);
+      }
+      .stack-card:not([data-pos="0"]) {
+        position: absolute;
+        inset: 0;
+      }
+      .stack-card .browser {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        cursor: inherit;
+      }
+      .stack-card .browser:hover { cursor: inherit; }
+      .stack-card .browser-shot {
+        display: block;
+        width: 100%;
+        /* Front card: natural height (auto). Back cards inherit the
+           container height via flex:1 below — they share the front
+           card's exact frame. */
+        height: auto;
+      }
+      .stack-card:not([data-pos="0"]) .browser-shot {
+        flex: 1 1 auto;
+        min-height: 0;
+        height: 100%;
+        object-fit: cover;
+        object-position: center top;
+      }
+
+      /* ─── Stack mode — peek-from-above, deck-of-papers feel ──────── */
+      .stack-card[data-pos="1"] {
+        z-index: 20;
+        transform: translate3d(0, -4.5%, 0) scale(0.96);
+        filter: brightness(0.9);
+      }
+      .stack-card[data-pos="2"] {
+        z-index: 10;
+        transform: translate3d(0, -9%, 0) scale(0.92);
+        filter: brightness(0.8);
+      }
+
+      /* ─── Stack controls ───────────────────────────────── */
+      .stack-controls {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 1rem;
+      }
+      .stack-hint {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        font-family: "IBM Plex Mono", ui-monospace, monospace;
+        font-size: 0.66rem;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--text-mute);
+      }
+      .stack-hint::before {
+        content: "";
+        width: 7px; height: 7px;
+        border-radius: 50%;
+        background: var(--cyan);
+        box-shadow: 0 0 8px var(--cyan);
+        animation: stack-hint-pulse 1.6s ease-in-out infinite;
+      }
+      @keyframes stack-hint-pulse {
+        0%, 100% { opacity: 1; }
+        50%      { opacity: 0.45; }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .stack-card { transition: none; }
+        .stack-hint::before { animation: none; }
+      }
+
       /* ───────────── Section header ───────────── */
       .section { padding: 5rem 0; }
       .section-eyebrow {
@@ -1210,16 +1312,47 @@
       </div>
     </section>
 
-    <!-- ───────────── Screenshot ───────────── -->
+    <!-- ───────────── Screenshot stack ─────────────
+         Three layered "browser" cards. Click any card to shuffle
+         (front goes to back). Toggle Spread to fan them out. -->
     <section class="preview wrap reveal">
-      <div class="browser">
-        <div class="browser-bar">
-          <span class="browser-dot r"></span>
-          <span class="browser-dot y"></span>
-          <span class="browser-dot g"></span>
-          <span class="browser-url"><span class="lock">●</span> https://status.edcs.app</span>
+      <div class="card-stack" id="cardStack" data-expanded="false" role="group" aria-label="Vigil dashboard screenshots — click to cycle">
+        <div class="stack-card" data-pos="0">
+          <div class="browser">
+            <div class="browser-bar">
+              <span class="browser-dot r"></span>
+              <span class="browser-dot y"></span>
+              <span class="browser-dot g"></span>
+              <span class="browser-url"><span class="lock">●</span> https://status.edcs.app</span>
+            </div>
+            <img class="browser-shot" src="dashboard.png" alt="Single-host dashboard with CPU, memory, disk, network and process metrics" loading="lazy" />
+          </div>
         </div>
-        <img class="browser-shot" src="dashboard.png" alt="Vigil dashboard screenshot showing CPU, memory, disk, network and process metrics" loading="lazy" />
+        <div class="stack-card" data-pos="1">
+          <div class="browser">
+            <div class="browser-bar">
+              <span class="browser-dot r"></span>
+              <span class="browser-dot y"></span>
+              <span class="browser-dot g"></span>
+              <span class="browser-url"><span class="lock">●</span> https://status.edcs.app/hub</span>
+            </div>
+            <img class="browser-shot" src="hub.png" alt="Hub fleet overview — multi-host status, alerts, recent activity" loading="lazy" />
+          </div>
+        </div>
+        <div class="stack-card" data-pos="2">
+          <div class="browser">
+            <div class="browser-bar">
+              <span class="browser-dot r"></span>
+              <span class="browser-dot y"></span>
+              <span class="browser-dot g"></span>
+              <span class="browser-url"><span class="lock">●</span> https://status.edcs.app/hub/hosts/1</span>
+            </div>
+            <img class="browser-shot" src="overview.png" alt="Per-host detail — system data sheet, health card, sparkline metrics" loading="lazy" />
+          </div>
+        </div>
+      </div>
+      <div class="stack-controls">
+        <span class="stack-hint" id="stackHint">click to view</span>
       </div>
     </section>
 
@@ -1730,6 +1863,27 @@
           el.addEventListener("pointermove", onMove);
           el.addEventListener("pointerleave", reset);
         });
+      }
+
+      // ─── Card stack: click any card to cycle the front to the back.
+      const stack = document.getElementById("cardStack");
+      if (stack) {
+        const cards = [...stack.querySelectorAll(".stack-card")];
+        let frontIdx = 0;
+
+        const applyPositions = () => {
+          cards.forEach((card, i) => {
+            const pos = (i - frontIdx + cards.length) % cards.length;
+            card.dataset.pos = String(pos);
+          });
+        };
+
+        stack.addEventListener("click", () => {
+          frontIdx = (frontIdx + 1) % cards.length;
+          applyPositions();
+        });
+
+        applyPositions();
       }
     </script>
   </body>
