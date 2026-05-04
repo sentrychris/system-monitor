@@ -8,7 +8,7 @@
 
 <p align="center">View a <a href="https://status.edcs.app">live example here</a>.</p>
 
-![image](./readme.png)
+![image](./docs/dashboard.png)
 
 Vigil ships in **two modes** that share the same SPA build:
 
