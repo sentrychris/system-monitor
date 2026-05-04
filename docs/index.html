@@ -1627,29 +1627,32 @@
             </ul>
 
             <a
-              class="btn btn-primary pricing-cta"
+              class="btn pricing-cta"
               href="https://buy.stripe.com/7sY8wP0rTbczccB5382Ry03"
               target="_blank"
               rel="noopener"
+              aria-label="Buy Vigil install via Stripe"
               data-stripe-link
             >
               <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/>
+                <rect x="2" y="6" width="20" height="14" rx="2" ry="2"/>
+                <line x1="2" y1="11" x2="22" y2="11"/>
               </svg>
-              Pay £99 — get installed
+              Buy with Stripe
             </a>
 
             <div class="pricing-secure">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
               </svg>
-              Secure checkout via <span class="stripe-mark">Stripe</span>
+              Secure checkout via Stripe
             </div>
           </div>
 
-          <!-- ─── Vigil Pro (waitlist) ─── -->
+          <!-- ─── Vigil Pro (Stripe checkout) ─── -->
           <div class="pricing-card tier-pro reveal">
-            <span class="pricing-tag"><span class="dot"></span>Waitlist</span>
+            <span class="pricing-tag"><span class="dot"></span>Available</span>
             <span class="pricing-eyebrow">Vigil Pro</span>
 
             <div class="pricing-amount">
@@ -1658,28 +1661,28 @@
               <span class="pricing-num">150</span>
               <span class="pricing-cadence">one-time</span>
             </div>
-            <p class="pricing-tagline">Self-hosted, fleet-aware, with alerting.</p>
+            <p class="pricing-tagline">Self-hosted hub for your whole fleet — with alerting.</p>
 
             <ul class="pricing-features">
               <li>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-                <span><b style="font-weight: 500;">Multi-host hub</b> — every collector on one dashboard</span>
+                <span><b style="font-weight: 500;">Multi-host hub</b> — every collector on one dashboard, fleet view + per-host detail</span>
               </li>
               <li>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-                <span><b style="font-weight: 500;">Alerting</b> via Slack, Discord, email and webhooks</span>
+                <span><b style="font-weight: 500;">Alerting</b> with Slack, Discord and webhook channels — sustained-breach state machine, not noisy spikes</span>
               </li>
               <li>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-                <span><b style="font-weight: 500;">Extended retention</b> — 24 h, 7 d, 30 d historical</span>
+                <span><b style="font-weight: 500;">Tiered retention</b> — raw 1 Hz, 1 m, 5 m, 1 h aggregates rolled into a single SQLite file</span>
               </li>
               <li>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-                <span><b style="font-weight: 500;">Auth</b> — basic auth + OAuth / OIDC</span>
+                <span><b style="font-weight: 500;">Admin auth</b> — bearer-token gated API, per-host argon2 keys for collectors</span>
               </li>
               <li>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-                <span><b style="font-weight: 500;">Probe templates</b> — Postgres, Redis, MySQL, Docker, k8s</span>
+                <span><b style="font-weight: 500;">Self-hosted</b> — runs on your hardware, all data stays on your disk</span>
               </li>
               <li>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
@@ -1689,21 +1692,24 @@
 
             <a
               class="btn pricing-cta"
-              href="mailto:christopher.rowles@outlook.com?subject=Vigil%20Pro%20—%20waitlist&body=Hi%20—%20add%20me%20to%20the%20Vigil%20Pro%20waitlist.%0A%0AHosts%20I'd%20be%20monitoring:%20%0AAlerting%20channels%20I'd%20want:%20%0A"
-              aria-label="Join the Vigil Pro waitlist"
+              href="https://buy.stripe.com/9B69AT4I92G3gsR8fk2Ry04"
+              target="_blank"
+              rel="noopener"
+              aria-label="Buy Vigil Pro via Stripe"
             >
               <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-                <polyline points="22,6 12,13 2,6"/>
+                <rect x="2" y="6" width="20" height="14" rx="2" ry="2"/>
+                <line x1="2" y1="11" x2="22" y2="11"/>
               </svg>
-              Join the waitlist
+              Buy with Stripe
             </a>
 
             <div class="pricing-secure">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
               </svg>
-              In development — no payment yet
+              Secure checkout via Stripe
             </div>
           </div>
 
@@ -1769,7 +1775,7 @@
         <p class="pricing-fineprint">
           <b style="color: var(--text); font-weight: 500;">Install</b> — Linux hosts only (Ubuntu, Debian, Fedora, RHEL/Rocky/Alma). After payment you'll receive an email with an onboarding form to share SSH credentials and your service probe endpoints. Refundable in full if I can't complete the install.
           <br />
-          <b style="color: var(--text); font-weight: 500;">Pro</b> — early-bird pricing for waitlist members; final price confirmed at launch. No charge until you opt in.
+          <b style="color: var(--text); font-weight: 500;">Pro</b> — single one-time payment via Stripe. After checkout you'll receive a download link and your activation token by email, usually within minutes.
           <br />
           <b style="color: var(--text); font-weight: 500;">Custom</b> — £250–500 typical for a single probe; complex integrations scoped after a 30-minute call. Stripe invoice once we agree on spec.
           <br />
