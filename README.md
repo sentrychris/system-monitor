@@ -12,7 +12,7 @@
 
 Vigil ships in **two modes** that share the same SPA build:
 
-- **Local** — connects directly to one [vigil-collector](https://github.com/sentrychris/vigil-collector)
+- **Host** — connects directly to one [vigil-collector](https://github.com/sentrychris/vigil-collector)
   via HTTP/WebSocket and shows that host's full live dashboard. The
   original mode; what most operators want for a single box.
 - **Hub** — connects to a [Vigil Pro](https://github.com/sentrychris/vigil-pro)
@@ -20,7 +20,7 @@ Vigil ships in **two modes** that share the same SPA build:
   the alert state machine, and rule management. Enabled by setting
   `VITE_HUB_URL` at build time. Optional.
 
-Both modes coexist in one build; the navbar carries a `Local | Hub`
+Both modes coexist in one build; the navbar carries a `Host | Hub`
 segmented switcher when Hub mode is enabled.
 
 ## Quick Start
@@ -51,7 +51,7 @@ segmented switcher when Hub mode is enabled.
    VITE_APP_DEPLOY_REGION=us-central1-a                  # (optional) visible in the footer
    VITE_APP_DEPLOY_INSTANCE=chris-web1                   # (optional) visible in the footer
 
-   # ─── Local mode ───────────────────────────────────────────────────
+   # ─── Host mode ────────────────────────────────────────────────────
    VITE_API_URL="http://192.168.1.237:4500"              # vigil-collector base URL
    VITE_WORKER_URL="http://192.168.1.237:4500/worker"    # collector's worker endpoint
    VITE_WEBSOCKET_URL="ws://192.168.1.237:4500/connect"  # collector's websocket endpoint
@@ -61,7 +61,7 @@ segmented switcher when Hub mode is enabled.
    VITE_HUB_URL="https://hub.vigil.example.com"          # Vigil Pro Hub base URL
    ```
 
-## Local mode
+## Host mode
 
 The dashboard at `/` works with either static data served from standard HTTP endpoints, or live data served through websocket connections.
 

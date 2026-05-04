@@ -61,7 +61,7 @@ const node = computed(() => {
             class="seg"
             active-class="is-active"
             exact-active-class="is-active"
-          >Local</RouterLink>
+          >Host</RouterLink>
           <span class="seg-divider" aria-hidden="true"></span>
           <RouterLink
             to="/hub"
@@ -360,7 +360,7 @@ const node = computed(() => {
   50%      { opacity: 0.4; }
 }
 
-/* ---------- Nav route links (Local / Hub) ---------- */
+/* ---------- Nav route links (Host / Hub) ---------- */
 .navbar-nav { display: inline-flex; align-items: center; gap: 0.4rem; padding-left: 0.6rem; }
 .nav-item   { list-style: none; }
 /* Primary view-mode switcher — segmented control (instrument-cluster
