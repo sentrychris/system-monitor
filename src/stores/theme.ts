@@ -9,7 +9,11 @@ export const useThemeStore = defineStore("theme", {
   }),
   actions: {
     load() {
-      const theme = this.theme ?? "light";
+      // Brand is dark-first (BRANDING §3.2); default new visitors to dark.
+      // Existing visitors with a saved preference (light or dark) are
+      // restored by Pinia persist before this runs, so this only kicks
+      // in on first load with nothing in localStorage.
+      const theme = this.theme ?? "dark";
       body.dataset.theme = theme;
 
       this.theme = theme;

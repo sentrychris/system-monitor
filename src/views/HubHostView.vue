@@ -175,31 +175,36 @@ onUnmounted(() => { hub.stopPolling(); });
               @click="editingUrl = false"
             >Cancel</button>
           </div>
-          <button
-            v-if="!confirmingDelete"
-            class="host-delete"
-            type="button"
-            title="Delete host"
-            aria-label="Delete host"
-            @click="confirmingDelete = true"
-          >
-            <font-awesome-icon icon="fa-solid fa-trash" />
-          </button>
-          <div v-else class="confirm-strip" role="alertdialog">
-            <span class="confirm-text">Delete host and all its data?</span>
+          <!-- TODO(demo): re-enable the delete-host control after the
+               demo. Drop the wrapping `<template v-if="false">` below;
+               onDelete and its reactive state are still wired up. -->
+          <template v-if="false">
             <button
-              class="confirm-yes"
+              v-if="!confirmingDelete"
+              class="host-delete"
               type="button"
-              :disabled="deleting"
-              @click="onDelete"
-            >{{ deleting ? "Deleting…" : "Delete" }}</button>
-            <button
-              class="confirm-no"
-              type="button"
-              :disabled="deleting"
-              @click="confirmingDelete = false"
-            >Cancel</button>
-          </div>
+              title="Delete host"
+              aria-label="Delete host"
+              @click="confirmingDelete = true"
+            >
+              <font-awesome-icon icon="fa-solid fa-trash" />
+            </button>
+            <div v-else class="confirm-strip" role="alertdialog">
+              <span class="confirm-text">Delete host and all its data?</span>
+              <button
+                class="confirm-yes"
+                type="button"
+                :disabled="deleting"
+                @click="onDelete"
+              >{{ deleting ? "Deleting…" : "Delete" }}</button>
+              <button
+                class="confirm-no"
+                type="button"
+                :disabled="deleting"
+                @click="confirmingDelete = false"
+              >Cancel</button>
+            </div>
+          </template>
         </div>
       </div>
 

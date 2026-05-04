@@ -92,3 +92,26 @@ export interface HealthzResponse {
   hosts: number;
   uptime_s: number;
 }
+
+/** /api/alert_rules — operator-defined alert thresholds. */
+export interface AlertRule {
+  id: number;
+  name: string;
+  metric: string;
+  dim: string;
+  scope: string;       // "all" | "host:<name>" | "tag:<tag>"
+  op: string;          // ">" | ">=" | "<" | "<="
+  threshold: number;
+  for_seconds: number;
+  channel_id: number;
+  enabled: number;     // 0|1
+  created_at: number;  // unix epoch s
+}
+
+/** /api/channels — dispatch destinations. */
+export interface Channel {
+  id: number;
+  name: string;
+  type: "slack" | "discord" | "webhook";
+  config: Record<string, unknown>;
+}

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from "vue";
+import { RouterLink } from "vue-router";
 import { useHubStore } from "@/stores/hub";
 
 const hub = useHubStore();
@@ -47,6 +48,10 @@ function relTime(unixS: number): string {
           </div>
         </div>
       </div>
+      <RouterLink to="/hub/rules" class="rules-link" title="Manage alert rules">
+        <span>Rules</span>
+        <font-awesome-icon icon="fa-solid fa-arrow-right" />
+      </RouterLink>
     </div>
 
     <div class="alert-body">
@@ -147,6 +152,34 @@ function relTime(unixS: number): string {
 </template>
 
 <style scoped>
+/* "Rules" link in the AlertList header — small mono pill, sits flush
+   right via the section-header's space-between flex. */
+.rules-link {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.28rem 0.7rem;
+  border-radius: 999px;
+  background: rgba(34, 211, 238, 0.08);
+  border: 1px solid rgba(34, 211, 238, 0.28);
+  color: #67e8f9;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: background 140ms ease, border-color 140ms ease, color 140ms ease;
+}
+.rules-link:hover {
+  background: rgba(34, 211, 238, 0.16);
+  border-color: rgba(34, 211, 238, 0.55);
+  color: #a5f3fc;
+}
+.rules-link svg { font-size: 0.6rem; }
+
 /* ── Header chrome ────────────────────────────────────────────────────── */
 .section-header {
   display: flex;

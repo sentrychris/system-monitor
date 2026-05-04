@@ -8,7 +8,9 @@
 
 import type {
   AlertEvent,
+  AlertRule,
   AlertState,
+  Channel,
   HealthzResponse,
   HubHost,
   HubOverviewHost,
@@ -99,4 +101,12 @@ export const hubApi = {
     if (since) q.set("since", String(since));
     return call<AlertEvent[]>(`/api/alert_events?${q}`, o);
   },
+
+  listAlertRules: (o: CallOptions) =>
+    call<AlertRule[]>("/api/alert_rules", o),
+
+  deleteAlertRule: (o: CallOptions, ruleId: number) =>
+    call<{ ok: true }>(`/api/alert_rules/${ruleId}`, o, { method: "DELETE" }),
+
+  listChannels: (o: CallOptions) => call<Channel[]>("/api/channels", o),
 };

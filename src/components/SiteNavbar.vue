@@ -14,6 +14,16 @@ const hub = useHubStore();
 const route = useRoute();
 const isHubRoute = computed(() => route.path.startsWith("/hub"));
 
+// Surface the current host as a breadcrumb chip when we're on a host
+// detail route — gives the navbar a "you are here" indicator beyond
+// just the Hub segment being lit.
+const hostCrumb = computed(() => {
+  if (route.name !== "hub-host") return null;
+  const id = Number(route.params.id);
+  const host = hub.hosts.find((h) => h.id === id);
+  return host ? { id, name: host.name, status: host.status } : { id, name: `#${id}`, status: null };
+});
+
 const node = computed(() => {
   const region = config.app.deployment.region;
   const instance = config.app.deployment.instance;
@@ -65,6 +75,21 @@ const node = computed(() => {
             </span>
           </RouterLink>
         </div>
+
+        <!-- Host-detail breadcrumb. Shows when we're on /hub/hosts/:id —
+             clicking the chevron returns to the fleet, the chip itself
+             is a static "you are here" indicator. -->
+        <div v-if="hostCrumb" class="nav-crumb" aria-label="Current host">
+          <RouterLink to="/hub" class="crumb-back" title="Back to fleet">
+            <font-awesome-icon icon="fa-solid fa-chevron-right" class="crumb-chev" />
+          </RouterLink>
+          <span class="crumb-chip" :class="hostCrumb.status ? `status-${hostCrumb.status}` : ''">
+            <font-awesome-icon icon="fa-solid fa-server" class="crumb-icon" />
+            <span class="crumb-name">{{ hostCrumb.name }}</span>
+            <span v-if="hostCrumb.status" class="crumb-dot" :title="hostCrumb.status.toUpperCase()"></span>
+          </span>
+        </div>
+
         <ul class="navbar-nav me-auto mb-0"></ul>
 
         <div class="nav-controls">
@@ -350,7 +375,10 @@ const node = computed(() => {
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(148, 163, 184, 0.18);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
-  margin-right: auto;
+  /* No margin-right: auto here — the empty navbar-nav.me-auto sibling
+     (or the crumb's margin-right: auto when present) handles pushing
+     the right-side controls to the far right. Two auto-margins next to
+     each other split the free space and pull adjacent items apart. */
 }
 .seg {
   position: relative;
@@ -401,6 +429,82 @@ const node = computed(() => {
 /* Hide the divider when one of the segments is active — the active
    segment's box already provides separation. */
 .nav-segments:has(.is-active) .seg-divider { opacity: 0; }
+
+/* Breadcrumb crumb — shown next to the segmented control when we're on
+   a host-detail view. The chevron is a back-link to /hub; the chip
+   itself is a static "you are here" indicator carrying host name and
+   status colour. */
+.nav-crumb {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-left: 0.45rem;
+  margin-right: auto;
+}
+.crumb-back {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  color: #64748b;
+  text-decoration: none;
+  transition: color 140ms ease, background 140ms ease;
+}
+.crumb-back:hover {
+  color: #22d3ee;
+  background: rgba(34, 211, 238, 0.08);
+}
+.crumb-chev { font-size: 0.62rem; }
+
+.crumb-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.3rem 0.7rem 0.3rem 0.55rem;
+  border-radius: 999px;
+  background: rgba(34, 211, 238, 0.08);
+  border: 1px solid rgba(34, 211, 238, 0.28);
+  color: #67e8f9;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  font-feature-settings: "tnum";
+  font-variant-numeric: tabular-nums;
+}
+.crumb-icon {
+  font-size: 0.74rem;
+  color: #22d3ee;
+  opacity: 0.85;
+}
+.crumb-name { color: #e2e8f0; line-height: 1; }
+/* Status dot — uses the same emerald/amber/rose vocab as the host
+   pages so colour coding is consistent across the app. */
+.crumb-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: #94a3b8;
+  box-shadow: 0 0 6px #94a3b8;
+  flex-shrink: 0;
+}
+.crumb-chip.status-live    .crumb-dot { background: #34d399; box-shadow: 0 0 8px #34d399; animation: live-pulse 1.4s ease-in-out infinite; }
+.crumb-chip.status-stale   .crumb-dot { background: #fbbf24; box-shadow: 0 0 8px #fbbf24; }
+.crumb-chip.status-offline .crumb-dot { background: #f87171; box-shadow: 0 0 8px #f87171; }
+@media (prefers-reduced-motion: reduce) {
+  .crumb-chip.status-live .crumb-dot { animation: none; }
+}
+@media (max-width: 575.98px) {
+  /* Truncate long host names on phones — keep the chip from pushing
+     the rest of the navbar off-screen. */
+  .crumb-name {
+    max-width: 14ch;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
 
 /* "PRO" chip on the Hub segment — gold gradient (amber primary + secondary
    from BRANDING §3.5) for an unmistakable premium-tier signal without
