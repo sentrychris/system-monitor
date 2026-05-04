@@ -59,7 +59,7 @@ Vigil ships in **two modes** that share the same UI:
 
 ## Host mode
 
-The dashboard at `/` works with either static data served from standard HTTP endpoints, or live data served through websocket connections.
+The dashboard works with either static data served from standard HTTP endpoints, or live data served through websocket connections.
 
 - If you set `VITE_CONNECTION_TYPE` to `websocket`, the dashboard will load with a websocket connection configured and will display live data that updates in real time.
 
