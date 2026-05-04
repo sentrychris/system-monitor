@@ -1177,8 +1177,8 @@
         color: var(--text-dim);
         letter-spacing: 0.08em;
       }
-      .foot-meta a { color: var(--text-mute); transition: color 160ms ease; }
-      .foot-meta a:hover { color: var(--text); }
+      a { color: var(--text-mute); transition: color 160ms ease; }
+      a:hover { color: var(--text); }
 
       .foot-built {
         margin-top: 1.4rem;
@@ -1296,9 +1296,9 @@
           </a>
         </div>
         <div class="hero-meta">
-          <span><b>Stack</b> Vue 3 · TypeScript · D3</span>
           <span><b>Bundle</b> ~140 KB gzipped</span>
           <span><b>License</b> MIT</span>
+          <span><b>Github</b> <a href="https://github.com/sentrychris/vigil" target="_blank" rel="noopener">sentrychris/vigil</a></span>
         </div>
       </div>
     </section>
@@ -1314,7 +1314,7 @@
               <span class="browser-dot r"></span>
               <span class="browser-dot y"></span>
               <span class="browser-dot g"></span>
-              <span class="browser-url"><span class="lock">●</span> https://status.edcs.app</span>
+              <span class="browser-url"><span class="lock">●</span> https://edcs.app</span>
             </div>
             <img class="browser-shot" src="dashboard.png" alt="Single-host dashboard with CPU, memory, disk, network and process metrics" loading="lazy" />
           </div>
@@ -1325,7 +1325,7 @@
               <span class="browser-dot r"></span>
               <span class="browser-dot y"></span>
               <span class="browser-dot g"></span>
-              <span class="browser-url"><span class="lock">●</span> https://status.edcs.app/hub</span>
+              <span class="browser-url"><span class="lock">●</span> https://edcs.app/hub</span>
             </div>
             <img class="browser-shot" src="hub.png" alt="Hub fleet overview — multi-host status, alerts, recent activity" loading="lazy" />
           </div>
@@ -1336,7 +1336,7 @@
               <span class="browser-dot r"></span>
               <span class="browser-dot y"></span>
               <span class="browser-dot g"></span>
-              <span class="browser-url"><span class="lock">●</span> https://status.edcs.app/hub/hosts/1</span>
+              <span class="browser-url"><span class="lock">●</span> https://edcs.app/hub/hosts/1</span>
             </div>
             <img class="browser-shot" src="overview.png" alt="Per-host detail — system data sheet, health card, sparkline metrics" loading="lazy" />
           </div>
@@ -1418,7 +1418,7 @@
           <div class="section-eyebrow">How it works</div>
           <h2 class="section-title">A two-piece system.</h2>
           <p class="section-lede">
-            Vigil is the polished frontend; <span style="color:var(--cyan)">Vigil Collector</span> does the host-side work. They talk over HTTP and a WebSocket — that's it.
+            Vigil is the polished frontend; <span style="color:var(--cyan)">Vigil Collector</span> does the host-side work. They talk over HTTP and a WebSocket, that's it.
           </p>
         </div>
 
