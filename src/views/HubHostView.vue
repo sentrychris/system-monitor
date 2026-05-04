@@ -3,6 +3,7 @@ import { computed, onMounted, onUnmounted, ref } from "vue";
 import { useRoute, useRouter, RouterLink } from "vue-router";
 import { useHubStore } from "@/stores/hub";
 import { useLoadingStore } from "@/stores/loading";
+import { useDocumentTitle } from "@/composables/useDocumentTitle";
 import { config } from "@/config";
 import HubMetricSpark from "@/components/hub/HubMetricSpark.vue";
 import PageHeader from "@/components/PageHeader.vue";
@@ -14,6 +15,8 @@ const hostId = computed(() => Number(route.params.id));
 
 const host = computed(() => hub.hosts.find((h) => h.id === hostId.value));
 const status = computed(() => host.value?.status ?? "offline");
+
+useDocumentTitle(() => host.value?.name ?? `Host #${hostId.value}`);
 
 // Active alerts for this host. Sorted firing-first, then breaching.
 const hostAlerts = computed(() =>

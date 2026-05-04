@@ -3,10 +3,13 @@ import { computed, onMounted, ref } from "vue";
 import { RouterLink } from "vue-router";
 import { useHubStore } from "@/stores/hub";
 import { useLoadingStore } from "@/stores/loading";
+import { useDocumentTitle } from "@/composables/useDocumentTitle";
 import { config } from "@/config";
 import { hubApi, HubApiError } from "@/api/hub";
 import type { AlertRule, Channel } from "@/interfaces/Hub";
 import PageHeader from "@/components/PageHeader.vue";
+
+useDocumentTitle("Alert Rules Section");
 
 const hub = useHubStore();
 const loader = useLoadingStore();

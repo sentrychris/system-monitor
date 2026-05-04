@@ -2,7 +2,10 @@
 import { onMounted } from "vue";
 import { RouterLink } from "vue-router";
 import { useLoadingStore } from "@/stores/loading";
+import { useDocumentTitle } from "@/composables/useDocumentTitle";
 import PageHeader from "@/components/PageHeader.vue";
+
+useDocumentTitle("Alerts Help Section");
 
 onMounted(() => {
   useLoadingStore().toggle(true);

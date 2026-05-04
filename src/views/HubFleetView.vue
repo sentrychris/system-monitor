@@ -3,7 +3,10 @@ import { computed, onMounted, onUnmounted, ref } from "vue";
 import { RouterLink } from "vue-router";
 import { useHubStore } from "@/stores/hub";
 import { useLoadingStore } from "@/stores/loading";
+import { useDocumentTitle } from "@/composables/useDocumentTitle";
 import { config } from "@/config";
+
+useDocumentTitle("Fleet Overview");
 import HostList from "@/components/hub/HostList.vue";
 import AlertList from "@/components/hub/AlertList.vue";
 import FleetSummary from "@/components/hub/FleetSummary.vue";

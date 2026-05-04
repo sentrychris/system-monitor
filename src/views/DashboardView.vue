@@ -3,6 +3,7 @@ import { onBeforeMount } from "vue";
 import { config } from "@/config";
 import { useLoadingStore } from "@/stores/loading";
 import { useSystemStore } from "@/stores/system";
+import { useDocumentTitle } from "@/composables/useDocumentTitle";
 import SectionHeader from "@/components/SectionHeader.vue";
 import StatCard from "@/components/stats/StatCard.vue";
 import PlatformDetail from "@/components/stats/PlatformDetail.vue";
@@ -16,6 +17,8 @@ import BarChart from "@/components/charts/BarChart.vue";
 import PieChart from "@/components/charts/PieChart.vue";
 import ServiceStatus from "@/components/ServiceStatus.vue";
 import DiskList from "@/components/stats/DiskList.vue";
+
+useDocumentTitle("Host Overview");
 
 const loader = useLoadingStore();
 const system = useSystemStore();
