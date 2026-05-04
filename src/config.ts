@@ -26,4 +26,11 @@ export const config: Configuration = {
       slow: 800,
     },
   },
+  hub: {
+    // VITE_HUB_URL='https://hub.example.com' enables the /hub/* routes.
+    // Empty/undefined ⇒ collector-only build (current behavior).
+    url: import.meta.env.VITE_HUB_URL || "",
+    pollInterval: 5_000,
+    alertPollInterval: 5_000,
+  },
 };

@@ -1,13 +1,18 @@
 <script setup lang="ts">
 import { computed } from "vue";
+import { RouterLink, useRoute } from "vue-router";
 import { config } from "@/config";
 import { useThemeStore } from "@/stores/theme";
 import { useSystemStore } from "@/stores/system";
+import { useHubStore } from "@/stores/hub";
 import PageHeader from "@/components/PageHeader.vue";
 import SiteLogo from "@/components/SiteLogo.vue";
 
 const theme = useThemeStore();
 const system = useSystemStore();
+const hub = useHubStore();
+const route = useRoute();
+const isHubRoute = computed(() => route.path.startsWith("/hub"));
 
 const node = computed(() => {
   const region = config.app.deployment.region;
@@ -40,15 +45,47 @@ const node = computed(() => {
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav me-auto mb-0"></ul>
+        <ul class="navbar-nav me-auto mb-0">
+          <li v-if="hub.isConfigured" class="nav-item">
+            <RouterLink to="/" class="nav-route" active-class="is-active" exact-active-class="is-active">
+              Local
+            </RouterLink>
+          </li>
+          <li v-if="hub.isConfigured" class="nav-item">
+            <RouterLink to="/hub" class="nav-route" active-class="is-active">
+              Hub
+              <span v-if="hub.firingAlerts.length" class="route-badge">
+                {{ hub.firingAlerts.length }}
+              </span>
+            </RouterLink>
+          </li>
+        </ul>
 
         <div class="nav-controls">
-          <!-- Status indicator -->
-          <span class="status-chip" :class="`status-${system.connectionType}`">
+          <!-- Status indicator (collector mode) -->
+          <span
+            v-if="!isHubRoute"
+            class="status-chip"
+            :class="`status-${system.connectionType}`"
+          >
             <span class="status-dot"></span>
             <span class="status-text">{{
               system.connectionType === "websocket" ? "LIVE" : "STATIC"
             }}</span>
+          </span>
+
+          <!-- Hub status chip -->
+          <span
+            v-else-if="hub.ready"
+            class="status-chip status-websocket"
+            :title="`Hub: ${config.hub.url}`"
+          >
+            <span class="status-dot"></span>
+            <span class="status-text">HUB · {{ hub.hosts.length }}</span>
+          </span>
+          <span v-else-if="hub.isConfigured" class="status-chip status-http">
+            <span class="status-dot"></span>
+            <span class="status-text">NO TOKEN</span>
           </span>
 
           <!-- Node identifier -->
@@ -56,6 +93,18 @@ const node = computed(() => {
             <font-awesome-icon icon="fa-solid fa-server" class="node-icon" />
             <span class="node-text">{{ node }}</span>
           </span>
+
+          <!-- Hub disconnect (only in hub mode + connected) -->
+          <button
+            v-if="isHubRoute && hub.ready"
+            class="hub-disconnect"
+            type="button"
+            title="Disconnect from hub"
+            aria-label="Disconnect from hub"
+            @click="hub.disconnect()"
+          >
+            <font-awesome-icon icon="fa-solid fa-power-off" />
+          </button>
 
           <span class="control-divider" aria-hidden="true"></span>
 
@@ -83,8 +132,9 @@ const node = computed(() => {
             </span>
           </label>
 
-          <!-- Connection mode toggle -->
+          <!-- Connection mode toggle (collector view only) -->
           <label
+            v-if="!isHubRoute"
             class="nav-toggle"
             title="Toggle live websocket"
             aria-label="Toggle live websocket"
@@ -277,6 +327,69 @@ const node = computed(() => {
 @keyframes live-pulse {
   0%, 100% { opacity: 1; }
   50%      { opacity: 0.4; }
+}
+
+/* ---------- Nav route links (Local / Hub) ---------- */
+.navbar-nav { display: inline-flex; align-items: center; gap: 0.4rem; padding-left: 0.6rem; }
+.nav-item   { list-style: none; }
+.nav-route {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.32rem 0.7rem;
+  border-radius: 6px;
+  font-family: "IBM Plex Sans", system-ui, sans-serif;
+  font-size: var(--fs-caption);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #cbd5e1;
+  text-decoration: none;
+  transition: background 160ms ease, color 160ms ease;
+}
+.nav-route:hover     { background: rgba(255, 255, 255, 0.06); color: #f9fafb; }
+.nav-route.is-active {
+  background: rgba(34, 211, 238, 0.1);
+  color: #67e8f9;
+  box-shadow: inset 0 0 0 1px rgba(34, 211, 238, 0.28);
+}
+.route-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 0.35rem;
+  border-radius: 999px;
+  background: rgba(244, 63, 94, 0.18);
+  color: #f87171;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  box-shadow: inset 0 0 0 1px rgba(244, 63, 94, 0.32);
+  animation: live-pulse 1.4s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .route-badge { animation: none; }
+}
+
+.hub-disconnect {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px; height: 26px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #9ca3af;
+  cursor: pointer;
+  transition: color 160ms ease, background 160ms ease, border-color 160ms ease;
+}
+.hub-disconnect:hover {
+  color: #f87171;
+  background: rgba(244, 63, 94, 0.08);
+  border-color: rgba(244, 63, 94, 0.32);
 }
 
 /* ---------- Mobile ---------- */
