@@ -59,6 +59,7 @@ const node = computed(() => {
             active-class="is-active"
           >
             Hub
+            <span class="seg-pro" aria-label="Vigil Pro">Pro</span>
             <span v-if="hub.firingAlerts.length" class="route-badge">
               {{ hub.firingAlerts.length }}
             </span>
@@ -400,6 +401,38 @@ const node = computed(() => {
 /* Hide the divider when one of the segments is active — the active
    segment's box already provides separation. */
 .nav-segments:has(.is-active) .seg-divider { opacity: 0; }
+
+/* "PRO" chip on the Hub segment — gold gradient (amber primary + secondary
+   from BRANDING §3.5) for an unmistakable premium-tier signal without
+   expanding the palette. Tiny, mono caps, dark text on gold for AA
+   contrast. */
+.seg-pro {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.08rem 0.4rem 0.1rem;
+  border-radius: 4px;
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 60%, #d97706 100%);
+  color: #422006;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 0.55rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  line-height: 1;
+  box-shadow:
+    0 0 10px -2px rgba(251, 191, 36, 0.45),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.22);
+  /* Slight upward translate to optically center against caps text. */
+  transform: translateY(-0.5px);
+}
+/* Brighten the chip subtly when its segment is active or hovered — keeps
+   the gold from looking dim against the cyan-tinted active background. */
+.seg.is-active .seg-pro,
+.seg:hover .seg-pro {
+  box-shadow:
+    0 0 14px -2px rgba(251, 191, 36, 0.6),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.32);
+}
 .route-badge {
   display: inline-flex;
   align-items: center;
