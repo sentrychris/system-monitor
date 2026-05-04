@@ -39,6 +39,29 @@ export interface HubOverviewHost extends HubHost {
   };
 }
 
+/** /api/hosts/{id}/processes — latest top-N process snapshot.
+ *  Snapshot semantics: the hub stores only the most recent set, so
+ *  callers should poll rather than expect a stream. */
+export interface HubProcess {
+  pid: number;
+  name: string;
+  username: string;
+  mem_bytes: number;
+}
+
+export interface HubProcessesResponse {
+  host_id: number;
+  /** Which mem measurement the snapshot used.
+   *  - "pss": Proportional Set Size (no shared-page overcount; preferred)
+   *  - "rss": Resident Set Size (fallback when /proc/<pid>/smaps_rollup
+   *    isn't readable — sums to more than total memory). */
+  metric: "pss" | "rss";
+  /** Unix epoch s — when the collector took the snapshot. 0 if no
+   *  snapshot has been ingested for this host yet. */
+  ts: number;
+  items: HubProcess[];
+}
+
 export interface SeriesPoint {
   ts: number;
   v?: number;             // raw tier

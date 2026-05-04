@@ -8,6 +8,7 @@ import { config } from "@/config";
 import { hubApi, HubApiError } from "@/api/hub";
 import type { AlertRule, Channel } from "@/interfaces/Hub";
 import PageHeader from "@/components/PageHeader.vue";
+import HubRuleForm from "@/components/hub/HubRuleForm.vue";
 
 useDocumentTitle("Alert Rules Section");
 
@@ -28,6 +29,86 @@ const channelById = computed(() => {
   for (const c of channels.value) m.set(c.id, c);
   return m;
 });
+
+// ── New-rule / edit-rule form ────────────────────────────────────────
+// All form state, validation, and field-level UI lives in HubRuleForm.
+// The parent only needs to know which mode it's in (create vs edit) and
+// which row the form is attached to in edit mode, so it can:
+//   - hide / disable the row's own controls while editing
+//   - render the form *inside* the editing row's <li> instead of at the top
+//   - call create or patch when the child emits its validated payload
+const formOpen = ref(false);
+const editingId = ref<number | null>(null);   // null = create mode; id = edit mode
+const submitting = ref(false);
+const formError = ref("");
+
+const editingRule = computed<AlertRule | null>(() =>
+  editingId.value === null
+    ? null
+    : rules.value.find((r) => r.id === editingId.value) ?? null,
+);
+
+function openForm(): void {
+  editingId.value = null;
+  formOpen.value = true;
+  formError.value = "";
+}
+
+function openEdit(rule: AlertRule): void {
+  editingId.value = rule.id;
+  formOpen.value = true;
+  formError.value = "";
+}
+
+function closeForm(): void {
+  formOpen.value = false;
+  editingId.value = null;
+  formError.value = "";
+}
+
+interface RuleFormPayload {
+  name: string;
+  metric: string;
+  dim: string;
+  scope: string;
+  op: ">" | ">=" | "<" | "<=";
+  threshold: number;
+  for_seconds: number;
+  channel_id: number;
+  enabled: boolean;
+}
+
+async function onSubmit(payload: RuleFormPayload): Promise<void> {
+  if (!hub.token || !config.hub.url || submitting.value) return;
+  submitting.value = true;
+  formError.value = "";
+  const o = { baseUrl: config.hub.url, token: hub.token };
+  try {
+    if (editingId.value !== null) {
+      // Patch only the operator-tunable fields. metric/dim are immutable
+      // server-side, so we don't even send them.
+      await hubApi.patchAlertRule(o, editingId.value, {
+        name: payload.name,
+        scope: payload.scope,
+        op: payload.op,
+        threshold: payload.threshold,
+        for_seconds: payload.for_seconds,
+        channel_id: payload.channel_id,
+        enabled: payload.enabled,
+      });
+    } else {
+      await hubApi.createAlertRule(o, payload);
+    }
+    closeForm();
+    await refresh();
+  } catch (e) {
+    formError.value = e instanceof HubApiError
+      ? `Hub error ${e.status}: ${e.message}`
+      : (e as Error).message;
+  } finally {
+    submitting.value = false;
+  }
+}
 
 async function refresh(): Promise<void> {
   if (!hub.token || !config.hub.url) return;
@@ -122,10 +203,10 @@ onMounted(async () => {
     <p class="lede">
       Operator-defined thresholds the hub evaluates against every Collector's
       incoming samples. See
-      <RouterLink to="/hub/help" class="lede-link">/hub/help</RouterLink>
-      for the firing/breaching state machine. Rules are created via the admin
-      API today; <code>cat ALERTS.md</code> on the hub host for the curl
-      quickstart.
+      <RouterLink to="/hub/help/alerts" class="lede-link">/hub/help/alerts</RouterLink>
+      for the firing/breaching state machine. Use <em>+ New rule</em> below to
+      create one — every field maps 1-to-1 with the
+      <code>POST /api/alert_rules</code> body if you'd rather curl it.
     </p>
 
     <div v-if="error" class="rules-error">
@@ -140,14 +221,40 @@ onMounted(async () => {
           <div class="header-title">Configured rules</div>
           <div class="header-sub">{{ rules.length }} TOTAL</div>
         </div>
+        <button
+          v-if="!formOpen"
+          type="button"
+          class="new-rule-btn"
+          :disabled="!hub.ready"
+          title="Create a new alert rule"
+          @click="openForm"
+        >
+          <font-awesome-icon icon="fa-solid fa-bolt" />
+          <span>New rule</span>
+        </button>
       </header>
 
-      <div v-if="!rules.length && !fetching" class="empty">
+      <!-- Create-mode form sits at the top of the card. Edit-mode form
+           is rendered inline beneath the row being edited (see <li> below). -->
+      <Transition name="rule-slide">
+        <HubRuleForm
+          v-if="formOpen && editingId === null"
+          class="rule-form-host top"
+          :rule="null"
+          :channels="channels"
+          :submitting="submitting"
+          :server-error="formError"
+          @submit="onSubmit"
+          @cancel="closeForm"
+        />
+      </Transition>
+
+      <div v-if="!rules.length && !fetching && !formOpen" class="empty">
         <font-awesome-icon icon="fa-solid fa-circle-question" class="empty-icon" />
         <div class="empty-title">No rules configured</div>
         <div class="empty-sub">
-          Create one with <code>POST /api/alert_rules</code>.
-          See <code>ALERTS.md</code> for the quickstart.
+          Hit <em>+ New rule</em> above, or curl
+          <code>POST /api/alert_rules</code> directly.
         </div>
       </div>
 
@@ -155,64 +262,90 @@ onMounted(async () => {
         <li
           v-for="rule in rules"
           :key="rule.id"
-          class="rule-row"
-          :class="{ 'is-disabled': !rule.enabled }"
+          class="rule-li"
+          :class="{ 'is-editing-row': editingId === rule.id }"
         >
-          <div class="rule-main">
-            <div class="rule-line">
-              <span class="rule-name">{{ rule.name }}</span>
-              <span class="rule-id mono">#{{ rule.id }}</span>
-              <span v-if="!rule.enabled" class="rule-pill is-disabled">DISABLED</span>
-            </div>
-            <div class="rule-meta mono">
-              <span class="meta-label">when</span>
-              <span class="meta-cond">{{ fmtCondition(rule) }}</span>
-              <span class="meta-sep">·</span>
-              <span class="meta-label">for</span>
-              <span class="meta-val">{{ fmtFor(rule.for_seconds) }}</span>
-              <span class="meta-sep">·</span>
-              <span class="meta-label">scope</span>
-              <span class="meta-val">{{ rule.scope }}</span>
-              <span class="meta-sep">·</span>
-              <span class="meta-label">→</span>
-              <span class="meta-val">
-                {{ channelById.get(rule.channel_id)?.name ?? `channel#${rule.channel_id}` }}
-                <span v-if="channelById.get(rule.channel_id)" class="chan-type">
-                  ({{ channelById.get(rule.channel_id)!.type }})
+          <div class="rule-row" :class="{ 'is-disabled': !rule.enabled }">
+            <div class="rule-main">
+              <div class="rule-line">
+                <span class="rule-name">{{ rule.name }}</span>
+                <span class="rule-id mono">#{{ rule.id }}</span>
+                <span v-if="!rule.enabled" class="rule-pill is-disabled">DISABLED</span>
+              </div>
+              <div class="rule-meta mono">
+                <span class="meta-label">when</span>
+                <span class="meta-cond">{{ fmtCondition(rule) }}</span>
+                <span class="meta-sep">·</span>
+                <span class="meta-label">for</span>
+                <span class="meta-val">{{ fmtFor(rule.for_seconds) }}</span>
+                <span class="meta-sep">·</span>
+                <span class="meta-label">scope</span>
+                <span class="meta-val">{{ rule.scope }}</span>
+                <span class="meta-sep">·</span>
+                <span class="meta-label">→</span>
+                <span class="meta-val">
+                  {{ channelById.get(rule.channel_id)?.name ?? `channel#${rule.channel_id}` }}
+                  <span v-if="channelById.get(rule.channel_id)" class="chan-type">
+                    ({{ channelById.get(rule.channel_id)!.type }})
+                  </span>
                 </span>
-              </span>
+              </div>
+              <div class="rule-stamp mono">created {{ fmtDate(rule.created_at) }}</div>
             </div>
-            <div class="rule-stamp mono">created {{ fmtDate(rule.created_at) }}</div>
+
+            <div class="rule-actions">
+              <template v-if="confirmingId !== rule.id">
+                <button
+                  type="button"
+                  class="rule-edit"
+                  :class="{ 'is-active': editingId === rule.id }"
+                  :title="editingId === rule.id ? 'Editing this rule' : 'Edit rule'"
+                  :aria-pressed="editingId === rule.id"
+                  :disabled="deletingId !== null || (formOpen && editingId !== rule.id)"
+                  @click="openEdit(rule)"
+                >
+                  <font-awesome-icon icon="fa-solid fa-pen" />
+                </button>
+                <button
+                  type="button"
+                  class="rule-delete"
+                  title="Delete rule"
+                  :disabled="deletingId !== null || formOpen"
+                  @click="confirmingId = rule.id"
+                >
+                  <font-awesome-icon icon="fa-solid fa-trash" />
+                </button>
+              </template>
+              <div v-else class="confirm-strip" role="alertdialog">
+                <span class="confirm-text">Delete rule and its history?</span>
+                <button
+                  class="confirm-yes"
+                  type="button"
+                  :disabled="deletingId === rule.id"
+                  @click="onDelete(rule)"
+                >{{ deletingId === rule.id ? "Deleting…" : "Delete" }}</button>
+                <button
+                  class="confirm-no"
+                  type="button"
+                  :disabled="deletingId === rule.id"
+                  @click="confirmingId = null"
+                >Cancel</button>
+              </div>
+            </div>
           </div>
 
-          <div class="rule-actions">
-            <template v-if="confirmingId !== rule.id">
-              <button
-                type="button"
-                class="rule-delete"
-                title="Delete rule"
-                :disabled="deletingId !== null"
-                @click="confirmingId = rule.id"
-              >
-                <font-awesome-icon icon="fa-solid fa-trash" />
-              </button>
-            </template>
-            <div v-else class="confirm-strip" role="alertdialog">
-              <span class="confirm-text">Delete rule and its history?</span>
-              <button
-                class="confirm-yes"
-                type="button"
-                :disabled="deletingId === rule.id"
-                @click="onDelete(rule)"
-              >{{ deletingId === rule.id ? "Deleting…" : "Delete" }}</button>
-              <button
-                class="confirm-no"
-                type="button"
-                :disabled="deletingId === rule.id"
-                @click="confirmingId = null"
-              >Cancel</button>
-            </div>
-          </div>
+          <Transition name="rule-slide">
+            <HubRuleForm
+              v-if="formOpen && editingId === rule.id && editingRule"
+              class="rule-form-host inline"
+              :rule="editingRule"
+              :channels="channels"
+              :submitting="submitting"
+              :server-error="formError"
+              @submit="onSubmit"
+              @cancel="closeForm"
+            />
+          </Transition>
         </li>
       </ul>
     </section>
@@ -432,17 +565,34 @@ body[data-theme="dark"] .empty-title { color: #f1f5f9; }
 body[data-theme="dark"] .empty { color: #94a3b8; }
 
 .rule-list { list-style: none; margin: 0; padding: 0; }
+
+/* Each <li> wraps the row + (optional) inline edit form. The bottom
+   border lives on the <li> so the form, when slid out, sits *inside*
+   the same bordered band as its parent row. */
+.rule-li {
+  border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+  transition: background 180ms ease;
+}
+body[data-theme="dark"] .rule-li { border-bottom-color: rgba(148, 163, 184, 0.1); }
+.rule-li:last-child { border-bottom: 0; }
+
+/* Active-edit halo on the host <li> — subtle cyan tint so the row
+   visibly "owns" the form below it. Kept low-opacity per the brand
+   accent rule (saturated colours never on backgrounds at full alpha). */
+.rule-li.is-editing-row {
+  background: rgba(34, 211, 238, 0.04);
+  box-shadow: inset 3px 0 0 rgba(34, 211, 238, 0.55);
+}
+body[data-theme="dark"] .rule-li.is-editing-row {
+  background: rgba(34, 211, 238, 0.06);
+}
+
 .rule-row {
   display: flex;
   align-items: center;
   gap: 1rem;
   padding: 0.85rem 1rem;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.12);
 }
-body[data-theme="dark"] .rule-row {
-  border-bottom-color: rgba(148, 163, 184, 0.1);
-}
-.rule-row:last-child { border-bottom: 0; }
 .rule-row.is-disabled { opacity: 0.55; }
 
 .rule-main { flex: 1 1 auto; min-width: 0; }
@@ -510,7 +660,59 @@ body[data-theme="dark"] .meta-cond { color: #67e8f9; }
   color: #94a3b8;
 }
 
-.rule-actions { flex-shrink: 0; }
+.rule-actions {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.rule-edit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  background: rgba(148, 163, 184, 0.06);
+  color: #6b7280;
+  cursor: pointer;
+  transition: color 160ms ease, border-color 160ms ease, background 160ms ease;
+}
+.rule-edit:hover:not(:disabled) {
+  color: #0e7490;
+  border-color: rgba(34, 211, 238, 0.4);
+  background: rgba(34, 211, 238, 0.08);
+}
+.rule-edit.is-active,
+.rule-edit.is-active:hover {
+  /* Persistent "you're editing this rule" state. Mirrors hover tones
+     but locked in — visually distinct enough from the hover cue that
+     the user knows it's not just hovered. */
+  color: #0e7490;
+  border-color: rgba(34, 211, 238, 0.6);
+  background: rgba(34, 211, 238, 0.12);
+  box-shadow: inset 0 0 0 1px rgba(34, 211, 238, 0.25);
+  cursor: default;
+}
+.rule-edit:disabled { opacity: 0.5; cursor: not-allowed; }
+.rule-edit.is-active:disabled {
+  /* Active row's edit button is "disabled" semantically (no-op click) but
+     should look fully lit, not greyed out. */
+  opacity: 1;
+}
+body[data-theme="dark"] .rule-edit {
+  color: #94a3b8;
+  border-color: rgba(148, 163, 184, 0.18);
+  background: rgba(148, 163, 184, 0.04);
+}
+body[data-theme="dark"] .rule-edit:hover:not(:disabled) { color: #67e8f9; }
+body[data-theme="dark"] .rule-edit.is-active,
+body[data-theme="dark"] .rule-edit.is-active:hover {
+  color: #67e8f9;
+  border-color: rgba(34, 211, 238, 0.55);
+  background: rgba(34, 211, 238, 0.10);
+}
 .rule-delete {
   display: inline-flex;
   align-items: center;
@@ -579,5 +781,79 @@ body[data-theme="dark"] .confirm-no { color: #cbd5e1; }
 @media (max-width: 720px) {
   .rule-row { flex-wrap: wrap; }
   .rule-actions { margin-left: auto; }
+}
+
+/* ── New-rule trigger (sits in the rules-header right slot) ────────── */
+.new-rule-btn {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.32rem 0.85rem;
+  border-radius: 999px;
+  background: rgba(52, 211, 153, 0.12);
+  border: 1px solid rgba(52, 211, 153, 0.4);
+  color: #047857;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  position: relative;
+  z-index: 1;
+  transition: background 140ms ease, border-color 140ms ease, color 140ms ease;
+}
+.new-rule-btn:hover:not(:disabled) {
+  background: rgba(52, 211, 153, 0.2);
+  border-color: rgba(52, 211, 153, 0.6);
+}
+.new-rule-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+body[data-theme="dark"] .new-rule-btn { color: #34d399; }
+
+/* ── Form host (chrome around the embedded HubRuleForm) ──────────────
+   Two render slots:
+   - .top:    create-mode form sits at the top of the rules-card,
+              divided from the list by a hairline.
+   - .inline: edit-mode form sits inside the row's <li>, sharing the
+              row's bordered band (no extra divider).
+*/
+.rule-form-host {
+  /* Component sits below this wrapper; this just gives the
+     transition layer something to height-animate. */
+  overflow: hidden;
+}
+.rule-form-host.top {
+  border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+}
+body[data-theme="dark"] .rule-form-host.top {
+  border-bottom-color: rgba(148, 163, 184, 0.10);
+}
+
+/* Slide-down / slide-up animation for the form. Per BRANDING §10,
+   180–250ms cubic ease — using 220ms here. max-height is bounded
+   generously since `auto` isn't animatable; the form is short enough
+   that 1200px never clips. Respects prefers-reduced-motion. */
+.rule-slide-enter-active,
+.rule-slide-leave-active {
+  transition:
+    max-height 220ms cubic-bezier(0.4, 0, 0.2, 1),
+    opacity   180ms ease;
+}
+.rule-slide-enter-from,
+.rule-slide-leave-to {
+  max-height: 0;
+  opacity: 0;
+}
+.rule-slide-enter-to,
+.rule-slide-leave-from {
+  max-height: 1200px;
+  opacity: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .rule-slide-enter-active,
+  .rule-slide-leave-active {
+    transition: none;
+  }
 }
 </style>

@@ -173,6 +173,14 @@ onUnmounted(() => {
         <font-awesome-icon icon="fa-solid fa-terminal" />
         <span>Ops commands</span>
       </button>
+      <RouterLink
+        to="/hub/help"
+        class="docs-trigger"
+        title="Open the Vigil Pro Hub docs"
+      >
+        <font-awesome-icon icon="fa-solid fa-circle-question" />
+        <span>Docs</span>
+      </RouterLink>
     </div>
 
     <!-- Ops modal — terminal-block popout. Esc / backdrop click closes. -->
@@ -566,6 +574,47 @@ body[data-theme="dark"] .ops-trigger:hover {
 }
 @media (max-width: 575.98px) {
   .ops-trigger { width: 100%; justify-content: center; margin-left: 0; }
+}
+
+/* Docs trigger — same pill shape as ops-trigger, blue tone so the two
+   read as related-but-different controls. Sits to the right of ops. */
+.docs-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.26rem 0.75rem;
+  border-radius: 999px;
+  background: rgba(96, 165, 250, 0.08);
+  border: 1px solid rgba(96, 165, 250, 0.32);
+  color: #1d4ed8;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 140ms ease, border-color 140ms ease, color 140ms ease;
+}
+.docs-trigger:hover {
+  background: rgba(96, 165, 250, 0.16);
+  border-color: rgba(96, 165, 250, 0.55);
+  color: #1d4ed8;
+}
+.docs-trigger:focus-visible {
+  outline: 2px solid #60a5fa;
+  outline-offset: 2px;
+}
+body[data-theme="dark"] .docs-trigger {
+  color: #93c5fd;
+  background: rgba(96, 165, 250, 0.06);
+}
+body[data-theme="dark"] .docs-trigger:hover {
+  color: #bfdbfe;
+  background: rgba(96, 165, 250, 0.14);
+}
+@media (max-width: 575.98px) {
+  .docs-trigger { width: 100%; justify-content: center; }
 }
 
 /* ── Ops modal — backdrop, dialog, close, foot hint. ──────────────── */

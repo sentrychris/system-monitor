@@ -1,12 +1,17 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref } from "vue";
 import { useRoute, useRouter, RouterLink } from "vue-router";
+import { hubApi } from "@/api/hub";
 import { useHubStore } from "@/stores/hub";
 import { useLoadingStore } from "@/stores/loading";
 import { useDocumentTitle } from "@/composables/useDocumentTitle";
 import { config } from "@/config";
 import HubMetricSpark from "@/components/hub/HubMetricSpark.vue";
 import PageHeader from "@/components/PageHeader.vue";
+import BarChart from "@/components/charts/BarChart.vue";
+import PieChart from "@/components/charts/PieChart.vue";
+import DataTable from "@/components/DataTable.vue";
+import type { HubProcess } from "@/interfaces/Hub";
 
 const hub = useHubStore();
 const route = useRoute();
@@ -89,12 +94,89 @@ function relTime(unixS: number): string {
   return `${Math.floor(ageS / 86400)}d ago`;
 }
 
+// ── Top processes (latest snapshot, polled) ───────────────────────────
+// Snapshot semantics: the hub stores only the most recent set per host,
+// so we poll rather than subscribe. 5s cadence is a deliberate trade —
+// the collector pushes at 1Hz, but the panel doesn't need that fidelity
+// (the table data churns slowly compared to a CPU spark).
+const PROCESSES_POLL_MS = 5000;
+const PROCESSES_LIMIT = 10;
+
+const processes = ref<HubProcess[]>([]);
+const processesMetric = ref<"pss" | "rss" | null>(null);
+const processesView = ref<"charts" | "table">("charts");
+let processesTimer: number | null = null;
+
+// Stable color per process name. Same hash as the system store uses for
+// single-host charts, so a process gets the same color across views.
+function processColor(name: string): string {
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) {
+    hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const hex = (hash & 0x00ffffff).toString(16).toUpperCase();
+  return "#" + "00000".substring(0, 6 - hex.length) + hex;
+}
+
+const memMb = (bytes: number) =>
+  Math.round((bytes / (1024 * 1024)) * 100) / 100;
+
+const processBarSeries = computed(() =>
+  processes.value.map((p) => ({
+    name: p.name,
+    color: processColor(p.name),
+    data: [memMb(p.mem_bytes)],
+  })),
+);
+
+const processPieSeries = computed(() =>
+  processes.value.map((p) => ({
+    name: p.name,
+    color: processColor(p.name),
+    y: memMb(p.mem_bytes),
+  })),
+);
+
+const processTableRows = computed(() =>
+  processes.value.map((p) => ({
+    pid: p.pid,
+    username: p.username,
+    name: p.name,
+    mem: memMb(p.mem_bytes),
+  })),
+);
+
+async function fetchProcesses(): Promise<void> {
+  if (!hub.token || !host.value) return;
+  try {
+    const resp = await hubApi.getProcesses(
+      { baseUrl: config.hub.url, token: hub.token },
+      host.value.id,
+      PROCESSES_LIMIT,
+    );
+    processes.value = resp.items;
+    processesMetric.value = resp.metric;
+  } catch {
+    // Soft-fail — leave the panel on its last-known state. Next tick retries.
+  }
+}
+
 onMounted(async () => {
   useLoadingStore().toggle(true);
   if (hub.isConfigured && hub.token && !hub.ready) await hub.connect();
   if (hub.ready) hub.startPolling();
+  if (host.value) {
+    fetchProcesses();
+    processesTimer = window.setInterval(fetchProcesses, PROCESSES_POLL_MS);
+  }
 });
-onUnmounted(() => { hub.stopPolling(); });
+onUnmounted(() => {
+  hub.stopPolling();
+  if (processesTimer !== null) {
+    window.clearInterval(processesTimer);
+    processesTimer = null;
+  }
+});
 </script>
 
 <template>
@@ -464,6 +546,90 @@ onUnmounted(() => { hub.stopPolling(); });
             </div>
           </div>
         </div>
+      </div>
+
+      <!-- ─── Top processes ─── -->
+      <div class="group">
+        <div class="group-eyebrow">
+          <span class="icon-tile sm tone-emerald"><font-awesome-icon icon="fa-solid fa-list-ul" /></span>
+          <span class="ge-text">PROCESSES</span>
+          <span class="ge-rule" aria-hidden="true"></span>
+        </div>
+        <section class="ds-card">
+          <header class="ds-header">
+            <span class="icon-tile tone-emerald"><font-awesome-icon icon="fa-solid fa-list-ul" /></span>
+            <div class="ds-header-text">
+              <div class="ds-title">Top Processes</div>
+              <div class="ds-sub">
+                {{ processesMetric ? `PER-PROCESS ${processesMetric.toUpperCase()} · TOP ${PROCESSES_LIMIT}` : `PER-PROCESS · TOP ${PROCESSES_LIMIT}` }}
+              </div>
+            </div>
+            <div
+              class="view-toggle btn-group btn-group-sm"
+              role="group"
+              aria-label="Top processes view"
+            >
+              <button
+                type="button"
+                class="btn"
+                :class="{ active: processesView === 'charts' }"
+                :aria-pressed="processesView === 'charts'"
+                title="Charts view"
+                @click="processesView = 'charts'"
+              >
+                <font-awesome-icon icon="fa-solid fa-chart-pie" />
+              </button>
+              <button
+                type="button"
+                class="btn"
+                :class="{ active: processesView === 'table' }"
+                :aria-pressed="processesView === 'table'"
+                title="Table view"
+                @click="processesView = 'table'"
+              >
+                <font-awesome-icon icon="fa-solid fa-table-list" />
+              </button>
+            </div>
+          </header>
+          <div class="ds-body">
+            <div v-if="!processes.length" class="processes-empty">
+              <span class="dim">No process snapshot yet — waiting for the collector to push one…</span>
+            </div>
+            <template v-else>
+              <div
+                v-if="processesView === 'charts'"
+                class="row align-items-center g-2"
+              >
+                <div class="col-sm-12 col-md-6 col-lg-8">
+                  <BarChart
+                    metric="system"
+                    id="hub-host-processes"
+                    title=""
+                    :series="processBarSeries"
+                    sort-key="data"
+                    sort-order="desc"
+                    y-axis-text="Memory Used"
+                    x-axis-text="System Process"
+                  />
+                </div>
+                <div class="col-sm-12 col-md-6 col-lg-4">
+                  <PieChart
+                    id="hub-host-processes-pie"
+                    title=""
+                    :series="processPieSeries"
+                  />
+                </div>
+              </div>
+              <DataTable
+                v-else
+                type="horizontal"
+                :data="processTableRows"
+                sort-key="mem"
+                sort-order="desc"
+              />
+            </template>
+          </div>
+        </section>
       </div>
 
       <!-- ─── Source footnote ─── -->
@@ -1208,6 +1374,46 @@ body[data-theme="dark"] .metric-card {
 .metric-card:hover {
   transform: translateY(-2px);
   border-color: rgba(96, 165, 250, 0.32);
+}
+
+/* ── Top processes panel ─────────────────────────────────────────────── */
+/* Toggle sits in the ds-header right slot. Mirrors the dashboard's
+   single-host toggle so the two views feel of-a-piece. */
+.view-toggle {
+  margin-left: auto;
+  position: relative;
+  z-index: 1;
+}
+.view-toggle .btn {
+  background: rgba(148, 163, 184, 0.08);
+  color: #cbd5e1;
+  border: 1px solid rgba(96, 165, 250, 0.22);
+  padding: 0.25rem 0.55rem;
+  line-height: 1;
+}
+.view-toggle .btn + .btn { border-left: none; }
+.view-toggle .btn:hover {
+  background: rgba(96, 165, 250, 0.14);
+  color: #f1f5f9;
+}
+.view-toggle .btn.active {
+  background: rgba(16, 185, 129, 0.18);
+  color: #34d399;
+  border-color: rgba(16, 185, 129, 0.4);
+  box-shadow: inset 0 0 0 1px rgba(16, 185, 129, 0.25);
+}
+.view-toggle .btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.35);
+}
+
+.processes-empty {
+  padding: 0.6rem 0;
+  font-family: "Lato", system-ui, sans-serif;
+  font-size: 0.86rem;
+}
+.processes-empty .dim {
+  color: #94a3b8;
 }
 
 /* ── Placeholder ─────────────────────────────────────────────────────── */

@@ -4,6 +4,8 @@ import DashboardView from "../views/DashboardView.vue";
 import HubFleetView from "../views/HubFleetView.vue";
 import HubHostView from "../views/HubHostView.vue";
 import HubHelpView from "../views/HubHelpView.vue";
+import HubHelpAlerts from "../views/help/HubHelpAlerts.vue";
+import HubHelpDeployment from "../views/help/HubHelpDeployment.vue";
 import HubRulesView from "../views/HubRulesView.vue";
 
 const router = createRouter({
@@ -27,10 +29,25 @@ const router = createRouter({
       name: "hub-host",
       component: HubHostView,
     },
+    // Docs section — HubHelpView is the layout (sidebar + <router-view>);
+    // each article is a child route. /hub/help redirects to the alerts
+    // article so existing deep links keep working.
     {
       path: "/hub/help",
-      name: "hub-help",
       component: HubHelpView,
+      children: [
+        { path: "", redirect: { name: "hub-help-alerts" } },
+        {
+          path: "alerts",
+          name: "hub-help-alerts",
+          component: HubHelpAlerts,
+        },
+        {
+          path: "deployment",
+          name: "hub-help-deployment",
+          component: HubHelpDeployment,
+        },
+      ],
     },
     {
       path: "/hub/rules",

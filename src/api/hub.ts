@@ -14,6 +14,7 @@ import type {
   HealthzResponse,
   HubHost,
   HubOverviewHost,
+  HubProcessesResponse,
   SeriesResponse,
 } from "@/interfaces/Hub";
 
@@ -94,6 +95,11 @@ export const hubApi = {
     );
   },
 
+  getProcesses: (o: CallOptions, hostId: number, limit = 10) =>
+    call<HubProcessesResponse>(
+      `/api/hosts/${hostId}/processes?limit=${limit}`, o,
+    ),
+
   alertState: (o: CallOptions) => call<AlertState[]>("/api/alert_state", o),
 
   alertEvents: (o: CallOptions, since?: number, limit = 100) => {
@@ -104,6 +110,43 @@ export const hubApi = {
 
   listAlertRules: (o: CallOptions) =>
     call<AlertRule[]>("/api/alert_rules", o),
+
+  createAlertRule: (
+    o: CallOptions,
+    body: {
+      name: string;
+      metric: string;
+      dim?: string;
+      scope?: string;       // "all" | "host:<name>" | "tag:<tag>"
+      op: string;           // ">" | ">=" | "<" | "<="
+      threshold: number;
+      for_seconds?: number;
+      channel_id: number;
+      enabled?: boolean;
+    },
+  ) =>
+    call<{ id: number; name: string }>("/api/alert_rules", o, {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
+
+  patchAlertRule: (
+    o: CallOptions,
+    ruleId: number,
+    patch: {
+      name?: string;
+      op?: string;
+      threshold?: number;
+      for_seconds?: number;
+      scope?: string;
+      channel_id?: number;
+      enabled?: boolean;
+    },
+  ) =>
+    call<AlertRule>(`/api/alert_rules/${ruleId}`, o, {
+      method: "PATCH",
+      body: JSON.stringify(patch),
+    }),
 
   deleteAlertRule: (o: CallOptions, ruleId: number) =>
     call<{ ok: true }>(`/api/alert_rules/${ruleId}`, o, { method: "DELETE" }),
