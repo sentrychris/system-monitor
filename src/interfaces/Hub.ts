@@ -18,6 +18,22 @@ export interface HubHost {
   enabled: number;        // 0|1
 }
 
+export type HostStatus = "live" | "stale" | "offline";
+
+export interface MetricSnapshot {
+  value: number;
+  ts: number;
+}
+
+/** /api/overview — host + computed status + latest inline metrics. */
+export interface HubOverviewHost extends HubHost {
+  status: HostStatus;
+  metrics: {
+    "cpu.usage": MetricSnapshot | null;
+    "mem.percent": MetricSnapshot | null;
+  };
+}
+
 export interface SeriesPoint {
   ts: number;
   v?: number;             // raw tier

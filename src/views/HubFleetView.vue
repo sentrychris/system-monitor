@@ -1,14 +1,17 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted } from "vue";
 import { useHubStore } from "@/stores/hub";
+import { useLoadingStore } from "@/stores/loading";
 import HostList from "@/components/hub/HostList.vue";
 import AlertList from "@/components/hub/AlertList.vue";
+import FleetSummary from "@/components/hub/FleetSummary.vue";
 import HubTokenSetup from "@/components/hub/HubTokenSetup.vue";
 import PageHeader from "@/components/PageHeader.vue";
 
 const hub = useHubStore();
 
 onMounted(async () => {
+  useLoadingStore().toggle(true);
   if (hub.isConfigured && hub.token && !hub.ready) {
     await hub.connect();
   }
@@ -37,14 +40,18 @@ onUnmounted(() => { hub.stopPolling(); });
       <HubTokenSetup />
     </div>
 
-    <div v-else class="row g-3">
-      <div class="col-12 col-lg-7 d-flex">
-        <HostList class="flex-fill" />
+    <template v-else>
+      <FleetSummary />
+
+      <div class="row g-3">
+        <div class="col-12 col-lg-7 d-flex">
+          <HostList class="flex-fill" />
+        </div>
+        <div class="col-12 col-lg-5 d-flex">
+          <AlertList class="flex-fill" />
+        </div>
       </div>
-      <div class="col-12 col-lg-5 d-flex">
-        <AlertList class="flex-fill" />
-      </div>
-    </div>
+    </template>
 
     <div v-if="hub.ready && hub.error" class="hub-error">
       {{ hub.error }}

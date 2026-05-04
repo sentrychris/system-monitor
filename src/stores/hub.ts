@@ -15,7 +15,8 @@ import { hubApi, HubApiError } from "@/api/hub";
 import type {
   AlertEvent,
   AlertState,
-  HubHost,
+  HostStatus,
+  HubOverviewHost,
 } from "@/interfaces/Hub";
 
 const TOKEN_KEY = "vigil-pro-hub-token";
@@ -23,7 +24,7 @@ const TOKEN_KEY = "vigil-pro-hub-token";
 interface HubState {
   token: string;
   ready: boolean;        // token verified against /healthz
-  hosts: HubHost[];
+  hosts: HubOverviewHost[];
   alertState: AlertState[];
   alertEvents: AlertEvent[];
   loading: boolean;
@@ -70,13 +71,53 @@ export const useHubStore = defineStore("hub", {
     breachingAlerts: (s): AlertState[] =>
       s.alertState.filter((a) => a.state === "breaching"),
 
-    /** Bucket hosts by liveness. Live = last_seen within 90s, the same
-        threshold the hub uses to decide a host is "fresh enough" to evaluate. */
-    hostStatus: (s) => (h: HubHost): "live" | "stale" | "offline" => {
-      const ageS = Math.floor(Date.now() / 1000) - h.last_seen;
-      if (ageS <= 90)  return "live";
-      if (ageS <= 600) return "stale";
-      return "offline";
+    /** Helper for callers that already have a host object — returns the
+        server-computed status field. Kept as a getter so the per-status
+        styling logic in components doesn't have to know about the wire shape. */
+    hostStatus: () => (h: { status: HostStatus }): HostStatus => h.status,
+
+    /** Fleet health breakdown — used by the summary hero. */
+    hostCounts: (s): { live: number; stale: number; offline: number; total: number } => {
+      const c = { live: 0, stale: 0, offline: 0, total: s.hosts.length };
+      for (const h of s.hosts) c[h.status] += 1;
+      return c;
+    },
+
+    /** Mean CPU % and mem % across LIVE hosts only — stale/offline values
+     *  are last-known and would skew the headline. */
+    fleetAvg: (s): { cpu: number | null; mem: number | null } => {
+      const live = s.hosts.filter((h) => h.status === "live");
+      const avg = (key: "cpu.usage" | "mem.percent"): number | null => {
+        const vals: number[] = [];
+        for (const h of live) {
+          const m = h.metrics?.[key];
+          if (m && typeof m.value === "number") vals.push(m.value);
+        }
+        if (!vals.length) return null;
+        return vals.reduce((a, b) => a + b, 0) / vals.length;
+      };
+      return { cpu: avg("cpu.usage"), mem: avg("mem.percent") };
+    },
+
+    /** The single hottest host for each headline metric — for the
+     *  "peak: 94% on web-01" subtitles. Live hosts only. */
+    fleetPeak: (s): {
+      cpu: { name: string; value: number } | null;
+      mem: { name: string; value: number } | null;
+    } => {
+      const live = s.hosts.filter((h) => h.status === "live");
+      const peak = (key: "cpu.usage" | "mem.percent") => {
+        let best: { name: string; value: number } | null = null;
+        for (const h of live) {
+          const m = h.metrics?.[key];
+          if (!m || typeof m.value !== "number") continue;
+          if (!best || m.value > best.value) {
+            best = { name: h.name, value: m.value };
+          }
+        }
+        return best;
+      };
+      return { cpu: peak("cpu.usage"), mem: peak("mem.percent") };
     },
   },
 
@@ -128,7 +169,7 @@ export const useHubStore = defineStore("hub", {
       const o = { baseUrl: config.hub.url, token: this.token };
       try {
         const [hosts, state] = await Promise.all([
-          hubApi.listHosts(o),
+          hubApi.fleetOverview(o),
           hubApi.alertState(o),
         ]);
         this.hosts = hosts;

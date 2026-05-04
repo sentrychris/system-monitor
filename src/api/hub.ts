@@ -11,6 +11,7 @@ import type {
   AlertState,
   HealthzResponse,
   HubHost,
+  HubOverviewHost,
   SeriesResponse,
 } from "@/interfaces/Hub";
 
@@ -59,6 +60,9 @@ export const hubApi = {
   healthz: (o: CallOptions) => call<HealthzResponse>("/healthz", o),
 
   listHosts: (o: CallOptions) => call<HubHost[]>("/api/hosts", o),
+
+  fleetOverview: (o: CallOptions) =>
+    call<HubOverviewHost[]>("/api/overview", o),
 
   getSeries: (
     o: CallOptions,

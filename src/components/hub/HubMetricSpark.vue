@@ -139,37 +139,48 @@ watch(() => [props.hostId, props.metric, props.dim], fetchSeries);
 </template>
 
 <style scoped>
-.spark { padding: 0.7rem 0.95rem 0.6rem; }
+.spark { padding: 0.85rem 1rem 0.85rem; }
 .spark-head {
   display: flex; align-items: baseline; justify-content: space-between;
-  gap: 0.5rem; margin-bottom: 0.3rem;
+  gap: 0.5rem; margin-bottom: 0.4rem;
 }
 .spark-label {
-  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   font-size: 0.66rem;
   letter-spacing: 0.18em;
   text-transform: uppercase;
+  font-weight: 600;
   color: #6b7280;
 }
+body[data-theme="dark"] .spark-label { color: #94a3b8; }
+
 .spark-value {
   font-family: "Montserrat", "IBM Plex Mono", monospace;
   font-feature-settings: "tnum";
   font-variant-numeric: tabular-nums;
-  font-size: 1.1rem;
-  font-weight: 500;
-  letter-spacing: 0.01em;
+  font-size: 1.4rem;
+  font-weight: 400;
+  letter-spacing: 0.005em;
+  line-height: 1;
 }
-.spark-unit { font-size: 0.7em; color: #94a3b8; margin-left: 0.15rem; }
+.spark-unit {
+  font-size: 0.55em;
+  color: #94a3b8;
+  margin-left: 0.15rem;
+  font-weight: 500;
+}
+body[data-theme="dark"] .spark-unit { color: #64748b; }
 
 .spark-svg {
   display: block;
   width: 100%;
-  height: 56px;
+  height: 64px;
 }
 .spark-error {
   margin-top: 0.3rem;
-  font-family: ui-monospace, monospace;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
   font-size: 0.7rem;
-  color: #f87171;
+  color: #b91c1c;
 }
+body[data-theme="dark"] .spark-error { color: #f87171; }
 </style>
