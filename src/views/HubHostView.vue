@@ -339,7 +339,7 @@ onUnmounted(() => { hub.stopPolling(); });
           <span class="ge-rule" aria-hidden="true"></span>
         </div>
         <div class="row g-3">
-          <div class="col-12 col-md-6 col-xl-4 d-flex">
+          <div class="col-12 col-md-6 col-xl-3 d-flex">
             <div class="metric-card">
               <HubMetricSpark
                 :host-id="host.id" metric="cpu.usage"
@@ -348,12 +348,34 @@ onUnmounted(() => { hub.stopPolling(); });
               />
             </div>
           </div>
-          <div class="col-12 col-md-6 col-xl-4 d-flex">
+          <div class="col-12 col-md-6 col-xl-3 d-flex">
             <div class="metric-card">
               <HubMetricSpark
                 :host-id="host.id" metric="cpu.load_1m"
                 tone="cyan"
                 :label="host.cpu_cores ? `Load 1m · ${host.cpu_cores} cores` : 'Load 1m'"
+                :decimals="2"
+                :reference="host.cpu_cores ?? undefined"
+              />
+            </div>
+          </div>
+          <div class="col-12 col-md-6 col-xl-3 d-flex">
+            <div class="metric-card">
+              <HubMetricSpark
+                :host-id="host.id" metric="cpu.load_5m"
+                tone="cyan"
+                :label="host.cpu_cores ? `Load 5m · ${host.cpu_cores} cores` : 'Load 5m'"
+                :decimals="2"
+                :reference="host.cpu_cores ?? undefined"
+              />
+            </div>
+          </div>
+          <div class="col-12 col-md-6 col-xl-3 d-flex">
+            <div class="metric-card">
+              <HubMetricSpark
+                :host-id="host.id" metric="cpu.load_15m"
+                tone="cyan"
+                :label="host.cpu_cores ? `Load 15m · ${host.cpu_cores} cores` : 'Load 15m'"
                 :decimals="2"
                 :reference="host.cpu_cores ?? undefined"
               />

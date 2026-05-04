@@ -15,7 +15,7 @@ Vigil ships in **two modes** that share the same UI:
 - **Host** — connects directly to one [vigil-collector](https://github.com/sentrychris/vigil-collector)
   via HTTP/WebSocket and shows that host's full live dashboard. The
   original mode; what most operators want for a single box.
-- **Hub** — connects to a [Vigil Pro](https://status.edcs.app/docs/#pricing)
+- **Hub** — connects to a [Vigil Pro](https://vigil.edcs.app#pricing)
   Hub and surfaces a fleet view, per-host detail with sparkline metrics,
   alert state visibility, and rule management.
 
@@ -24,7 +24,7 @@ Vigil ships in **two modes** that share the same UI:
 ### Requirements
 
 - [vigil-collector](https://github.com/sentrychris/vigil-collector) — the agent that gathers system samples.
-- [vigil-pro](https://status.edcs.app/docs/#pricing) (optional) — the multi-host hub. Only needed for Hub mode.
+- [vigil-pro](https://vigil.edcs.app#pricing) (optional) — the multi-host hub. Only needed for Hub mode.
 
 1. Clone the repository
 
