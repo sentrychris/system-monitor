@@ -10,25 +10,21 @@
 
 ![image](./docs/dashboard.png)
 
-Vigil ships in **two modes** that share the same SPA build:
+Vigil ships in **two modes** that share the same UI:
 
 - **Host** — connects directly to one [vigil-collector](https://github.com/sentrychris/vigil-collector)
   via HTTP/WebSocket and shows that host's full live dashboard. The
   original mode; what most operators want for a single box.
-- **Hub** — connects to a [Vigil Pro](https://github.com/sentrychris/vigil-pro)
+- **Hub** — connects to a [Vigil Pro](https://status.edcs.app/docs/#pricing)
   Hub and surfaces a fleet view, per-host detail with sparkline metrics,
-  the alert state machine, and rule management. Enabled by setting
-  `VITE_HUB_URL` at build time. Optional.
-
-Both modes coexist in one build; the navbar carries a `Host | Hub`
-segmented switcher when Hub mode is enabled.
+  alert state visibility, and rule management.
 
 ## Quick Start
 
 ### Requirements
 
 - [vigil-collector](https://github.com/sentrychris/vigil-collector) — the agent that gathers system samples.
-- [vigil-pro](https://github.com/sentrychris/vigil-pro) (optional) — the multi-host hub. Only needed for Hub mode.
+- [vigil-pro](https://status.edcs.app/docs/#pricing) (optional) — the multi-host hub. Only needed for Hub mode.
 
 1. Clone the repository
 
@@ -74,8 +70,7 @@ There is a control switch provided at the top-right on the navbar to toggle the 
 ## Hub mode
 
 Setting `VITE_HUB_URL` at build time enables the hub routes. Everything
-behind them is gated by the Vigil Pro admin bearer token — paste it
-once on first visit and it's stored in `localStorage` for that browser.
+behind them is gated by the Vigil Pro admin bearer token.
 
 | Path | What |
 |---|---|
@@ -86,22 +81,14 @@ once on first visit and it's stored in `localStorage` for that browser.
 
 The host-detail page renders an "Open dashboard" link when the host's
 `collector_url` is set on the hub, deep-linking to that host's own
-collector dashboard for full live metrics. See the Vigil Pro
-[FLEET.md](https://github.com/sentrychris/vigil-pro/blob/main/FLEET.md)
-for the reverse-proxy pattern that makes those URLs reachable.
+collector dashboard for full live metrics.
 
 When Hub mode isn't configured, the navbar hides the segmented switcher
 and the routes render a "Hub mode disabled" notice.
 
-## Theme
-
-Vigil is dark-first per its design language ([branding spec](https://vigil.edcs.app/branding.html)).
-The theme toggle lives in the navbar; the choice persists in
-`localStorage`. New visitors default to dark.
-
 ## Feedback
 
-I hope you find this project useful, if you have any questions or feedback, please feel free to raise an [issue here](https://github.com/sentrychris/vigil/issues).
+If you have any questions or feedback, please feel free to raise an [issue here](https://github.com/sentrychris/vigil/issues).
 
 ## License
 
