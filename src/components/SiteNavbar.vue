@@ -45,21 +45,26 @@ const node = computed(() => {
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav me-auto mb-0">
-          <li v-if="hub.isConfigured" class="nav-item">
-            <RouterLink to="/" class="nav-route" active-class="is-active" exact-active-class="is-active">
-              Local
-            </RouterLink>
-          </li>
-          <li v-if="hub.isConfigured" class="nav-item">
-            <RouterLink to="/hub" class="nav-route" active-class="is-active">
-              Hub
-              <span v-if="hub.firingAlerts.length" class="route-badge">
-                {{ hub.firingAlerts.length }}
-              </span>
-            </RouterLink>
-          </li>
-        </ul>
+        <div v-if="hub.isConfigured" class="nav-segments" role="tablist" aria-label="View mode">
+          <RouterLink
+            to="/"
+            class="seg"
+            active-class="is-active"
+            exact-active-class="is-active"
+          >Local</RouterLink>
+          <span class="seg-divider" aria-hidden="true"></span>
+          <RouterLink
+            to="/hub"
+            class="seg seg--hub"
+            active-class="is-active"
+          >
+            Hub
+            <span v-if="hub.firingAlerts.length" class="route-badge">
+              {{ hub.firingAlerts.length }}
+            </span>
+          </RouterLink>
+        </div>
+        <ul class="navbar-nav me-auto mb-0"></ul>
 
         <div class="nav-controls">
           <!-- Status indicator (collector mode) -->
@@ -332,27 +337,69 @@ const node = computed(() => {
 /* ---------- Nav route links (Local / Hub) ---------- */
 .navbar-nav { display: inline-flex; align-items: center; gap: 0.4rem; padding-left: 0.6rem; }
 .nav-item   { list-style: none; }
-.nav-route {
+/* Primary view-mode switcher — segmented control (instrument-cluster
+   mode-switch feel, BRANDING §1 SOC/NOC sensibility). Both routes live
+   in a single bordered shell; the active segment fills with cyan and
+   gets a thin top accent line. */
+.nav-segments {
+  display: inline-flex;
+  align-items: stretch;
+  padding: 3px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  margin-right: auto;
+}
+.seg {
+  position: relative;
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
-  padding: 0.32rem 0.7rem;
+  gap: 0.45rem;
+  padding: 0.36rem 0.95rem;
   border-radius: 6px;
-  font-family: "IBM Plex Sans", system-ui, sans-serif;
-  font-size: var(--fs-caption);
-  font-weight: 600;
-  letter-spacing: 0.06em;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: #cbd5e1;
+  color: #94a3b8;
   text-decoration: none;
-  transition: background 160ms ease, color 160ms ease;
+  transition: color 160ms ease, background 160ms ease, box-shadow 200ms ease;
 }
-.nav-route:hover     { background: rgba(255, 255, 255, 0.06); color: #f9fafb; }
-.nav-route.is-active {
-  background: rgba(34, 211, 238, 0.1);
+.seg:hover { color: #f1f5f9; }
+.seg:focus-visible {
+  outline: 2px solid #22d3ee;
+  outline-offset: 2px;
+}
+.seg-divider {
+  width: 1px;
+  margin: 4px 0;
+  background: rgba(148, 163, 184, 0.18);
+  transition: opacity 160ms ease;
+}
+.seg.is-active {
   color: #67e8f9;
-  box-shadow: inset 0 0 0 1px rgba(34, 211, 238, 0.28);
+  background: rgba(34, 211, 238, 0.12);
+  box-shadow:
+    inset 0 0 0 1px rgba(34, 211, 238, 0.28),
+    0 0 14px -4px rgba(34, 211, 238, 0.5);
 }
+/* Hairline cyan accent at the top of the active segment — reinforces
+   "selected mode" without making the segment look painted. */
+.seg.is-active::before {
+  content: "";
+  position: absolute;
+  left: 0.6rem;
+  right: 0.6rem;
+  top: 1px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #22d3ee 50%, transparent);
+  opacity: 0.55;
+}
+/* Hide the divider when one of the segments is active — the active
+   segment's box already provides separation. */
+.nav-segments:has(.is-active) .seg-divider { opacity: 0; }
 .route-badge {
   display: inline-flex;
   align-items: center;
