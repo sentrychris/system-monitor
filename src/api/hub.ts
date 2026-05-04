@@ -64,6 +64,19 @@ export const hubApi = {
   fleetOverview: (o: CallOptions) =>
     call<HubOverviewHost[]>("/api/overview", o),
 
+  deleteHost: (o: CallOptions, hostId: number) =>
+    call<{ ok: true }>(`/api/hosts/${hostId}`, o, { method: "DELETE" }),
+
+  patchHost: (
+    o: CallOptions,
+    hostId: number,
+    patch: { collector_url?: string | null; tags?: string[]; enabled?: boolean },
+  ) =>
+    call<{ ok: true }>(`/api/hosts/${hostId}`, o, {
+      method: "PATCH",
+      body: JSON.stringify(patch),
+    }),
+
   getSeries: (
     o: CallOptions,
     hostId: number,

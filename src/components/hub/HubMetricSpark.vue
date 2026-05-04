@@ -18,6 +18,11 @@ const props = withDefaults(
     decimals?: number;
     /** Window in seconds — defaults to 5 minutes. */
     windowS?: number;
+    /** Optional saturation/reference value. When set, the chart's Y
+     *  range expands to include it and a dashed rose line is drawn at
+     *  that level — operator gets a "danger zone" reference (e.g. load
+     *  average vs. core count). */
+    reference?: number;
   }>(),
   {
     dim: "",
@@ -55,17 +60,37 @@ const formattedLatest = computed(() => {
   return v === null ? "—" : v.toFixed(props.decimals);
 });
 
-const path = computed(() => {
-  if (points.value.length < 2) return "";
+const W = 280;
+const H = 56;
+
+// Shared Y-scale: data range, optionally widened to include the
+// reference value so the dashed line stays visible alongside the data
+// even when the curve is well below saturation.
+const scale = computed(() => {
   const values = points.value.map((p) => p.v ?? p.avg ?? 0);
-  const min = Math.min(...values);
-  const max = Math.max(...values);
+  if (!values.length) return null;
+  let min = Math.min(...values);
+  let max = Math.max(...values);
+  if (props.reference !== undefined) {
+    min = Math.min(min, 0);             // anchor floor at 0 for "X of capacity" charts
+    max = Math.max(max, props.reference);
+  }
   const range = max - min || 1;
-  const W = 280, H = 56;
+  return { min, max, range };
+});
+
+function yFor(v: number): number {
+  const s = scale.value!;
+  return H - ((v - s.min) / s.range) * (H - 6) - 3;
+}
+
+const path = computed(() => {
+  if (points.value.length < 2 || !scale.value) return "";
+  const values = points.value.map((p) => p.v ?? p.avg ?? 0);
   return values
     .map((v, i) => {
       const x = (i / (values.length - 1)) * W;
-      const y = H - ((v - min) / range) * (H - 6) - 3;
+      const y = yFor(v);
       return `${i === 0 ? "M" : "L"} ${x.toFixed(1)} ${y.toFixed(1)}`;
     })
     .join(" ");
@@ -73,7 +98,15 @@ const path = computed(() => {
 
 const fillPath = computed(() => {
   if (!path.value) return "";
-  return `${path.value} L 280 56 L 0 56 Z`;
+  return `${path.value} L ${W} ${H} L 0 ${H} Z`;
+});
+
+// Y position of the dashed saturation line (only when `reference` set
+// and currently within the visible band).
+const referenceY = computed(() => {
+  if (props.reference === undefined || !scale.value) return null;
+  const y = yFor(props.reference);
+  return y >= 0 && y <= H ? y : null;
 });
 
 const uid = `hms-${Math.random().toString(36).slice(2, 9)}`;
@@ -129,6 +162,17 @@ watch(() => [props.hostId, props.metric, props.dim], fetchSeries);
         </filter>
       </defs>
       <path v-if="fillPath" :d="fillPath" :fill="`url(#${uid}-fill)`" />
+      <!-- Saturation reference (e.g. 1.0×cores for load average). Drawn
+           under the data so the curve always reads on top. -->
+      <line
+        v-if="referenceY !== null"
+        :x1="0" :x2="W"
+        :y1="referenceY" :y2="referenceY"
+        stroke="rgba(244, 63, 94, 0.5)"
+        stroke-width="1"
+        stroke-dasharray="3 3"
+        vector-effect="non-scaling-stroke"
+      />
       <path v-if="path" :d="path" fill="none" :stroke="tone.glow" stroke-width="4"
             :filter="`url(#${uid}-blur)`" stroke-linecap="round" stroke-linejoin="round" />
       <path v-if="path" :d="path" fill="none" :stroke="`url(#${uid}-stroke)`"

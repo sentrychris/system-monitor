@@ -183,6 +183,59 @@ export const useHubStore = defineStore("hub", {
       }
     },
 
+    /** Update operator-managed fields on a host (collector_url, tags,
+     *  enabled). Local state is patched optimistically on success so the
+     *  view reflects the change without waiting for the next poll. */
+    async patchHost(
+      hostId: number,
+      patch: { collector_url?: string | null; tags?: string[]; enabled?: boolean },
+    ): Promise<boolean> {
+      if (!this.token || !config.hub.url) return false;
+      try {
+        await hubApi.patchHost(
+          { baseUrl: config.hub.url, token: this.token },
+          hostId,
+          patch,
+        );
+        const idx = this.hosts.findIndex((h) => h.id === hostId);
+        if (idx >= 0) {
+          // Normalise patch values to the wire shape (enabled is 0|1 here).
+          const merged = { ...this.hosts[idx] };
+          if ("collector_url" in patch) merged.collector_url = patch.collector_url ?? null;
+          if ("tags"          in patch) merged.tags          = patch.tags!;
+          if ("enabled"       in patch) merged.enabled       = patch.enabled ? 1 : 0;
+          this.hosts[idx] = merged;
+        }
+        return true;
+      } catch (e) {
+        this.error = e instanceof HubApiError
+          ? this._friendly(e)
+          : (e as Error).message;
+        return false;
+      }
+    },
+
+    /** Delete a host + all its samples/alerts on the hub. Removes it from
+     *  local state on success so the fleet view updates without a poll
+     *  round-trip. */
+    async deleteHost(hostId: number): Promise<boolean> {
+      if (!this.token || !config.hub.url) return false;
+      try {
+        await hubApi.deleteHost(
+          { baseUrl: config.hub.url, token: this.token },
+          hostId,
+        );
+        this.hosts = this.hosts.filter((h) => h.id !== hostId);
+        this.alertState = this.alertState.filter((a) => a.host_id !== hostId);
+        return true;
+      } catch (e) {
+        this.error = e instanceof HubApiError
+          ? this._friendly(e)
+          : (e as Error).message;
+        return false;
+      }
+    },
+
     async refreshEvents(): Promise<void> {
       if (!this.token || !config.hub.url) return;
       try {

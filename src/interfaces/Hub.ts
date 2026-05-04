@@ -12,10 +12,15 @@ export interface HubHost {
   os: string | null;
   arch: string | null;
   agent_version: string | null;
+  cpu_cores: number | null;
   tags: string[];
   first_seen: number;     // unix epoch s
   last_seen: number;      // unix epoch s
   enabled: number;        // 0|1
+  /** Operator-set base URL of this host's vigil-collector dashboard.
+   *  Null when the operator hasn't published one — UI hides the deep
+   *  link in that case. */
+  collector_url: string | null;
 }
 
 export type HostStatus = "live" | "stale" | "offline";

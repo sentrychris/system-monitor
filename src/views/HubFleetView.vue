@@ -21,13 +21,17 @@ onUnmounted(() => { hub.stopPolling(); });
 </script>
 
 <template>
-  <div class="container-fluid py-3">
-    <PageHeader
-      decor-title="Vigil Pro Hub"
-      title="Fleet overview"
-    />
+  <!-- Pre-auth: center the token form, no "Fleet overview" header (the
+       fleet doesn't exist yet from the user's perspective). -->
+  <div v-if="hub.isConfigured && !hub.ready" class="setup-stage">
+    <div class="setup-wrap">
+      <HubTokenSetup />
+    </div>
+  </div>
 
-    <div v-if="!hub.isConfigured" class="not-configured">
+  <!-- Hub URL not built into this bundle — config error, also centred. -->
+  <div v-else-if="!hub.isConfigured" class="setup-stage">
+    <div class="not-configured">
       <span class="eyebrow">Hub mode disabled</span>
       <p>
         This build wasn't configured with a Hub URL. Set
@@ -35,42 +39,57 @@ onUnmounted(() => { hub.stopPolling(); });
         the multi-host views.
       </p>
     </div>
+  </div>
 
-    <div v-else-if="!hub.ready" class="setup-wrap">
-      <HubTokenSetup />
+  <!-- Authenticated: full fleet dashboard. -->
+  <div v-else class="container-fluid py-3">
+    <PageHeader
+      decor-title="Vigil Pro Hub"
+      title="Fleet overview"
+    />
+
+    <FleetSummary />
+
+    <div class="row g-3">
+      <div class="col-12 col-lg-7 d-flex">
+        <HostList class="flex-fill" />
+      </div>
+      <div class="col-12 col-lg-5 d-flex">
+        <AlertList class="flex-fill" />
+      </div>
     </div>
 
-    <template v-else>
-      <FleetSummary />
-
-      <div class="row g-3">
-        <div class="col-12 col-lg-7 d-flex">
-          <HostList class="flex-fill" />
-        </div>
-        <div class="col-12 col-lg-5 d-flex">
-          <AlertList class="flex-fill" />
-        </div>
-      </div>
-    </template>
-
-    <div v-if="hub.ready && hub.error" class="hub-error">
+    <div v-if="hub.error" class="hub-error">
       {{ hub.error }}
     </div>
   </div>
 </template>
 
 <style scoped>
+/* Pre-auth stage — fills the available viewport height between navbar
+   and footer so the form sits visually centred. The wrapper uses flex
+   centring + a small top bias so the card lands at roughly the optical
+   centre instead of the geometric one (BRANDING §11). */
+.setup-stage {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  /* Account for navbar + footer chrome — keeps the card off the edges
+     when the page is short, but lets it scroll naturally when the
+     viewport is too small to centre cleanly. */
+  min-height: calc(100vh - 240px);
+}
 .setup-wrap {
-  margin-top: 1.5rem;
-  max-width: 640px;
+  width: min(560px, 100%);
 }
 .not-configured {
-  margin-top: 1.5rem;
+  width: min(640px, 100%);
   padding: 1.5rem 1.4rem;
   border-radius: 12px;
   background: rgba(251, 191, 36, 0.06);
   border: 1px solid rgba(251, 191, 36, 0.28);
-  max-width: 720px;
 }
 .not-configured .eyebrow {
   color: #fbbf24;

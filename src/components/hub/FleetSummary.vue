@@ -39,7 +39,7 @@ function tone(v: number | null): "ok" | "warn" | "crit" | "none" {
 </script>
 
 <template>
-  <div class="fleet-summary">
+  <div class="mt-3 fleet-summary">
     <!-- ─── Hosts ─── -->
     <div class="tile tone-cyan">
       <div class="tile-eyebrow">

@@ -3,9 +3,31 @@ import { computed, ref } from "vue";
 import { RouterLink } from "vue-router";
 import { useHubStore } from "@/stores/hub";
 import type { HostStatus, HubOverviewHost } from "@/interfaces/Hub";
+import SortToolbar, {
+  type SortState,
+  type SortOption,
+} from "@/components/SortToolbar.vue";
 
 const hub = useHubStore();
 const filter = ref("");
+
+// Default: status ascending = "unhealthy first" (offline → stale → live),
+// preserving the original behaviour of the hardcoded sort.
+const sort = ref<SortState>({ field: "status", direction: "asc" });
+const sortOptions: SortOption[] = [
+  {
+    value: "status",
+    label: "Status",
+    defaultDirection: "asc",
+    tooltip: "Asc: unhealthy first · Desc: healthy first",
+  },
+  {
+    value: "name",
+    label: "Name",
+    defaultDirection: "asc",
+    tooltip: "Asc: A→Z · Desc: Z→A",
+  },
+];
 
 const filtered = computed<HubOverviewHost[]>(() => {
   const q = filter.value.trim().toLowerCase();
@@ -17,18 +39,25 @@ const filtered = computed<HubOverviewHost[]>(() => {
   );
 });
 
-const sorted = computed<HubOverviewHost[]>(() =>
-  [...filtered.value].sort((a, b) => {
-    // Surface unhealthy hosts first; alphabetical within each bucket.
-    const order: Record<HostStatus, number> = { offline: 0, stale: 1, live: 2 };
-    const oa = order[a.status], ob = order[b.status];
-    if (oa !== ob) return oa - ob;
-    return a.name.localeCompare(b.name);
-  }),
-);
+const STATUS_ORDER: Record<HostStatus, number> = { offline: 0, stale: 1, live: 2 };
 
-// Only surface the filter input above a fleet size where eyeballing the list
-// stops being faster than typing.
+const sorted = computed<HubOverviewHost[]>(() => {
+  const dir = sort.value.direction === "asc" ? 1 : -1;
+  return [...filtered.value].sort((a, b) => {
+    if (sort.value.field === "name") {
+      return a.name.localeCompare(b.name) * dir;
+    }
+    // status — primary key honours direction; alphabetical tiebreak is
+    // always ascending so equal-status hosts stay readable regardless.
+    const oa = STATUS_ORDER[a.status], ob = STATUS_ORDER[b.status];
+    if (oa !== ob) return (oa - ob) * dir;
+    return a.name.localeCompare(b.name);
+  });
+});
+
+// Surface controls when there's enough fleet to warrant them — sorting
+// one host is meaningless, filtering under ~6 is slower than eyeballing.
+const showSorter = computed(() => hub.hosts.length >= 2);
 const showFilter = computed(() => hub.hosts.length >= 6);
 
 function relTime(unixS: number): string {
@@ -55,7 +84,7 @@ function metricTone(v: number | null | undefined): "ok" | "warn" | "crit" | "non
 <template>
   <div class="card panel-card border-0 shadow-lg flex-fill">
     <div class="section-header">
-      <div class="d-flex align-items-center gap-3">
+      <div class="header-left">
         <div class="header-icon">
           <font-awesome-icon icon="fa-solid fa-server" />
         </div>
@@ -71,16 +100,19 @@ function metricTone(v: number | null | undefined): "ok" | "warn" | "crit" | "non
           </div>
         </div>
       </div>
-      <div v-if="showFilter" class="header-filter">
-        <font-awesome-icon icon="fa-solid fa-magnifying-glass" class="filter-icon" />
-        <input
-          v-model="filter"
-          type="text"
-          placeholder="filter…"
-          spellcheck="false"
-          autocomplete="off"
-          aria-label="Filter hosts"
-        />
+      <div class="header-right">
+        <SortToolbar v-if="showSorter" v-model="sort" :options="sortOptions" />
+        <div v-if="showFilter" class="header-filter">
+          <font-awesome-icon icon="fa-solid fa-magnifying-glass" class="filter-icon" />
+          <input
+            v-model="filter"
+            type="text"
+            placeholder="filter…"
+            spellcheck="false"
+            autocomplete="off"
+            aria-label="Filter hosts"
+          />
+        </div>
       </div>
     </div>
 
@@ -185,6 +217,26 @@ function metricTone(v: number | null | undefined): "ok" | "warn" | "crit" | "non
   pointer-events: none;
 }
 .section-header > * { position: relative; z-index: 1; }
+
+.header-left {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+}
+.header-right {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+@media (max-width: 575.98px) {
+  .section-header { flex-wrap: wrap; row-gap: 0.55rem; }
+  .header-right { width: 100%; justify-content: flex-start; }
+}
+
 .header-icon {
   width: 30px; height: 30px;
   border-radius: 8px;
