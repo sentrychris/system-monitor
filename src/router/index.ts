@@ -6,6 +6,8 @@ import HubHostView from "../views/HubHostView.vue";
 import HubHelpView from "../views/HubHelpView.vue";
 import HubHelpAlerts from "../views/help/HubHelpAlerts.vue";
 import HubHelpDeployment from "../views/help/HubHelpDeployment.vue";
+import HubHelpMetrics from "../views/help/HubHelpMetrics.vue";
+import HubHelpRules from "../views/help/HubHelpRules.vue";
 import HubRulesView from "../views/HubRulesView.vue";
 
 const router = createRouter({
@@ -46,6 +48,16 @@ const router = createRouter({
           path: "deployment",
           name: "hub-help-deployment",
           component: HubHelpDeployment,
+        },
+        {
+          path: "rules",
+          name: "hub-help-rules",
+          component: HubHelpRules,
+        },
+        {
+          path: "metrics",
+          name: "hub-help-metrics",
+          component: HubHelpMetrics,
         },
       ],
     },

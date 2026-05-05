@@ -35,7 +35,7 @@
   line-height: 1.65;
   color: #475569;
   margin: 0.4rem 0 1.6rem;
-  max-width: 72ch;
+  // max-width: 72ch;
 }
 body[data-theme="dark"] .help-page .lede { color: #cbd5e1; }
 .help-page .lede strong {
@@ -47,10 +47,16 @@ body[data-theme="dark"] .help-page .lede strong { color: #f1f5f9; }
 /* ── Sidebar ───────────────────────────────────────────────────────────── */
 .help-sidebar {
   position: sticky;
-  top: 1rem;
+  /* Clear the sticky SiteNavbar (≈64–72px) plus a small gap. If the nav
+     ever grows, bump this. */
+  top: 7rem;
   align-self: start;
+  /* Cap height to the viewport below the sticky nav so a long article
+     index can scroll inside the sidebar instead of running off-screen. */
+  max-height: calc(100vh - 6rem);
   border-radius: 14px;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
   background: rgba(255, 255, 255, 0.72);
   border: 1px solid rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(18px) saturate(140%);
@@ -71,6 +77,8 @@ body[data-theme="dark"] .help-sidebar {
 @media (max-width: 991.98px) {
   .help-sidebar {
     position: static;
+    max-height: none;
+    overflow: hidden;
     margin-bottom: 0;
   }
 }

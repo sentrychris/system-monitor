@@ -2,15 +2,15 @@
 import { useDocumentTitle } from "@/composables/useDocumentTitle";
 import PageHeader from "@/components/PageHeader.vue";
 
-useDocumentTitle("Docs · Fleet Deployment");
+useDocumentTitle("Docs · Hub Deployment");
 </script>
 
 <template>
   <article class="help-page">
-    <PageHeader decor-title="Vigil Pro Hub · Docs" title="Fleet Deployment" />
+    <PageHeader decor-title="Vigil Pro Hub · Docs" title="Hub Deployment" />
 
     <p class="lede">
-      Fleet mode pairs many free <strong>Collectors</strong> with one
+      Vigil <span class="seg-pro" aria-label="Vigil Pro">Pro</span> pairs many <strong>Collectors</strong> with one
       commercial <strong>Hub</strong>. Each Collector opens an outbound
       WebSocket to the hub and pushes 1 Hz samples — there's no inbound
       port to expose, no agent for the hub to manage. This page walks
@@ -29,21 +29,14 @@ useDocumentTitle("Docs · Fleet Deployment");
       </header>
 
       <pre class="timeline"><span class="comment">             ┌──────────────┐    wss://hub/ingest   ┌──────────────┐</span>
-<span class="comment">             │  Collector   │ ────── push 1 Hz ───▶ │              │</span>
+<span class="comment">             │  Collector   │ ────── push 1 Hz ───> │              │</span>
 <span class="comment">             │ web-01.dc1   │     bearer = api_key  │  Vigil Pro   │</span>
 <span class="comment">             └──────────────┘                       │     Hub      │</span>
 <span class="comment">             ┌──────────────┐    wss://hub/ingest   │              │</span>
-<span class="comment">             │  Collector   │ ────── push 1 Hz ───▶ │  ┌────────┐  │</span>
+<span class="comment">             │  Collector   │ ────── push 1 Hz ───> │  ┌────────┐  │</span>
 <span class="comment">             │ web-02.dc1   │                       │  │ SQLite │  │</span>
 <span class="comment">             └──────────────┘                       │  └────────┘  │</span>
-<span class="comment">                       ⋮                            └──────────────┘</span></pre>
-
-      <p class="example-intro">
-        Collectors are MIT and unmodified — the hub is a separate service
-        they push <em>to</em>. No agent on the hub, no inbound ports on
-        the hosts, no shared state across collectors. Authentication is a
-        per-host bearer key that the hub issues on registration.
-      </p>
+<span class="comment">                       ...                          └──────────────┘</span></pre>
     </section>
 
     <!-- ─── End-to-end deployment ───────────────────────────────── -->
@@ -279,3 +272,37 @@ useDocumentTitle("Docs · Fleet Deployment");
     </section>
   </article>
 </template>
+
+<style scoped>
+/* "PRO" chip on the Hub segment — gold gradient (amber primary + secondary
+   from BRANDING §3.5) for an unmistakable premium-tier signal without
+   expanding the palette. Tiny, mono caps, dark text on gold for AA
+   contrast. */
+.seg-pro {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.08rem 0.4rem 0.1rem;
+  border-radius: 4px;
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 60%, #d97706 100%);
+  color: #422006;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 0.55rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  line-height: 1;
+  box-shadow:
+    0 0 10px -2px rgba(251, 191, 36, 0.45),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.22);
+  /* Slight upward translate to optically center against caps text. */
+  transform: translateY(-0.5px);
+}
+/* Brighten the chip subtly when its segment is active or hovered — keeps
+   the gold from looking dim against the cyan-tinted active background. */
+.seg.is-active .seg-pro,
+.seg:hover .seg-pro {
+  box-shadow:
+    0 0 14px -2px rgba(251, 191, 36, 0.6),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.32);
+}
+</style>

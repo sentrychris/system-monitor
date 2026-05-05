@@ -25,8 +25,22 @@ const links: DocLink[] = [
     tone: "cyan",
   },
   {
+    to: "/hub/help/rules",
+    title: "Alert Rules",
+    eyebrow: "METRICS · SCOPE · API",
+    icon: "fa-solid fa-list-check",
+    tone: "purple",
+  },
+  {
+    to: "/hub/help/metrics",
+    title: "Metric Catalog",
+    eyebrow: "WHAT COLLECTORS EMIT",
+    icon: "fa-solid fa-gauge-high",
+    tone: "amber",
+  },
+  {
     to: "/hub/help/deployment",
-    title: "Fleet Deployment",
+    title: "Hub Deployment",
     eyebrow: "REGISTER · CONFIGURE",
     icon: "fa-solid fa-circle-nodes",
     tone: "emerald",
