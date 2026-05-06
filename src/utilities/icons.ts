@@ -1,4 +1,17 @@
 import { library } from "@fortawesome/fontawesome-svg-core";
+import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
+
+// Two subsets are pulled in: the bulk of the app uses the solid set,
+// and a small number of icons (currently just bookmark) need the
+// regular outline pair so we can render filled vs unfilled states.
+// Aliased on import so the solid + regular versions of the same glyph
+// don't collide in scope. The cast on `library.add()` below pins the
+// regular icon to the core's IconDefinition type — the two subset
+// packages export structurally-identical but nominally-distinct
+// IconDefinitions, which trips library.add()'s variadic typing.
+import {
+  faBookmark as farBookmark,
+} from "@fortawesome/free-regular-svg-icons";
 
 import {
   faArrowDown,
@@ -10,6 +23,7 @@ import {
   faArrowCircleUp,
   faBell,
   faBolt,
+  faBookmark,
   faBullseye,
   faCaretDown,
   faCaretUp,
@@ -27,6 +41,8 @@ import {
   faDatabase,
   faDownload,
   faExclamationTriangle,
+  faEye,
+  faEyeSlash,
   faGaugeHigh,
   faGlobe,
   faGlobeEurope,
@@ -46,6 +62,7 @@ import {
   faPenToSquare,
   faPlay,
   faPlug,
+  faPlus,
   faPowerOff,
   faServer,
   faShieldHalved,
@@ -75,6 +92,7 @@ library.add(
   faArrowCircleUp,
   faBell,
   faBolt,
+  faBookmark,
   faBullseye,
   faCaretDown,
   faCaretUp,
@@ -92,6 +110,8 @@ library.add(
   faDatabase,
   faDownload,
   faExclamationTriangle,
+  faEye,
+  faEyeSlash,
   faGaugeHigh,
   faGlobe,
   faGlobeEurope,
@@ -111,6 +131,7 @@ library.add(
   faPenToSquare,
   faPlay,
   faPlug,
+  faPlus,
   faPowerOff,
   faServer,
   faShieldHalved,
@@ -128,3 +149,7 @@ library.add(
   faWaveSquare,
   faWifi,
 );
+
+// Regular (outline) — paired with their solid counterparts above.
+// Used by toggle UIs that need a filled/unfilled distinction.
+library.add(farBookmark as IconDefinition);

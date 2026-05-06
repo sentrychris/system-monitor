@@ -36,9 +36,14 @@ export interface HubConfiguration {
   alertPollInterval: number;
 }
 
+export interface PinsConfiguration {
+  inlineLimit: number;
+}
+
 export interface Configuration {
   app: BaseConfiguration;
   api: ApiConfiguration;
   services: ServicesConfiguration;
   hub: HubConfiguration;
+  pins: PinsConfiguration;
 }

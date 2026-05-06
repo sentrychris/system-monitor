@@ -11,9 +11,29 @@ import SortToolbar, {
 const hub = useHubStore();
 const filter = ref("");
 
+// Per-host alert counts, indexed by host_id once per render. Cheap O(N)
+// pass over alertState avoids re-filtering inside the v-for, and the
+// Map lookup keeps the template tidy. Recomputes only when alertState
+// changes (Pinia reactivity).
+const alertCounts = computed(() => {
+  const m = new Map<number, { firing: number; breaching: number }>();
+  for (const a of hub.alertState) {
+    if (a.state === "ok") continue;
+    const cur = m.get(a.host_id) ?? { firing: 0, breaching: 0 };
+    if (a.state === "firing")        cur.firing    += 1;
+    else if (a.state === "breaching") cur.breaching += 1;
+    m.set(a.host_id, cur);
+  }
+  return m;
+});
+
+function alertsFor(hostId: number): { firing: number; breaching: number } {
+  return alertCounts.value.get(hostId) ?? { firing: 0, breaching: 0 };
+}
+
 // Default: status ascending = "unhealthy first" (offline → stale → live),
 // preserving the original behaviour of the hardcoded sort.
-const sort = ref<SortState>({ field: "status", direction: "asc" });
+const sort = ref<SortState>({ field: "status", direction: "desc" });
 const sortOptions: SortOption[] = [
   {
     value: "status",
@@ -149,6 +169,22 @@ function metricTone(v: number | null | undefined): "ok" | "warn" | "crit" | "non
             <span class="host-pill" :class="`status-${h.status}`">
               <span class="pill-dot"></span>
               {{ h.status.toUpperCase() }}
+            </span>
+            <span
+              v-if="alertsFor(h.id).firing"
+              class="alert-badge alert-firing"
+              :title="`${alertsFor(h.id).firing} firing alert${alertsFor(h.id).firing === 1 ? '' : 's'}`"
+            >
+              <font-awesome-icon icon="fa-solid fa-triangle-exclamation" class="alert-badge-icon" />
+              <span>{{ alertsFor(h.id).firing }}</span>
+            </span>
+            <span
+              v-if="alertsFor(h.id).breaching"
+              class="alert-badge alert-breaching"
+              :title="`${alertsFor(h.id).breaching} breaching alert${alertsFor(h.id).breaching === 1 ? '' : 's'}`"
+            >
+              <font-awesome-icon icon="fa-solid fa-stopwatch" class="alert-badge-icon" />
+              <span>{{ alertsFor(h.id).breaching }}</span>
             </span>
             <span class="host-seen">{{ relTime(h.last_seen) }} ago</span>
           </div>
@@ -436,6 +472,50 @@ body[data-theme="dark"] .host-pill.status-offline { color: #f87171; }
   letter-spacing: 0.04em;
 }
 body[data-theme="dark"] .host-seen { color: #94a3b8; }
+
+/* Alert badges — small icon+count chips next to the status pill,
+   only rendered when the host has active firing/breaching alerts.
+   Mirrors the .route-badge recipe from SiteNavbar.vue so the alert
+   vocabulary reads consistently across the app. Firing pulses (active
+   urgency); breaching stays static (watching, not yet fired). */
+.alert-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0 0.45rem;
+  height: 18px;
+  border-radius: 999px;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  font-feature-settings: "tnum";
+  font-variant-numeric: tabular-nums;
+}
+.alert-badge-icon { font-size: 0.62rem; }
+
+.alert-badge.alert-firing {
+  background: rgba(244, 63, 94, 0.18);
+  color: #b91c1c;
+  box-shadow: inset 0 0 0 1px rgba(244, 63, 94, 0.32);
+  animation: alert-pulse 1.4s ease-in-out infinite;
+}
+body[data-theme="dark"] .alert-badge.alert-firing { color: #f87171; }
+
+.alert-badge.alert-breaching {
+  background: rgba(251, 191, 36, 0.16);
+  color: #b45309;
+  box-shadow: inset 0 0 0 1px rgba(251, 191, 36, 0.32);
+}
+body[data-theme="dark"] .alert-badge.alert-breaching { color: #fbbf24; }
+
+@keyframes alert-pulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.5; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .alert-badge.alert-firing { animation: none; }
+}
 
 .host-tags {
   margin-top: 0.32rem;

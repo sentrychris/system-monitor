@@ -23,6 +23,9 @@ const fetching = ref(false);
 // rule_id → confirm/loading state for the delete control on that row.
 const confirmingId = ref<number | null>(null);
 const deletingId = ref<number | null>(null);
+// rule_id of an in-flight enable/disable PATCH. Only one toggle can be
+// in flight at a time; the row's button is disabled until it returns.
+const togglingId = ref<number | null>(null);
 
 const channelById = computed(() => {
   const m = new Map<number, Channel>();
@@ -128,6 +131,41 @@ async function refresh(): Promise<void> {
       : (e as Error).message;
   } finally {
     fetching.value = false;
+  }
+}
+
+/** Quick toggle for the enabled flag — one-field PATCH, no edit form.
+ *  The local rules list is updated optimistically so the row's
+ *  "DISABLED" pill appears/disappears immediately. Disabling also
+ *  clears alert_state on the server (see vigil-pro update_rule), so
+ *  we trigger a hub.refresh() to pull fresh alert state — without it,
+ *  the navbar firing badge and fleet view would show the now-stale
+ *  firing entries until the next 5s poll. */
+async function onToggleEnabled(rule: AlertRule): Promise<void> {
+  if (!hub.token || !config.hub.url || togglingId.value !== null) return;
+  togglingId.value = rule.id;
+  const nextEnabled = !rule.enabled;
+  try {
+    await hubApi.patchAlertRule(
+      { baseUrl: config.hub.url, token: hub.token },
+      rule.id,
+      { enabled: nextEnabled },
+    );
+    const idx = rules.value.findIndex((r) => r.id === rule.id);
+    if (idx >= 0) {
+      rules.value[idx] = { ...rules.value[idx], enabled: nextEnabled ? 1 : 0 };
+    }
+    if (!nextEnabled) {
+      // Server cleared this rule's alert_state; pull fresh so the UI
+      // reflects it without waiting for the polling interval.
+      await hub.refresh();
+    }
+  } catch (e) {
+    error.value = e instanceof HubApiError
+      ? `Hub error ${e.status}: ${e.message}`
+      : (e as Error).message;
+  } finally {
+    togglingId.value = null;
   }
 }
 
@@ -303,11 +341,27 @@ onMounted(async () => {
               <template v-if="confirmingId !== rule.id">
                 <button
                   type="button"
+                  class="rule-toggle"
+                  :class="{ 'is-off': !rule.enabled }"
+                  :title="rule.enabled
+                    ? 'Disable rule (mute without losing history)'
+                    : 'Enable rule'"
+                  :aria-label="rule.enabled ? 'Disable rule' : 'Enable rule'"
+                  :aria-pressed="!rule.enabled"
+                  :disabled="togglingId !== null || deletingId !== null || formOpen"
+                  @click="onToggleEnabled(rule)"
+                >
+                  <font-awesome-icon
+                    :icon="rule.enabled ? 'fa-solid fa-eye' : 'fa-solid fa-eye-slash'"
+                  />
+                </button>
+                <button
+                  type="button"
                   class="rule-edit"
                   :class="{ 'is-active': editingId === rule.id }"
                   :title="editingId === rule.id ? 'Editing this rule' : 'Edit rule'"
                   :aria-pressed="editingId === rule.id"
-                  :disabled="deletingId !== null || (formOpen && editingId !== rule.id)"
+                  :disabled="togglingId !== null || deletingId !== null || (formOpen && editingId !== rule.id)"
                   @click="openEdit(rule)"
                 >
                   <font-awesome-icon icon="fa-solid fa-pen" />
@@ -316,7 +370,7 @@ onMounted(async () => {
                   type="button"
                   class="rule-delete"
                   title="Delete rule"
-                  :disabled="deletingId !== null || formOpen"
+                  :disabled="togglingId !== null || deletingId !== null || formOpen"
                   @click="confirmingId = rule.id"
                 >
                   <font-awesome-icon icon="fa-solid fa-trash" />
@@ -700,6 +754,57 @@ body[data-theme="dark"] .meta-cond { color: #67e8f9; }
   align-items: center;
   gap: 0.4rem;
 }
+/* ── Toggle (eye / eye-slash) — quick mute without opening the form.
+   Same chrome as the edit button; the icon swap is the state signal.
+   When the rule is disabled, the row itself is dimmed via .is-disabled,
+   but the toggle button overrides that opacity so the affordance for
+   re-enabling stays visible. */
+.rule-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  background: rgba(148, 163, 184, 0.06);
+  color: #6b7280;
+  cursor: pointer;
+  transition: color 160ms ease, border-color 160ms ease, background 160ms ease;
+}
+.rule-toggle:hover:not(:disabled) {
+  color: #0e7490;
+  border-color: rgba(34, 211, 238, 0.4);
+  background: rgba(34, 211, 238, 0.08);
+}
+.rule-toggle.is-off {
+  /* Slightly warm the chrome to read as "currently muted" without
+     leaning on a full alert palette. The eye-slash icon is the
+     primary state signal. */
+  color: #b45309;
+  border-color: rgba(251, 191, 36, 0.32);
+  background: rgba(251, 191, 36, 0.08);
+}
+.rule-toggle.is-off:hover:not(:disabled) {
+  color: #b45309;
+  border-color: rgba(251, 191, 36, 0.55);
+  background: rgba(251, 191, 36, 0.16);
+}
+.rule-toggle:disabled { opacity: 0.5; cursor: not-allowed; }
+body[data-theme="dark"] .rule-toggle {
+  color: #94a3b8;
+  border-color: rgba(148, 163, 184, 0.18);
+  background: rgba(148, 163, 184, 0.04);
+}
+body[data-theme="dark"] .rule-toggle:hover:not(:disabled) { color: #67e8f9; }
+body[data-theme="dark"] .rule-toggle.is-off { color: #fbbf24; }
+body[data-theme="dark"] .rule-toggle.is-off:hover:not(:disabled) { color: #fbbf24; }
+/* Row's .is-disabled dims its content (opacity 0.55); the toggle is
+   the one control that needs to stay full-strength so the user can
+   click to re-enable. */
+.rule-row.is-disabled .rule-toggle { opacity: 1; }
+.rule-row.is-disabled .rule-toggle:disabled { opacity: 0.5; }
+
 .rule-edit {
   display: inline-flex;
   align-items: center;
