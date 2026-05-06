@@ -66,13 +66,25 @@ useDocumentTitle("Docs · Overview");
           <div class="st-rule mono">visual interface</div>
           <div class="st-desc">
             Standalone static app. Hosted anywhere, configured at build
-            time to point at a Collector, a Hub, or both. Pure client
+            time to point at a Collector, a Pro Hub, or both. Pure client
             — no storage, no proxying.
           </div>
         </div>
       </div>
 
-      <ArchDiagram caption="— DATA FLOW">
+      <ArchDiagram caption="— SINGLE-HOST MODE · UI READS ONE COLLECTOR">
+        <ArchStage>
+          <ArchNode title="Collector" sub="any host" icon="fa-microchip" tone="emerald">
+            <ArchPill icon="fa-gauge-high" label="dashboard :4500" tone="emerald" />
+          </ArchNode>
+        </ArchStage>
+        <ArchEdge dir="left" tone="cyan" label="HTTP + WebSocket" sub="no hub in the loop" />
+        <ArchStage>
+          <ArchNode title="Vigil UI" sub="bundled or standalone" icon="fa-laptop" tone="cyan" />
+        </ArchStage>
+      </ArchDiagram>
+
+      <ArchDiagram caption="— FLEET MODE · MANY HOSTS THROUGH A HUB">
         <ArchStage>
           <ArchNode title="Collector" sub="web-01" icon="fa-microchip" tone="emerald">
             <ArchPill icon="fa-gauge-high" label="dashboard :4500" tone="emerald" />

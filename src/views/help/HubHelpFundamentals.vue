@@ -96,7 +96,19 @@ useDocumentTitle("Docs · Fundamentals");
         end.
       </p>
 
-      <ArchDiagram caption="— HUB MODE AT A GLANCE">
+      <ArchDiagram caption="— SINGLE-HOST MODE · COLLECTOR SERVES DIRECTLY">
+        <ArchStage>
+          <ArchNode title="Collector" sub="any host" icon="fa-microchip" tone="emerald">
+            <ArchPill icon="fa-gauge-high" label="dashboard :4500" tone="emerald" />
+          </ArchNode>
+        </ArchStage>
+        <ArchEdge dir="left" tone="cyan" label="HTTP + WebSocket" sub="no hub in the loop" />
+        <ArchStage>
+          <ArchNode title="Vigil UI" sub="bundled or standalone" icon="fa-laptop" tone="cyan" />
+        </ArchStage>
+      </ArchDiagram>
+
+      <ArchDiagram caption="— HUB MODE · COLLECTORS PUSH TO THE HUB">
         <ArchStage>
           <ArchNode title="Collector" sub="web-01" icon="fa-microchip" tone="emerald">
             <ArchPill icon="fa-gauge-high" label="dashboard :4500" tone="emerald" />
