@@ -11,10 +11,9 @@ useDocumentTitle("Docs · Metric Catalog");
     <PageHeader decor-title="Vigil Pro Hub · Docs" title="Metric Catalog" />
 
     <p class="lede">
-      Every Collector ships <strong>metrics</strong>
-      to the hub at 1 Hz. This page is the canonical reference for what
-      gets emitted: each metric's name, units, source, and the
-      caveats worth knowing before writing an
+      Every host sends a snapshot of its <strong>metrics</strong> to
+      Vigil once a second. This page is the full reference: every
+      metric's name, unit, and what's worth knowing before writing an
       <RouterLink to="/hub/help/rules" class="lede-link">alert rule</RouterLink>
       against it.
     </p>
@@ -25,16 +24,16 @@ useDocumentTitle("Docs · Metric Catalog");
         <span class="icon-tile tone-blue"><font-awesome-icon icon="fa-solid fa-table-list" /></span>
         <div>
           <div class="help-title">Anatomy of a sample</div>
-          <div class="help-sub">FOUR FIELDS · KEYED ON (HOST, METRIC, DIM, TS)</div>
+          <div class="help-sub">WHAT EACH HOST SENDS EVERY SECOND</div>
         </div>
       </header>
 
       <p class="example-intro">
-        Each Collector tick produces one <code>samples</code> frame
-        carrying a flat <code>metrics</code> map. Dimensioned metrics
-        encode their dim after a pipe (<code>disk.percent|/var</code>);
-        the hub splits on that pipe at ingest and stores
-        <code>metric</code> and <code>dim</code> as separate columns.
+        Every second, each host sends one <code>samples</code> frame
+        with a flat map of metric values. Some metrics need a label
+        (which mount, which interface) — those use a pipe
+        (<code>disk.percent|/var</code>), and Vigil stores the metric
+        and label separately on its end.
       </p>
 
       <div class="example">
@@ -52,13 +51,13 @@ useDocumentTitle("Docs · Metric Catalog");
 
       <dl class="ds-list">
         <dt><code>v</code></dt>
-        <dd>Protocol version. Currently <code>1</code>. Bumped on incompatible wire changes.</dd>
+        <dd>Protocol version. Currently <code>1</code>. Bumped when the wire format changes incompatibly.</dd>
         <dt><code>t</code></dt>
         <dd>Frame type. <code>"samples"</code> here; <code>"hello"</code>, <code>"welcome"</code>, and <code>"processes"</code> are the others.</dd>
         <dt><code>ts</code></dt>
-        <dd>Unix epoch seconds at the Collector when the snapshot was taken. The hub trusts this — clock skew shows up as gaps or overlap on charts.</dd>
+        <dd>Unix timestamp from the host when the snapshot was taken. Vigil trusts this — clock skew shows up as gaps or overlap on charts.</dd>
         <dt><code>metrics</code></dt>
-        <dd>Flat <code>{ "metric[|dim]": value }</code> map. Numeric values only — strings, nulls, and arrays are rejected at ingest.</dd>
+        <dd>Flat map of <code>{ "metric[|label]": value }</code>. Numbers only — strings, nulls, and arrays are rejected.</dd>
       </dl>
     </section>
 
@@ -79,11 +78,8 @@ useDocumentTitle("Docs · Metric Catalog");
             <span class="metric-tags"><span class="unit-tag is-percent">%</span></span>
           </div>
           <p class="metric-desc">
-            Whole-system CPU utilization averaged across all logical
-            cores since the last sample, 0–100. From
-            <code>psutil.cpu_percent(interval=None)</code>; the sampler
-            primes this once at startup so the first tick still reports
-            a meaningful value. The most common alert target.
+            CPU usage across all logical cores since the last sample,
+            0–100. The most common alert target.
           </p>
         </li>
 
@@ -93,11 +89,10 @@ useDocumentTitle("Docs · Metric Catalog");
             <span class="metric-tags"><span class="unit-tag is-mhz">MHz</span></span>
           </div>
           <p class="metric-desc">
-            Current CPU clock frequency. Only emitted when the platform
-            reports it — virtualized hosts and many ARM SoCs return
-            <code>0</code> from psutil and the metric is omitted
-            entirely. Useful for spotting thermal throttling alongside
-            <code>cpu.temp_c</code>.
+            Current CPU clock speed. Only emitted when the OS reports
+            it — virtual hosts and many ARM chips don't, and the
+            metric is dropped entirely. Useful for spotting thermal
+            throttling alongside <code>cpu.temp_c</code>.
           </p>
         </li>
 
@@ -112,11 +107,10 @@ useDocumentTitle("Docs · Metric Catalog");
           </div>
           <p class="metric-desc">
             Unix load averages over the last 1, 5, and 15 minutes.
-            Linux and macOS only — missing on Windows and on container
-            hosts without a load source. A load of <code>n</code> means
-            <em>n</em> runnable processes; compare against
-            <code>cpu_cores</code> from the host's hello frame, not a
-            fixed threshold.
+            Linux and macOS only — Windows hosts and most containers
+            won't report these. A load of <code>n</code> roughly means
+            <em>n</em> processes wanting CPU; compare against the
+            host's core count, not a fixed threshold.
           </p>
         </li>
 
@@ -126,11 +120,11 @@ useDocumentTitle("Docs · Metric Catalog");
             <span class="metric-tags"><span class="unit-tag is-temp">°C</span></span>
           </div>
           <p class="metric-desc">
-            CPU package temperature in Celsius. Only emitted when the
-            kernel exposes a sensor and the reading is non-zero — most
-            VMs, most containers, and many cloud bare-metal images
-            return nothing here. Alert with
-            <code>scope: tag:bare-metal</code> to avoid false negatives.
+            CPU package temperature in °C. Only emitted when the OS
+            exposes a sensor with a real reading — most VMs,
+            containers, and cloud images don't. Tag your bare-metal
+            hosts and use <code>scope: tag:bare-metal</code> to avoid
+            false negatives.
           </p>
         </li>
       </ul>
@@ -142,15 +136,14 @@ useDocumentTitle("Docs · Metric Catalog");
         <span class="icon-tile tone-emerald"><font-awesome-icon icon="fa-solid fa-memory" /></span>
         <div>
           <div class="help-title">Memory</div>
-          <div class="help-sub">VIRTUAL_MEMORY · ROUNDED TO 2-DECIMAL GIB ON THE WIRE</div>
+          <div class="help-sub">TOTAL · USED · FREE · PERCENT</div>
         </div>
       </header>
 
       <p class="example-intro">
-        All <code>*_bytes</code> memory and disk values are rounded by
-        the Collector to 2-decimal GiB before transmission and converted
-        back to bytes — precision is bounded at roughly 10 MiB. Fine
-        for alerting; not an accounting tool.
+        All <code>*_bytes</code> memory and disk values are rounded to
+        2-decimal GiB before being sent — precision is roughly 10 MiB.
+        Fine for alerts, not for billing.
       </p>
 
       <ul class="metric-list">
@@ -160,9 +153,8 @@ useDocumentTitle("Docs · Metric Catalog");
             <span class="metric-tags"><span class="unit-tag is-percent">%</span></span>
           </div>
           <p class="metric-desc">
-            Overall memory utilization, 0–100. Matches the percent field
-            of <code>psutil.virtual_memory()</code>. The recommended
-            alert target — works on any host without per-host tuning.
+            Overall memory usage, 0–100. The recommended alert target
+            — works on any host without tuning.
           </p>
         </li>
 
@@ -172,10 +164,9 @@ useDocumentTitle("Docs · Metric Catalog");
             <span class="metric-tags"><span class="unit-tag is-bytes">bytes</span></span>
           </div>
           <p class="metric-desc">
-            Used memory in bytes. Use when hosts have very different
-            RAM sizes and a single percent threshold doesn't translate
-            (a database box at 80% of 256 GiB is fine; the same percent
-            on a 2 GiB worker is not).
+            Used memory, in bytes. Use when your hosts have very
+            different RAM sizes and a single percent threshold doesn't
+            fit (80% of 256 GiB is fine; 80% of 2 GiB is not).
           </p>
         </li>
 
@@ -188,9 +179,8 @@ useDocumentTitle("Docs · Metric Catalog");
             </span>
           </div>
           <p class="metric-desc">
-            Total physical RAM. Effectively static — emitted every tick
-            for completeness, but you'd never alert on it. The host
-            page uses it as the denominator for the memory bar.
+            Total physical RAM. Doesn't change — sent every tick so
+            the UI can show usage bars. You'd never alert on it.
           </p>
         </li>
 
@@ -200,9 +190,9 @@ useDocumentTitle("Docs · Metric Catalog");
             <span class="metric-tags"><span class="unit-tag is-bytes">bytes</span></span>
           </div>
           <p class="metric-desc">
-            Free memory as psutil reports it. Note: on Linux this
-            excludes buffers and cache — for "available memory"
-            semantics, alert on <code>mem.percent</code> instead.
+            Free memory. On Linux this excludes buffers and cache —
+            for true "available memory" semantics, alert on
+            <code>mem.percent</code> instead.
           </p>
         </li>
       </ul>
@@ -214,17 +204,15 @@ useDocumentTitle("Docs · Metric Catalog");
         <span class="icon-tile tone-amber"><font-awesome-icon icon="fa-solid fa-wave-square" /></span>
         <div>
           <div class="help-title">Disk I/O</div>
-          <div class="help-sub">RATE METRICS · AGGREGATE ACROSS BLOCK DEVICES</div>
+          <div class="help-sub">RATES · TOTAL ACROSS EVERY DISK</div>
         </div>
       </header>
 
       <p class="example-intro">
-        These are <em>rates</em> the Collector computes itself from
-        <code>psutil.disk_io_counters()</code> deltas — the value is
-        already <code>per-second</code>, no conversion needed. They sum
-        across every block device on the host; per-device dimensioning
-        is on the roadmap and will appear here as <code>dim = device
-        name</code> when it lands.
+        Vigil computes these rates from the OS counters between ticks,
+        so values are already per-second. They sum across every disk
+        on the host — per-disk breakdown is on the roadmap and will
+        land as <code>dim = device name</code>.
       </p>
 
       <ul class="metric-list">
@@ -233,7 +221,7 @@ useDocumentTitle("Docs · Metric Catalog");
             <span class="metric-names"><code>disk.io.read_bytes_per_s</code></span>
             <span class="metric-tags"><span class="unit-tag is-rate">bytes/s</span></span>
           </div>
-          <p class="metric-desc">Aggregate read throughput across all block devices.</p>
+          <p class="metric-desc">Total read throughput across every disk.</p>
         </li>
 
         <li class="metric-row is-rate">
@@ -241,7 +229,7 @@ useDocumentTitle("Docs · Metric Catalog");
             <span class="metric-names"><code>disk.io.write_bytes_per_s</code></span>
             <span class="metric-tags"><span class="unit-tag is-rate">bytes/s</span></span>
           </div>
-          <p class="metric-desc">Aggregate write throughput across all block devices.</p>
+          <p class="metric-desc">Total write throughput across every disk.</p>
         </li>
 
         <li class="metric-row is-count">
@@ -250,8 +238,8 @@ useDocumentTitle("Docs · Metric Catalog");
             <span class="metric-tags"><span class="unit-tag is-count">ops/s</span></span>
           </div>
           <p class="metric-desc">
-            Aggregate read operations per second. Useful for detecting
-            random-IO storms that don't show up in throughput.
+            Total read operations per second. Catches random-IO spikes
+            that don't show up in raw throughput.
           </p>
         </li>
 
@@ -260,7 +248,7 @@ useDocumentTitle("Docs · Metric Catalog");
             <span class="metric-names"><code>disk.io.write_iops</code></span>
             <span class="metric-tags"><span class="unit-tag is-count">ops/s</span></span>
           </div>
-          <p class="metric-desc">Aggregate write operations per second.</p>
+          <p class="metric-desc">Total write operations per second.</p>
         </li>
       </ul>
     </section>
@@ -276,14 +264,13 @@ useDocumentTitle("Docs · Metric Catalog");
       </header>
 
       <p class="example-intro">
-        Capacity metrics are dimensioned: one value per mount point,
-        with <code>dim</code> set to the mount path
-        (<code>/</code>, <code>/var</code>, <code>/data</code>, …). On
-        the wire the dim follows a pipe — <code>disk.percent|/var</code>
-        — and the hub splits on ingest. Alert rules supply the
-        <code>dim</code> separately from the <code>metric</code>; the UI
-        does this for you when you pick a dimensioned metric in the
-        <RouterLink to="/hub/rules" class="lede-link">rules form</RouterLink>.
+        These metrics are per-mount: one value for each mount point,
+        with <code>dim</code> set to the mount path (<code>/</code>,
+        <code>/var</code>, <code>/data</code>). On the wire the dim is
+        appended after a pipe — <code>disk.percent|/var</code> — and
+        Vigil splits them. The
+        <RouterLink to="/hub/rules" class="lede-link">rules form</RouterLink>
+        handles this for you when you pick a per-mount metric.
       </p>
 
       <ul class="metric-list">
@@ -296,9 +283,9 @@ useDocumentTitle("Docs · Metric Catalog");
             </span>
           </div>
           <p class="metric-desc">
-            Mount fullness, 0–100. The recommended target — 85–90
-            catches most operational concerns without firing on every
-            <code>/tmp</code> burst.
+            How full the mount is, 0–100. The recommended target —
+            85–90 catches most real concerns without firing on every
+            <code>/tmp</code> spike.
           </p>
         </li>
 
@@ -311,8 +298,8 @@ useDocumentTitle("Docs · Metric Catalog");
             </span>
           </div>
           <p class="metric-desc">
-            Used capacity for the mount. Use when you want to alert on
-            absolute headroom (e.g. less than 10 GiB free on a small
+            Used space on the mount. Use when you want to alert on
+            absolute free space (e.g. less than 10 GiB left on a small
             root).
           </p>
         </li>
@@ -327,20 +314,18 @@ useDocumentTitle("Docs · Metric Catalog");
             </span>
           </div>
           <p class="metric-desc">
-            Mount capacity. Static (changes only on resize); emitted
-            for completeness so the UI can compute headroom without a
-            separate query.
+            Mount size. Doesn't change unless you resize — sent so the
+            UI can show free space without an extra request.
           </p>
         </li>
       </ul>
 
       <p class="example-intro" style="margin-top: 1rem;">
-        <strong>Skipped mounts.</strong> The Collector filters three
-        prefixes that bloat the namespace without telling you anything
-        actionable: <code>/snap/</code> (Ubuntu snap loops),
+        <strong>Skipped mounts.</strong> Vigil ignores three prefixes
+        that produce a lot of noise without telling you anything
+        useful: <code>/snap/</code> (Ubuntu snap loops),
         <code>/var/lib/docker/</code>, and <code>/run/docker/</code>.
-        Anything underneath those won't appear in the catalog and
-        can't be alerted on.
+        Mounts under these aren't reported and can't be alerted on.
       </p>
     </section>
 
@@ -350,17 +335,15 @@ useDocumentTitle("Docs · Metric Catalog");
         <span class="icon-tile tone-blue"><font-awesome-icon icon="fa-solid fa-tower-broadcast" /></span>
         <div>
           <div class="help-title">Network</div>
-          <div class="help-sub">RATE METRICS · AGGREGATE ACROSS INTERFACES</div>
+          <div class="help-sub">RATES · TOTAL ACROSS EVERY INTERFACE</div>
         </div>
       </header>
 
       <p class="example-intro">
-        Network throughput is computed by the Collector from
-        <code>psutil.net_io_counters()</code> deltas across all
-        non-loopback interfaces. Per-interface dimensioning will land
-        alongside the corresponding Collector change — the existing
-        empty-string <code>dim</code> slot becomes the interface name
-        with no breaking change to rules already targeting the aggregate.
+        Network throughput is the total across every non-loopback
+        interface, computed from OS counters between ticks. Per-interface
+        breakdown is on the roadmap — when it lands, existing rules
+        will keep working against the total.
       </p>
 
       <ul class="metric-list">
@@ -369,7 +352,7 @@ useDocumentTitle("Docs · Metric Catalog");
             <span class="metric-names"><code>net.rx_bytes_per_s</code></span>
             <span class="metric-tags"><span class="unit-tag is-rate">bytes/s</span></span>
           </div>
-          <p class="metric-desc">Receive throughput summed over every non-loopback interface.</p>
+          <p class="metric-desc">Total inbound traffic across every non-loopback interface.</p>
         </li>
 
         <li class="metric-row is-rate">
@@ -377,7 +360,7 @@ useDocumentTitle("Docs · Metric Catalog");
             <span class="metric-names"><code>net.tx_bytes_per_s</code></span>
             <span class="metric-tags"><span class="unit-tag is-rate">bytes/s</span></span>
           </div>
-          <p class="metric-desc">Transmit throughput summed over every non-loopback interface.</p>
+          <p class="metric-desc">Total outbound traffic across every non-loopback interface.</p>
         </li>
       </ul>
     </section>
@@ -388,34 +371,33 @@ useDocumentTitle("Docs · Metric Catalog");
         <span class="icon-tile tone-rose"><font-awesome-icon icon="fa-solid fa-stopwatch" /></span>
         <div>
           <div class="help-title">Sampling cadence and freshness</div>
-          <div class="help-sub">1 HZ DEFAULT · 90 S ALERT FRESHNESS WINDOW</div>
+          <div class="help-sub">1 HZ DEFAULT · 90 S BEFORE A SAMPLE IS TOO OLD TO ALERT ON</div>
         </div>
       </header>
 
       <dl class="ds-list">
         <dt><code>interval</code></dt>
         <dd>
-          Cadence is negotiated at handshake — the hub returns an
-          <code>interval</code> in its <code>welcome</code> frame and
-          the Collector pushes at that rate. Default is 1.0 s. The hub
-          can lower it for noisy fleets; it's never raised below the
-          Collector's local sampler tick.
+          How often hosts push. Each Collector connects, the hub
+          replies with an <code>interval</code>, and the Collector
+          pushes at that rate. Defaults to 1 second. The hub can lower
+          it for noisy fleets but won't go below the Collector's own
+          sampling rate.
         </dd>
         <dt>Alert freshness</dt>
         <dd>
-          The alert engine ignores samples older than
-          <strong>90&nbsp;s</strong>. A host that goes silent stops
-          contributing to evaluation rather than wedging an old breach
-          firing forever — see the
-          <RouterLink to="/hub/help/deployment" class="lede-link">Hub Deployment</RouterLink>
-          page for the corresponding host status windows.
+          Vigil's alert engine ignores samples older than
+          <strong>90&nbsp;s</strong>. A silent host stops being
+          evaluated, so a stale value can't keep an old alert firing.
+          The <RouterLink to="/hub/help/deployment" class="lede-link">Hub Deployment</RouterLink>
+          page has the matching host status windows.
         </dd>
         <dt>Retention</dt>
         <dd>
-          Raw 1 Hz samples are kept 6 hours. The rollup worker rolls
-          them into <code>samples_1m</code>, <code>samples_5m</code>,
-          and <code>samples_1h</code> tiers — the host page picks the
-          tier appropriate to the chart window automatically.
+          Raw 1 Hz samples are kept for 6 hours, then rolled up into
+          1-minute, 5-minute, and 1-hour averages for longer windows.
+          The host page picks the right tier for the chart window
+          automatically.
         </dd>
       </dl>
     </section>
@@ -425,12 +407,11 @@ useDocumentTitle("Docs · Metric Catalog");
       <div class="help-cta">
         <div class="help-cta-eyebrow">— USING METRICS IN RULES</div>
         <p>
-          Every metric in this catalog is a valid alert target. The
+          Every metric here is a valid alert target. The
           <RouterLink to="/hub/help/rules" class="lede-link">Alert Rules</RouterLink>
-          page walks through the seven-field rule shape, scope syntax,
-          and the <code>for_seconds</code> debounce. The
+          page walks through how to write a rule; the
           <RouterLink to="/hub/rules" class="lede-link">Alert rules</RouterLink>
-          view is the canonical UI for authoring them.
+          view is where you'll author them.
         </p>
       </div>
     </section>

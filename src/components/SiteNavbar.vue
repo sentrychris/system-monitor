@@ -76,6 +76,21 @@ const node = computed(() => {
           </RouterLink>
         </div>
 
+        <!-- Docs link — sits adjacent to the view-mode segments but with its
+             own quieter styling, since docs aren't a third mode (you don't
+             "switch into" docs the way you switch between Host and Hub).
+             Active on any /hub/help/* path; collapses with the rest of the
+             navbar at the lg breakpoint. -->
+        <RouterLink
+          v-if="hub.isConfigured"
+          to="/hub/help"
+          class="nav-docs"
+          active-class="is-active"
+        >
+          <font-awesome-icon icon="fa-solid fa-circle-question" class="nav-docs-icon" />
+          <span>Docs</span>
+        </RouterLink>
+
         <!-- Host-detail breadcrumb. Shows when we're on /hub/hosts/:id —
              clicking the chevron returns to the fleet, the chip itself
              is a static "you are here" indicator. -->
@@ -429,6 +444,49 @@ const node = computed(() => {
 /* Hide the divider when one of the segments is active — the active
    segment's box already provides separation. */
 .nav-segments:has(.is-active) .seg-divider { opacity: 0; }
+
+/* Docs link — sits beside the view-mode segments but reads as secondary
+   nav. Mono caps and a dashed underline pattern keep it visually
+   distinct from the boxed Host/Hub segments without disappearing. */
+.nav-docs {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-left: 0.7rem;
+  padding: 0.36rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  color: #cbd5e1;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: color 160ms ease, background 160ms ease, border-color 160ms ease;
+}
+.nav-docs:hover {
+  color: #67e8f9;
+  background: rgba(34, 211, 238, 0.06);
+  border-color: rgba(34, 211, 238, 0.28);
+}
+.nav-docs.is-active {
+  color: #67e8f9;
+  background: rgba(34, 211, 238, 0.10);
+  border-color: rgba(34, 211, 238, 0.32);
+}
+.nav-docs-icon { font-size: 0.85rem; opacity: 0.85; }
+.nav-docs:hover .nav-docs-icon,
+.nav-docs.is-active .nav-docs-icon { opacity: 1; }
+@media (max-width: 991.98px) {
+  /* Inside the collapsed mobile menu the link goes full-width and loses
+     the left margin so it lines up with the segment row above it. */
+  .nav-docs {
+    margin-left: 0;
+    margin-top: 0.4rem;
+    align-self: flex-start;
+  }
+}
 
 /* Breadcrumb crumb — shown next to the segmented control when we're on
    a host-detail view. The chevron is a back-link to /hub; the chip

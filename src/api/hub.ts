@@ -152,4 +152,34 @@ export const hubApi = {
     call<{ ok: true }>(`/api/alert_rules/${ruleId}`, o, { method: "DELETE" }),
 
   listChannels: (o: CallOptions) => call<Channel[]>("/api/channels", o),
+
+  createChannel: (
+    o: CallOptions,
+    body: {
+      name: string;
+      type: "slack" | "discord" | "webhook";
+      config: Record<string, unknown>;
+    },
+  ) =>
+    call<Channel>("/api/channels", o, {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
+
+  patchChannel: (
+    o: CallOptions,
+    channelId: number,
+    patch: {
+      name?: string;
+      type?: "slack" | "discord" | "webhook";
+      config?: Record<string, unknown>;
+    },
+  ) =>
+    call<Channel>(`/api/channels/${channelId}`, o, {
+      method: "PATCH",
+      body: JSON.stringify(patch),
+    }),
+
+  deleteChannel: (o: CallOptions, channelId: number) =>
+    call<{ ok: true }>(`/api/channels/${channelId}`, o, { method: "DELETE" }),
 };

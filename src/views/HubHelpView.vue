@@ -18,18 +18,11 @@ interface DocLink {
 // route + a component.
 const links: DocLink[] = [
   {
-    to: "/hub/help/alerts",
-    title: "Alerts",
-    eyebrow: "STATE MACHINE",
-    icon: "fa-solid fa-heart-pulse",
-    tone: "cyan",
-  },
-  {
-    to: "/hub/help/rules",
-    title: "Alert Rules",
-    eyebrow: "METRICS · SCOPE · API",
-    icon: "fa-solid fa-list-check",
-    tone: "purple",
+    to: "/hub/help/deployment",
+    title: "Hub Deployment",
+    eyebrow: "REGISTER · CONFIGURE",
+    icon: "fa-solid fa-circle-nodes",
+    tone: "emerald",
   },
   {
     to: "/hub/help/metrics",
@@ -39,12 +32,26 @@ const links: DocLink[] = [
     tone: "amber",
   },
   {
-    to: "/hub/help/deployment",
-    title: "Hub Deployment",
-    eyebrow: "REGISTER · CONFIGURE",
-    icon: "fa-solid fa-circle-nodes",
-    tone: "emerald",
+    to: "/hub/help/channels",
+    title: "Channels",
+    eyebrow: "SLACK · DISCORD · WEBHOOK",
+    icon: "fa-solid fa-bell",
+    tone: "rose",
   },
+  {
+    to: "/hub/help/rules",
+    title: "Alert Rules",
+    eyebrow: "METRICS · SCOPE · API",
+    icon: "fa-solid fa-list-check",
+    tone: "purple",
+  },
+  {
+    to: "/hub/help/alerts",
+    title: "Alerts",
+    eyebrow: "STATE MACHINE",
+    icon: "fa-solid fa-heart-pulse",
+    tone: "cyan",
+  }
 ];
 
 onMounted(() => {

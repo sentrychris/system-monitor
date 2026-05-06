@@ -1,10 +1,12 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { config } from "@/config";
 import DashboardView from "../views/DashboardView.vue";
+import HubChannelsView from "../views/HubChannelsView.vue";
 import HubFleetView from "../views/HubFleetView.vue";
 import HubHostView from "../views/HubHostView.vue";
 import HubHelpView from "../views/HubHelpView.vue";
 import HubHelpAlerts from "../views/help/HubHelpAlerts.vue";
+import HubHelpChannels from "../views/help/HubHelpChannels.vue";
 import HubHelpDeployment from "../views/help/HubHelpDeployment.vue";
 import HubHelpMetrics from "../views/help/HubHelpMetrics.vue";
 import HubHelpRules from "../views/help/HubHelpRules.vue";
@@ -59,12 +61,22 @@ const router = createRouter({
           name: "hub-help-metrics",
           component: HubHelpMetrics,
         },
+        {
+          path: "channels",
+          name: "hub-help-channels",
+          component: HubHelpChannels,
+        },
       ],
     },
     {
       path: "/hub/rules",
       name: "hub-rules",
       component: HubRulesView,
+    },
+    {
+      path: "/hub/channels",
+      name: "hub-channels",
+      component: HubChannelsView,
     },
   ],
 });

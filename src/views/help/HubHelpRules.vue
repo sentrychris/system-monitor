@@ -11,14 +11,12 @@ useDocumentTitle("Docs · Alert Rules");
     <PageHeader decor-title="Vigil Pro Hub · Docs" title="Alert Rules" />
 
     <p class="lede">
-      A <strong>rule</strong> is the <em>input</em> to the alert engine —
-      a metric, an operator, a threshold, and a scope of hosts to watch.
-      The <RouterLink to="/hub/help/alerts" class="lede-link">Alerts</RouterLink>
-      page covers the firing/breaching state machine; this page covers
-      authoring rules: the seven fields, the metric namespace, scope
-      syntax, and the API recipes the
-      <RouterLink to="/hub/rules" class="lede-link">Alert rules</RouterLink>
-      view wraps.
+      A <strong>rule</strong> tells Vigil what to watch and when to
+      alert: a metric, a comparison, a threshold, and which hosts to
+      apply it to. The
+      <RouterLink to="/hub/help/alerts" class="lede-link">Alerts</RouterLink>
+      page explains what happens once a rule fires; this page explains
+      how to write one.
     </p>
 
     <!-- ─── Anatomy of a rule ───────────────────────────────────── -->
@@ -33,42 +31,41 @@ useDocumentTitle("Docs · Alert Rules");
 
       <dl class="ds-list">
         <dt><code>name</code></dt>
-        <dd>Human label that appears in dispatched notifications and the rules list. No uniqueness constraint — pick something the oncall will recognize at 3am.</dd>
+        <dd>What the rule is called. Shows up in alerts and the rules list — pick something you'll recognize when paged at 3am. Doesn't need to be unique.</dd>
         <dt><code>metric</code> + <code>dim</code></dt>
         <dd>
-          What to evaluate. <code>metric</code> is the flat namespace key
-          (e.g. <code>cpu.usage</code>, <code>mem.percent</code>);
-          <code>dim</code> is a single-dimension qualifier used today only
-          for per-mount disk metrics (<code>/</code>, <code>/var</code>,
-          …). Empty string for everything else, never <code>NULL</code>.
-          See the catalog below.
+          What to watch. <code>metric</code> is the value name
+          (<code>cpu.usage</code>, <code>mem.percent</code>);
+          <code>dim</code> is an extra label used today only for
+          per-mount disk metrics (<code>/</code>, <code>/var</code>, …).
+          Leave it blank for everything else. See the catalog below.
         </dd>
         <dt><code>op</code> + <code>threshold</code></dt>
         <dd>
-          Comparator and value. <code>op</code> is one of <code>&gt;</code>,
+          How to compare. <code>op</code> is one of <code>&gt;</code>,
           <code>&gt;=</code>, <code>&lt;</code>, <code>&lt;=</code>;
-          <code>threshold</code> is a real number compared against the
-          metric's most recent sample. Units are whatever the metric
-          uses — percent, bytes, bytes/s — no scaling is applied.
+          <code>threshold</code> is the value to compare against the
+          latest sample, in whatever unit the metric uses (percent,
+          bytes, bytes/s — no conversion).
         </dd>
         <dt><code>for_seconds</code></dt>
         <dd>
-          How long the breach must persist before the rule fires.
-          Defaults to <code>60</code>. <code>0</code> means fire on the
-          first sample that crosses — useful for binary signals, noisy
-          for anything analog.
+          How long the threshold must keep being crossed before the
+          alert fires. Defaults to <code>60</code>. Set to <code>0</code>
+          to fire on the first sample that crosses — fine for binary
+          signals, very noisy for anything that fluctuates.
         </dd>
         <dt><code>scope</code></dt>
         <dd>
-          Which hosts the rule applies to. One of <code>all</code>,
+          Which hosts the rule covers. One of <code>all</code>,
           <code>host:&lt;name&gt;</code>, or <code>tag:&lt;tag&gt;</code>.
-          Resolved every eval tick — adding a tag to a host enrolls it
-          in matching rules within the next interval.
+          Vigil rechecks scope on every tick, so adding a tag to a host
+          enrolls it in seconds.
         </dd>
         <dt><code>channel_id</code></dt>
-        <dd>FK into <code>channels</code>. The rule fires into exactly one channel; fan-out is by registering the same target in two channels (e.g. an oncall webhook and an audit log).</dd>
+        <dd>Which channel to send the alert to. One channel per rule — to send to multiple places, set up multiple channels with the same target.</dd>
         <dt><code>enabled</code></dt>
-        <dd><code>0</code> excludes the rule from evaluation without deleting it. Existing alert state is preserved — re-enable and the next tick picks up where it left off.</dd>
+        <dd>Set to <code>0</code> to pause the rule without deleting it. State and history are kept — turn it back on and Vigil picks up where it left off.</dd>
       </dl>
     </section>
 
@@ -83,21 +80,20 @@ useDocumentTitle("Docs · Alert Rules");
       </header>
 
       <p class="example-intro">
-        These are the metrics most rules end up targeting. The
+        These are the metrics most rules end up using. The
         <RouterLink to="/hub/help/metrics" class="lede-link">Metric Catalog</RouterLink>
-        page has the complete list — every value the Collector emits,
-        with units, source, and caveats.
+        has the full list with units and notes.
       </p>
 
       <dl class="ds-list">
         <dt><code>cpu.usage</code></dt>
-        <dd>Whole-system CPU utilization, percent (0–100). The default for "is something on fire?" rules.</dd>
+        <dd>CPU usage across all cores, 0–100. The default for "is this host in trouble?" rules.</dd>
         <dt><code>mem.percent</code></dt>
-        <dd>Memory utilization. 85–90 catches most operational concerns without per-host tuning.</dd>
+        <dd>Memory usage. 85–90 works for most setups without tuning per host.</dd>
         <dt><code>disk.percent</code> <span class="dim-tag">+ dim</span></dt>
-        <dd>Per-mount fullness — <code>dim</code> is the mount path. One rule per mount you care about.</dd>
+        <dd>How full each mount is. Set <code>dim</code> to the mount path. Write one rule per mount you care about.</dd>
         <dt><code>cpu.load_1m</code> · <code>cpu.load_5m</code> · <code>cpu.load_15m</code></dt>
-        <dd>Unix load averages. Compare against <code>cpu_cores</code> from the host's hello frame — a load of 8 means very different things on a 4-core box and a 32-core one.</dd>
+        <dd>Unix load averages. Compare against the host's CPU core count — a load of 8 means very different things on a 4-core box vs a 32-core one.</dd>
       </dl>
     </section>
 
@@ -107,7 +103,7 @@ useDocumentTitle("Docs · Alert Rules");
         <span class="icon-tile tone-amber"><font-awesome-icon icon="fa-solid fa-bullseye" /></span>
         <div>
           <div class="help-title">Scope syntax</div>
-          <div class="help-sub">RESOLVED EVERY TICK · DISABLED HOSTS EXCLUDED</div>
+          <div class="help-sub">RECHECKED EVERY TICK · DISABLED HOSTS SKIPPED</div>
         </div>
       </header>
 
@@ -115,24 +111,24 @@ useDocumentTitle("Docs · Alert Rules");
         <div class="status-tile is-live">
           <span class="st-pill"><span class="st-dot"></span>ALL</span>
           <div class="st-rule mono">scope = "all"</div>
-          <div class="st-desc">Every <code>enabled</code> host. The blunt option — fine for global SLOs (<em>any</em> host above 95% CPU), too noisy for anything host-specific.</div>
+          <div class="st-desc">Every active host. Good for global thresholds (<em>any</em> host above 95% CPU), too noisy for anything host-specific.</div>
         </div>
         <div class="status-tile is-stale">
           <span class="st-pill"><span class="st-dot"></span>HOST</span>
           <div class="st-rule mono">scope = "host:web-01.dc1"</div>
-          <div class="st-desc">A single host by exact <code>name</code>. Best for the one box that needs a custom threshold — a database with legitimately high memory, an edge node with tighter latency goals.</div>
+          <div class="st-desc">One specific host, by name. Use when one box needs a different threshold — a database that legitimately runs hot, an edge node with stricter limits.</div>
         </div>
         <div class="status-tile is-offline">
           <span class="st-pill"><span class="st-dot"></span>TAG</span>
           <div class="st-rule mono">scope = "tag:edge"</div>
-          <div class="st-desc">Every host whose <code>tags</code> array contains the value. The recommended default: tag hosts by role (<code>db</code>, <code>edge</code>, <code>worker</code>) and write rules against the role.</div>
+          <div class="st-desc">Every host with that tag. The recommended default: tag hosts by role (<code>db</code>, <code>edge</code>, <code>worker</code>) and write rules per role.</div>
         </div>
       </div>
 
       <p class="example-intro" style="margin-top: 1rem;">
-        Hosts with <code>enabled = 0</code> are skipped at scope-resolution
-        time, so muting a host (PATCH <code>enabled: 0</code>) silences
-        every rule that targets it without touching the rules themselves.
+        Setting <code>enabled = 0</code> on a host silences every rule
+        that targets it without touching the rules themselves. Useful
+        for muting a noisy host mid-incident.
       </p>
     </section>
 
@@ -147,12 +143,12 @@ useDocumentTitle("Docs · Alert Rules");
       </header>
 
       <p class="example-intro">
-        <code>for_seconds</code> is a <em>continuous-breach</em> timer,
-        not a rolling average. The metric must stay over (or under) the
-        threshold for the entire window — a single sample that recovers
-        clears the timer back to zero. The
+        <code>for_seconds</code> is a continuous timer, not a rolling
+        average. The metric has to stay across the threshold for the
+        whole window — a single sample that recovers resets the timer
+        to zero. The
         <RouterLink to="/hub/help/alerts" class="lede-link">Alerts</RouterLink>
-        page has worked timelines.
+        page has more worked timelines.
       </p>
 
       <div class="example">
@@ -165,12 +161,11 @@ useDocumentTitle("Docs · Alert Rules");
       </div>
 
       <p class="example-intro">
-        Rule of thumb: pick <code>for_seconds</code> longer than your
-        deploy/restart pause. A 60-second window swallows a normal
-        rolling restart; a 5-second window will page on every deploy.
-        The engine evaluates every 10 s by default, so set
-        <code>for_seconds</code> in multiples of that for predictable
-        timing.
+        Rule of thumb: pick <code>for_seconds</code> longer than a
+        typical deploy or restart. 60 seconds absorbs a normal rolling
+        restart; 5 seconds will page you every deploy. Vigil checks
+        every 10 seconds by default, so multiples of 10 give the most
+        predictable timing.
       </p>
     </section>
 
@@ -186,10 +181,9 @@ useDocumentTitle("Docs · Alert Rules");
 
       <p class="example-intro">
         The <RouterLink to="/hub/rules" class="lede-link">Alert rules</RouterLink>
-        view is the canonical UI — every field maps one-to-one with the
-        <code>POST /api/alert_rules</code> body. Use the API directly
-        when bootstrapping a fleet from config or when you'd rather
-        commit rules to a repo than click them in.
+        view is the easiest way to author rules — every field maps
+        directly to the API. Use the API directly when bootstrapping a
+        fleet from config or committing rules to a repo.
       </p>
 
       <ol class="step-list">
@@ -197,9 +191,9 @@ useDocumentTitle("Docs · Alert Rules");
           <div class="step-body">
             <div class="step-title">Create a rule</div>
             <p>
-              <code>POST</code> the seven fields. The hub responds with
-              the assigned <code>id</code> and <code>created_at</code>.
-              The rule is live on the next eval tick (≤ 10 s by default).
+              Send the seven fields. The hub returns the new
+              <code>id</code> and <code>created_at</code>. The rule is
+              live on the next check — within 10 seconds by default.
             </p>
             <pre class="cmd"><span class="prompt">$</span> curl -sX POST https://hub.example/api/alert_rules \
     -H <span class="string">"Authorization: Bearer $HUB_ADMIN_TOKEN"</span> \
@@ -222,13 +216,12 @@ useDocumentTitle("Docs · Alert Rules");
           <div class="step-body">
             <div class="step-title">Tune an existing rule</div>
             <p>
-              <code>PATCH</code> accepts <code>name</code>,
-              <code>scope</code>, <code>op</code>, <code>threshold</code>,
+              You can change <code>name</code>, <code>scope</code>,
+              <code>op</code>, <code>threshold</code>,
               <code>for_seconds</code>, <code>channel_id</code>, and
-              <code>enabled</code>. <code>metric</code> and <code>dim</code>
-              are <em>immutable</em> — changing them would orphan the
-              alert state and event history, so the API rejects them.
-              Delete and recreate to change the metric.
+              <code>enabled</code>. <code>metric</code> and
+              <code>dim</code> can't be changed — that would orphan the
+              existing history. Delete and recreate to switch metrics.
             </p>
             <pre class="cmd"><span class="prompt">$</span> curl -sX PATCH https://hub.example/api/alert_rules/4 \
     -H <span class="string">"Authorization: Bearer $HUB_ADMIN_TOKEN"</span> \
@@ -240,10 +233,9 @@ useDocumentTitle("Docs · Alert Rules");
           <div class="step-body">
             <div class="step-title">Mute without losing history</div>
             <p>
-              Flip <code>enabled</code> to <code>0</code>. Evaluation
-              skips the rule but <code>alert_state</code> and
-              <code>alert_events</code> rows stay put. Re-enable and the
-              engine resumes from the previous state on the next tick.
+              Set <code>enabled</code> to <code>0</code>. Vigil skips
+              the rule but keeps its state and history. Turn it back on
+              and evaluation resumes from where it left off.
             </p>
             <pre class="cmd"><span class="prompt">$</span> curl -sX PATCH https://hub.example/api/alert_rules/4 \
     -H <span class="string">"Authorization: Bearer $HUB_ADMIN_TOKEN"</span> \
@@ -254,11 +246,8 @@ useDocumentTitle("Docs · Alert Rules");
           <div class="step-body">
             <div class="step-title">Delete</div>
             <p>
-              <code>DELETE</code> drops the rule and cascades through
-              <code>alert_state</code> and <code>alert_events</code>.
-              Use only when you're certain you don't want the firing
-              history — for a temporary pause, prefer <code>enabled:
-              false</code> above.
+              Removes the rule along with its state and history. For a
+              temporary pause, use the mute step above instead.
             </p>
             <pre class="cmd"><span class="prompt">$</span> curl -sX DELETE https://hub.example/api/alert_rules/4 \
     -H <span class="string">"Authorization: Bearer $HUB_ADMIN_TOKEN"</span>
@@ -280,13 +269,13 @@ useDocumentTitle("Docs · Alert Rules");
 
       <dl class="ds-list">
         <dt><code>alert_rules</code></dt>
-        <dd>The seven fields plus <code>id</code> and <code>created_at</code>. The whole table fits in a single eval-tick query — the engine reloads every rule on every tick, so config changes apply within the next interval.</dd>
+        <dd>The seven fields plus <code>id</code> and <code>created_at</code>. Vigil reloads every rule on every check, so changes apply within seconds.</dd>
         <dt><code>alert_state</code></dt>
-        <dd>Per-<code>(rule, host)</code> snapshot — current state, breach-start timestamp, last value. Cascades on rule delete. See the <RouterLink to="/hub/help/alerts" class="lede-link">Alerts</RouterLink> page for what each state means.</dd>
+        <dd>Current state per rule and host: which state it's in, when the breach started, the last value seen. See the <RouterLink to="/hub/help/alerts" class="lede-link">Alerts</RouterLink> page for what the states mean.</dd>
         <dt><code>alert_events</code></dt>
-        <dd>Append-only log of <code>fired</code> and <code>resolved</code> transitions. Cascades on rule delete — disable rather than delete if you need to keep the history.</dd>
+        <dd>Append-only log of <code>fired</code> and <code>resolved</code> events. Deleted with the rule — mute instead if you need to keep the history.</dd>
         <dt><code>channels</code></dt>
-        <dd>Dispatch targets. <code>channel_id</code> on every rule is a foreign key here; the channel's <code>type</code> + <code>config</code> JSON decides how the notification is delivered.</dd>
+        <dd>Where alerts go. Each rule's <code>channel_id</code> points here; the channel's <code>type</code> and <code>config</code> decide how the notification is delivered.</dd>
       </dl>
     </section>
 
@@ -295,12 +284,12 @@ useDocumentTitle("Docs · Alert Rules");
       <div class="help-cta">
         <div class="help-cta-eyebrow">— DISPATCH TARGETS</div>
         <p>
-          Every rule needs a <code>channel_id</code>. Channel
-          configuration (Slack, Discord, generic webhook) lives on the
-          hub host alongside the codebase — a dedicated docs page is on
-          the way.
+          Every rule needs a channel. Configure Slack, Discord, and
+          generic webhooks on the
+          <RouterLink to="/hub/channels" class="lede-link">Channels</RouterLink>
+          page — Add / Edit / Delete with the same shape as the rules
+          form.
         </p>
-        <pre class="cta-cmd"><span class="prompt">$</span> cat ~/vigil-pro/docs/CHANNELS.md</pre>
       </div>
     </section>
   </article>
