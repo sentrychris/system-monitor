@@ -659,9 +659,12 @@
         gap: 1rem;
         align-items: stretch;
       }
-      @media (max-width: 720px) {
-        .arch { grid-template-columns: 1fr; }
-        .arch-arrow { transform: rotate(90deg); }
+      .arch.arch-3 {
+        grid-template-columns: 1fr auto 1fr auto 1fr;
+      }
+      @media (max-width: 880px) {
+        .arch, .arch.arch-3 { grid-template-columns: 1fr; }
+        .arch-arrow { transform: rotate(90deg); margin: 0.4rem 0; }
       }
       .arch-node {
         padding: 1.5rem 1.4rem;
@@ -723,6 +726,78 @@
         letter-spacing: 0.18em;
         bottom: -1rem;
         white-space: nowrap;
+      }
+      .arch-note {
+        margin: 2rem auto 0;
+        max-width: 780px;
+        text-align: center;
+        font-size: 0.92rem;
+        line-height: 1.65;
+        color: var(--text-mute);
+        font-weight: 300;
+      }
+      .arch-note em {
+        font-style: normal;
+        color: var(--cyan);
+        border-bottom: 1px dashed rgba(34, 211, 238, 0.45);
+        padding-bottom: 1px;
+      }
+
+      /* ───────────── Deployment patterns ───────────── */
+      .patterns {
+        margin-top: 3rem;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1rem;
+      }
+      .pattern-card {
+        position: relative;
+        padding: 1.5rem 1.5rem 1.6rem;
+        border-radius: var(--r-md);
+        background: linear-gradient(180deg, rgba(255,255,255,0.025), rgba(255,255,255,0.01));
+        border: 1px solid var(--line);
+        transition: transform 220ms ease, border-color 220ms ease, background 220ms ease;
+      }
+      .pattern-card:hover {
+        transform: translateY(-3px);
+        border-color: var(--line-strong);
+        background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.012));
+      }
+      .pattern-pill {
+        display: inline-block;
+        margin-bottom: 0.7rem;
+        padding: 0.22rem 0.55rem;
+        border-radius: 999px;
+        background: rgba(255,255,255,0.04);
+        border: 1px solid currentColor;
+        font-family: "IBM Plex Mono", ui-monospace, monospace;
+        font-size: 0.64rem;
+        font-weight: 500;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        opacity: 0.95;
+      }
+      .pattern-card h4 {
+        font-size: 1rem;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        color: var(--text);
+      }
+      .pattern-card p {
+        margin: 0.6rem 0 0;
+        color: var(--text-mute);
+        font-size: 0.88rem;
+        font-weight: 300;
+        line-height: 1.55;
+      }
+      .pattern-card code {
+        background: rgba(96, 165, 250, 0.08);
+        border: 1px solid rgba(96, 165, 250, 0.18);
+        padding: 0.05rem 0.4rem;
+        border-radius: 4px;
+        font-size: 0.78rem;
+        color: var(--cyan);
+        font-family: "IBM Plex Mono", ui-monospace, monospace;
       }
 
       /* ───────────── Quick start ───────────── */
@@ -1427,19 +1502,21 @@
       <div class="wrap">
         <div class="reveal">
           <div class="section-eyebrow">How it works</div>
-          <h2 class="section-title">A two-piece system.</h2>
+          <h2 class="section-title">Three pieces, one product.</h2>
           <p class="section-lede">
-            Vigil is the polished frontend; <span style="color:var(--cyan)">Vigil Collector</span> does the host-side work. They talk over HTTP and a WebSocket, that's it.
+            A small agent on each host, an aggregator hub for the fleet,
+            and the dashboard you're looking at right now. Each piece does
+            one job; the wire protocol between them fits on one page.
           </p>
         </div>
 
-        <div class="arch reveal">
+        <div class="arch arch-3 reveal">
           <div class="arch-node">
-            <span class="arch-tag">Backend</span>
+            <span class="arch-tag">On every host</span>
             <h4>Vigil Collector</h4>
             <ul style="color: var(--blue);">
-              <li>asyncio sampler · 1 Hz default</li>
-              <li>Vigil metric collectors</li>
+              <li>Single Rust binary · ~5 MB</li>
+              <li>1 Hz sampler · ~8 MB RSS idle</li>
               <li>HTTP /system, /network, /probes</li>
               <li>WebSocket /connect</li>
               <li>Linux &amp; Windows</li>
@@ -1449,18 +1526,91 @@
             <svg width="46" height="22" viewBox="0 0 46 22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M2 11h36M30 4l8 7-8 7"/>
             </svg>
-            <span class="arch-pulse">JSON · 1 Hz</span>
+            <span class="arch-pulse">push · 1 Hz</span>
+          </div>
+          <div class="arch-node">
+            <span class="arch-tag">Central</span>
+            <h4>Vigil Pro Hub</h4>
+            <ul style="color: var(--purple);">
+              <li>Rust + bundled SQLite · one file</li>
+              <li>Push ingest over WebSocket</li>
+              <li>Tiered retention · raw → 1 m → 5 m → 1 h</li>
+              <li>Alerting · Slack / Discord / webhook</li>
+              <li>Bearer-token admin API</li>
+            </ul>
+          </div>
+          <div class="arch-arrow" aria-hidden="true">
+            <svg width="46" height="22" viewBox="0 0 46 22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2 11h36M30 4l8 7-8 7"/>
+            </svg>
+            <span class="arch-pulse">HTTPS</span>
           </div>
           <div class="arch-node">
             <span class="arch-tag">Frontend</span>
-            <h4>Vigil Dashboard</h4>
+            <h4>Vigil UI</h4>
             <ul style="color: var(--cyan);">
-              <li>Vue 3 · Pinia · TypeScript</li>
+              <li>Extensive visual information</li>
               <li>D3 realtime charts</li>
-              <li>Clean + focused UI</li>
-              <li>Dark + light theme</li>
-              <li>Static or live mode</li>
+              <li>Per-host live · Fleet hub mode</li>
+              <li>Light + dark themes</li>
+              <li>Static-hostable · no server required</li>
             </ul>
+          </div>
+        </div>
+
+        <p class="arch-note reveal">
+          Collectors push to the hub <em>outbound</em> — your hosts don't
+          need an inbound port open. The UI is a pure client; host it
+          anywhere reachable from a browser, point it at a Collector or
+          a Hub at build time.
+        </p>
+      </div>
+    </section>
+
+    <!-- ───────────── Deployment patterns ───────────── -->
+    <section class="section" style="padding-top: 0;">
+      <div class="wrap">
+        <div class="reveal">
+          <div class="section-eyebrow">Deployment patterns</div>
+          <h2 class="section-title">Scales down to one host. Up to a fleet.</h2>
+          <p class="section-lede">
+            Most installs land in one of three patterns. You can move
+            between them over time — start with one Collector, add a Hub
+            when the second host shows up.
+          </p>
+        </div>
+
+        <div class="patterns reveal">
+          <div class="pattern-card">
+            <span class="pattern-pill" style="color: var(--emerald);">Single host</span>
+            <h4>Collector + bundled dashboard</h4>
+            <p>
+              Install the Collector, open <code>:4500</code>. Zero
+              infrastructure beyond the agent. Good for dev boxes,
+              homelabs, and any "I just want to see what this one
+              machine is doing" situation.
+            </p>
+          </div>
+          <div class="pattern-card">
+            <span class="pattern-pill" style="color: var(--cyan);">Fleet</span>
+            <h4>Collectors → Hub → UI</h4>
+            <p>
+              Run a Vigil Pro hub somewhere reachable. Each Collector
+              pushes over an outbound WebSocket — no ports to open on
+              the hosts. Host the standalone UI anywhere and point it
+              at the hub. Adds fleet view, alerts, channels, history.
+            </p>
+          </div>
+          <div class="pattern-card">
+            <span class="pattern-pill" style="color: var(--purple);">Hybrid</span>
+            <h4>Hub + per-host deep dives</h4>
+            <p>
+              Same as Fleet, but each Collector keeps its bundled
+              dashboard exposed. Operators use the Hub for the
+              bird's-eye view and click through to a host's local
+              dashboard for real-time detail the Hub's rolled-up data
+              doesn't show.
+            </p>
           </div>
         </div>
       </div>
@@ -1484,19 +1634,19 @@
 
         <div class="pricing-grid">
           <div class="pricing-card tier-install reveal">
-            <span class="pricing-eyebrow">Vigil Standard</span>
+            <span class="pricing-eyebrow">Vigil Collectors + Vigil UI</span>
 
             <div class="pricing-amount">
               <span class="pricing-currency">£</span>
               <span class="pricing-num">99</span>
               <span class="pricing-cadence">one-time</span>
             </div>
-            <p class="pricing-tagline">Any host, end-to-end install, supported by the author.</p>
+            <p class="pricing-tagline">3x collectors, any host, end-to-end install, supported by the author.</p>
 
             <ul class="pricing-features">
               <li>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-                <span>Vigil Collector deployed and running as a systemd service</span>
+                <span>Vigil Collectors deployed and running as systemd services</span>
               </li>
               <li>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
@@ -1543,7 +1693,7 @@
           <!-- ─── Vigil Pro (Stripe checkout) ─── -->
           <div class="pricing-card tier-pro reveal">
             <span class="pricing-tag"><span class="dot"></span>Available</span>
-            <span class="pricing-eyebrow">Vigil Pro</span>
+            <span class="pricing-eyebrow">Vigil Hub (Pro)</span>
 
             <div class="pricing-amount">
               <span class="pricing-starts">From</span>
@@ -1556,7 +1706,7 @@
             <ul class="pricing-features">
               <li>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-                <span><b style="font-weight: 500;">Multi-host hub</b> — every collector on one dashboard, fleet view + per-host detail</span>
+                <span><b style="font-weight: 500;">Multi-host hub</b> — Unlimited collectors on one dashboard, fleet view + per-host detail</span>
               </li>
               <li>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
@@ -1610,7 +1760,7 @@
             <ul class="pricing-features">
               <li>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-                <span><b style="font-weight: 500;">Bespoke installation</b> in Python or Typescript</span>
+                <span><b style="font-weight: 500;">Bespoke probe</b> in your stack of choice</span>
               </li>
               <li>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
