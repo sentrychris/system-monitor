@@ -8,6 +8,8 @@ import {
   ArchNode,
   ArchEdge,
   ArchPill,
+  ArchSequence,
+  ArchSequenceFrame,
 } from "@/components/help-diagram";
 
 useDocumentTitle("Docs · Fundamentals");
@@ -133,13 +135,87 @@ useDocumentTitle("Docs · Fundamentals");
       </header>
 
       <p class="example-intro">
+        Every frame is a JSON message over a single long-lived
+        WebSocket. The lifecycle has three phases — a one-time
+        handshake, a steady stream of samples, and lightweight
+        keepalives.
+      </p>
+
+      <ArchSequence
+        caption="— FRAME FLOW"
+        left-actor="Collector"
+        left-sub="web-01"
+        left-icon="fa-microchip"
+        left-tone="emerald"
+        right-actor="Vigil Pro Hub"
+        right-sub="aggregator"
+        right-icon="fa-server"
+        right-tone="amber"
+      >
+        <ArchSequenceFrame
+          dir="right"
+          label="hello"
+          sub="api_key + host info"
+          tone="emerald"
+          phase="handshake"
+          phase-sub="once per connection"
+        />
+        <ArchSequenceFrame
+          dir="left"
+          label="welcome"
+          sub="host_id, interval"
+          tone="amber"
+        />
+        <ArchSequenceFrame
+          dir="right"
+          label="samples"
+          sub="ts + metric map"
+          tone="cyan"
+          phase="stream"
+          phase-sub="every 1 s"
+        />
+        <ArchSequenceFrame
+          dir="right"
+          label="samples"
+          tone="cyan"
+        />
+        <ArchSequenceFrame
+          dir="right"
+          label="processes"
+          sub="ts + top-N by memory"
+          tone="purple"
+          phase="snapshot"
+          phase-sub="occasional"
+        />
+        <ArchSequenceFrame
+          dir="left"
+          label="ping"
+          tone="neutral"
+          phase="keepalive"
+          phase-sub="either side"
+        />
+        <ArchSequenceFrame
+          dir="right"
+          label="pong"
+          tone="neutral"
+        />
+      </ArchSequence>
+
+      <p class="example-intro">
         On connect the Collector introduces itself with a
-        <code>hello</code> frame (host name, OS, CPU cores, agent
-        version, tags). After the hub replies with
-        <code>welcome</code>, it pushes one <code>samples</code> frame
-        per second carrying every metric value. A separate
-        <code>processes</code> frame carries the top-N processes by
-        memory.
+        <code>hello</code> frame — host name, OS, CPU cores, agent
+        version, tags, and the per-host API key. The hub verifies the
+        key, replies with <code>welcome</code> carrying an assigned
+        <code>host_id</code> and the suggested cadence, and from then
+        on the Collector pushes one <code>samples</code> frame per
+        tick. The <code>processes</code> frame is a separate, less
+        frequent snapshot of the top-N processes by memory.
+      </p>
+
+      <p class="example-intro">
+        Either side can send <code>ping</code>; the other replies with
+        <code>pong</code>. That keeps the WebSocket alive across NAT
+        idle timers without the Collector having to reconnect.
       </p>
 
       <p class="example-intro mb-3">
