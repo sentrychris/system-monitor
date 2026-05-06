@@ -12,7 +12,7 @@
 
 Vigil ships in **two modes** that share the same UI:
 
-- **Host** — connects directly to one [vigil-collector](https://github.com/sentrychris/vigil-collector)
+- **Host** — connects directly to one [vigil-collector](https://status.edcs.app/hub/help/fundamentals)
   via HTTP/WebSocket and shows that host's full live dashboard. The
   original mode; what most operators want for a single box.
 - **Hub** — connects to a [Vigil Pro](https://vigil.edcs.app#pricing)
@@ -23,7 +23,7 @@ Vigil ships in **two modes** that share the same UI:
 
 ### Requirements
 
-- [vigil-collector](https://github.com/sentrychris/vigil-collector) — the agent that gathers system samples.
+- [vigil-collector](https://status.edcs.app/hub/help/fundamentals) — the agent that gathers system samples.
 - [vigil-pro](https://vigil.edcs.app#pricing) (optional) — the multi-host hub. Only needed for Hub mode.
 
 1. Clone the repository
@@ -41,20 +41,20 @@ Vigil ships in **two modes** that share the same UI:
 3. Copy `.env.example` to `.env` and configure your environment variables
 
    ```
-   VITE_APP_NAME="Vigil"                                 # Visible in the navbar, above page title
-   VITE_APP_TITLE="Metric & Monitoring"                  # Visible in the navbar, page title
+   VITE_APP_NAME="Vigil"                             # Visible in the navbar, above page title
+   VITE_APP_TITLE="Metric & Monitoring"              # Visible in the navbar, page title
 
-   VITE_APP_DEPLOY_REGION=us-central1-a                  # (optional) visible in the footer
-   VITE_APP_DEPLOY_INSTANCE=chris-web1                   # (optional) visible in the footer
+   VITE_APP_DEPLOY_REGION=us-central1-a              # (optional) visible in the footer
+   VITE_APP_DEPLOY_INSTANCE=chris-web1               # (optional) visible in the footer
 
    # ─── Host mode ────────────────────────────────────────────────────
-   VITE_API_URL="http://192.168.1.237:4500"              # vigil-collector base URL
-   VITE_WORKER_URL="http://192.168.1.237:4500/worker"    # collector's worker endpoint
-   VITE_WEBSOCKET_URL="ws://192.168.1.237:4500/connect"  # collector's websocket endpoint
-   VITE_CONNECTION_TYPE="websocket"                      # "http" for static data, "websocket" for live
+   VITE_API_URL="http://127.0.0.1:4500"              # vigil-collector base URL
+   VITE_WORKER_URL="http://127.0.0.1:4500/worker"    # collector's worker endpoint
+   VITE_WEBSOCKET_URL="ws://127.0.0.1:4500/connect"  # collector's websocket endpoint
+   VITE_CONNECTION_TYPE="websocket"                  # "http" for static data, "websocket" for live
 
    # ─── Hub mode (optional) ──────────────────────────────────────────
-   VITE_HUB_URL="https://hub.vigil.example.com"          # Vigil Pro Hub base URL
+   VITE_HUB_URL="https://hub.vigil.example.com"      # Vigil Pro Hub base URL
    ```
 
 ## Host mode
