@@ -515,6 +515,31 @@ body[data-theme="dark"] .help-page .cta-cmd {
 }
 .help-page .cta-cmd .prompt { color: #22d3ee; margin-right: 0.5rem; user-select: none; }
 
+/* ── Links ─────────────────────────────────────────────────────────────
+   Every <a> inside an article gets the same treatment — mono caps with a
+   dashed cyan/blue underline that goes solid on hover. Originally only
+   the lede had this style (`.lede-link`); promoting it to all article
+   links keeps cross-references visually consistent without each page
+   tagging links manually. The `.lede-link` class still works as a
+   no-op alias on existing markup. Sidebar/back-link links live outside
+   `.help-page`, so they're unaffected. */
+.help-page a {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  color: #2563eb;
+  text-decoration: none;
+  border-bottom: 1px dashed rgba(96, 165, 250, 0.5);
+  transition: color 140ms ease, border-bottom-style 140ms ease;
+}
+.help-page a:hover {
+  color: #1d4ed8;
+  border-bottom-style: solid;
+}
+body[data-theme="dark"] .help-page a {
+  color: #67e8f9;
+  border-bottom-color: rgba(34, 211, 238, 0.5);
+}
+body[data-theme="dark"] .help-page a:hover { color: #a5f3fc; }
+
 /* Generic <code> styling within articles. */
 .help-page .lede code,
 .help-page .state-row dd code,

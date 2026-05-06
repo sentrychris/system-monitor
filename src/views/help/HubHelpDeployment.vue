@@ -2,12 +2,12 @@
 import { useDocumentTitle } from "@/composables/useDocumentTitle";
 import PageHeader from "@/components/PageHeader.vue";
 
-useDocumentTitle("Docs · Hub Deployment");
+useDocumentTitle("Docs · Deployment");
 </script>
 
 <template>
   <article class="help-page">
-    <PageHeader decor-title="Vigil Pro Hub · Docs" title="Hub Deployment" />
+    <PageHeader decor-title="Vigil Pro Hub · Docs" title="Deployment" />
 
     <p class="lede">
       Vigil <span class="seg-pro" aria-label="Vigil Pro">Pro</span> pairs many <strong>Collectors</strong> with one
@@ -78,7 +78,7 @@ useDocumentTitle("Docs · Hub Deployment");
 
       <pre class="cmd"><span class="prompt">$</span> sudo grep -oP <span class="string">'^VIGIL_PRO_ADMIN_TOKEN=\K.*'</span> /etc/vigil-pro/hub.env</pre>
 
-      <p class="example-intro">
+      <p class="example-intro mb-3">
         To rotate, repeat the first-time setup with a fresh value. The
         new token takes effect on the next request — there's no grace
         period, so update any scripts that hold the old one at the
@@ -107,7 +107,7 @@ useDocumentTitle("Docs · Hub Deployment");
               can't be retrieved later, so copy it straight into the
               Collector's config.
             </p>
-            <pre class="cmd"><span class="prompt">$</span> curl -sX POST https://hub.example/api/hosts \
+            <pre class="cmd"><span class="prompt">$</span> curl -sX POST https://hub.vigil.edcs.app/api/hosts \
     -H <span class="string">"Authorization: Bearer $HUB_ADMIN_TOKEN"</span> \
     -H <span class="string">"Content-Type: application/json"</span> \
     -d <span class="string">'{"name": "web-01.dc1", "tags": ["dc1", "edge"]}'</span>
@@ -118,18 +118,17 @@ useDocumentTitle("Docs · Hub Deployment");
           <div class="step-body">
             <div class="step-title">Point the Collector at the hub</div>
             <p>
-              Set the hub URL and api_key on the Collector. CLI flags
+              Set the hub URL and API key on the Collector. CLI flags
               and env vars both work — env is easier for systemd. Tags
               set here are added to whatever the hub already has for
               the host.
             </p>
-            <pre class="cmd"><span class="prompt">$</span> vigil-collector \
-    <span class="flag">--hub</span>=<span class="string">wss://hub.example/ingest</span> \
+            <pre class="cmd mb-3"><span class="prompt">$</span> vigil-collector \
+    <span class="flag">--hub</span>=<span class="string">wss://hub.vigil.edcs.app/ingest</span> \
     <span class="flag">--hub-key</span>=<span class="string">vh_…</span> \
-    <span class="flag">--hub-name</span>=<span class="string">web-01.dc1</span>
-
-<span class="comment"># or via env (e.g. inside a systemd unit)</span>
-<span class="prompt">$</span> export VIGIL_COLLECTOR_HUB=wss://hub.example/ingest
+    <span class="flag">--hub-name</span>=<span class="string">web-01.dc1</span></pre>
+    <pre class="cmd"><span class="comment"># or via env (e.g. inside a systemd unit)</span>
+<span class="prompt">$</span> export VIGIL_COLLECTOR_HUB=wss://hub.vigil.edcs.app/ingest
 <span class="prompt">$</span> export VIGIL_COLLECTOR_HUB_KEY=vh_…
 <span class="prompt">$</span> export VIGIL_COLLECTOR_HUB_NAME=web-01.dc1
 <span class="prompt">$</span> systemctl --user start vigil-collector</pre>
@@ -147,7 +146,7 @@ useDocumentTitle("Docs · Hub Deployment");
               until the connection drops.
             </p>
             <pre class="cmd"><span class="prompt">$</span> journalctl -u vigil-collector -f
-<span class="comment"># INFO  Pushing to Vigil Pro hub at wss://hub.example/ingest</span>
+<span class="comment"># INFO  Pushing to Vigil Pro hub at wss://hub.vigil.edcs.app/ingest</span>
 <span class="comment"># INFO  hub.connected: host=web-01.dc1 host_id=7 interval=1.00s</span></pre>
           </div>
         </li>
@@ -282,7 +281,7 @@ useDocumentTitle("Docs · Hub Deployment");
         keep retrying until you stop it or re-register with a new key.
       </p>
 
-      <pre class="cmd"><span class="prompt">$</span> curl -sX DELETE https://hub.example/api/hosts/7 \
+      <pre class="cmd mb-3"><span class="prompt">$</span> curl -sX DELETE https://hub.vigil.edcs.app/api/hosts/7 \
     -H <span class="string">"Authorization: Bearer $HUB_ADMIN_TOKEN"</span>
 <span class="comment"># → {"ok": true}</span></pre>
     </section>
@@ -302,7 +301,7 @@ useDocumentTitle("Docs · Hub Deployment");
         <dd>One row per registered host. Holds the host's name, the hashed api_key, the metadata from the latest <code>hello</code>, and <code>last_seen</code>.</dd>
         <dt><code>samples_raw</code></dt>
         <dd>Raw 1 Hz samples, kept for 6 hours, then rolled up into <code>samples_1m</code>, <code>samples_5m</code>, and <code>samples_1h</code> for longer windows.</dd>
-        <dt><code>host_processes_latest</code></dt>
+        <dt><code>host_process_latest</code></dt>
         <dd>Latest top-N processes per host. Replaced in full on every push — the host page reads from here for the Top Processes panel.</dd>
       </dl>
     </section>

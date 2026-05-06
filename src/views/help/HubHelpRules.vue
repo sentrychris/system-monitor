@@ -14,7 +14,7 @@ useDocumentTitle("Docs · Alert Rules");
       A <strong>rule</strong> tells Vigil what to watch and when to
       alert: a metric, a comparison, a threshold, and which hosts to
       apply it to. The
-      <RouterLink to="/hub/help/alerts" class="lede-link">Alerts</RouterLink>
+      <RouterLink to="/hub/help/alerts" class="lede-link">Alert States</RouterLink>
       page explains what happens once a rule fires; this page explains
       how to write one.
     </p>
@@ -81,7 +81,7 @@ useDocumentTitle("Docs · Alert Rules");
 
       <p class="example-intro">
         These are the metrics most rules end up using. The
-        <RouterLink to="/hub/help/metrics" class="lede-link">Metric Catalog</RouterLink>
+        <RouterLink to="/hub/help/metrics" class="lede-link">Metrics</RouterLink>
         has the full list with units and notes.
       </p>
 
@@ -125,7 +125,7 @@ useDocumentTitle("Docs · Alert Rules");
         </div>
       </div>
 
-      <p class="example-intro" style="margin-top: 1rem;">
+      <p class="example-intro mb-3" style="margin-top: 1rem;">
         Setting <code>enabled = 0</code> on a host silences every rule
         that targets it without touching the rules themselves. Useful
         for muting a noisy host mid-incident.
@@ -147,7 +147,7 @@ useDocumentTitle("Docs · Alert Rules");
         average. The metric has to stay across the threshold for the
         whole window — a single sample that recovers resets the timer
         to zero. The
-        <RouterLink to="/hub/help/alerts" class="lede-link">Alerts</RouterLink>
+        <RouterLink to="/hub/help/alerts" class="lede-link">Alert States</RouterLink>
         page has more worked timelines.
       </p>
 
@@ -160,7 +160,7 @@ useDocumentTitle("Docs · Alert Rules");
 <span class="t">t=140s </span><span class="metric">cpu = 95%</span>   <span class="state state-firing">firing</span>      <span class="comment"># 60s sustained → dispatch</span></pre>
       </div>
 
-      <p class="example-intro">
+      <p class="example-intro mb-3">
         Rule of thumb: pick <code>for_seconds</code> longer than a
         typical deploy or restart. 60 seconds absorbs a normal rolling
         restart; 5 seconds will page you every deploy. Vigil checks
@@ -195,7 +195,7 @@ useDocumentTitle("Docs · Alert Rules");
               <code>id</code> and <code>created_at</code>. The rule is
               live on the next check — within 10 seconds by default.
             </p>
-            <pre class="cmd"><span class="prompt">$</span> curl -sX POST https://hub.example/api/alert_rules \
+            <pre class="cmd"><span class="prompt">$</span> curl -sX POST https://hub.vigil.edcs.app/api/alert_rules \
     -H <span class="string">"Authorization: Bearer $HUB_ADMIN_TOKEN"</span> \
     -H <span class="string">"Content-Type: application/json"</span> \
     -d <span class="string">'{
@@ -223,7 +223,7 @@ useDocumentTitle("Docs · Alert Rules");
               <code>dim</code> can't be changed — that would orphan the
               existing history. Delete and recreate to switch metrics.
             </p>
-            <pre class="cmd"><span class="prompt">$</span> curl -sX PATCH https://hub.example/api/alert_rules/4 \
+            <pre class="cmd"><span class="prompt">$</span> curl -sX PATCH https://hub.vigil.edcs.app/api/alert_rules/4 \
     -H <span class="string">"Authorization: Bearer $HUB_ADMIN_TOKEN"</span> \
     -H <span class="string">"Content-Type: application/json"</span> \
     -d <span class="string">'{"threshold": 95, "for_seconds": 120}'</span></pre>
@@ -237,7 +237,7 @@ useDocumentTitle("Docs · Alert Rules");
               the rule but keeps its state and history. Turn it back on
               and evaluation resumes from where it left off.
             </p>
-            <pre class="cmd"><span class="prompt">$</span> curl -sX PATCH https://hub.example/api/alert_rules/4 \
+            <pre class="cmd"><span class="prompt">$</span> curl -sX PATCH https://hub.vigil.edcs.app/api/alert_rules/4 \
     -H <span class="string">"Authorization: Bearer $HUB_ADMIN_TOKEN"</span> \
     -d <span class="string">'{"enabled": false}'</span></pre>
           </div>
@@ -249,7 +249,7 @@ useDocumentTitle("Docs · Alert Rules");
               Removes the rule along with its state and history. For a
               temporary pause, use the mute step above instead.
             </p>
-            <pre class="cmd"><span class="prompt">$</span> curl -sX DELETE https://hub.example/api/alert_rules/4 \
+            <pre class="cmd"><span class="prompt">$</span> curl -sX DELETE https://hub.vigil.edcs.app/api/alert_rules/4 \
     -H <span class="string">"Authorization: Bearer $HUB_ADMIN_TOKEN"</span>
 <span class="comment"># → {"ok": true}</span></pre>
           </div>
@@ -271,7 +271,7 @@ useDocumentTitle("Docs · Alert Rules");
         <dt><code>alert_rules</code></dt>
         <dd>The seven fields plus <code>id</code> and <code>created_at</code>. Vigil reloads every rule on every check, so changes apply within seconds.</dd>
         <dt><code>alert_state</code></dt>
-        <dd>Current state per rule and host: which state it's in, when the breach started, the last value seen. See the <RouterLink to="/hub/help/alerts" class="lede-link">Alerts</RouterLink> page for what the states mean.</dd>
+        <dd>Current state per rule and host: which state it's in, when the breach started, the last value seen. See the <RouterLink to="/hub/help/alerts" class="lede-link">Alert States</RouterLink> page for what the states mean.</dd>
         <dt><code>alert_events</code></dt>
         <dd>Append-only log of <code>fired</code> and <code>resolved</code> events. Deleted with the rule — mute instead if you need to keep the history.</dd>
         <dt><code>channels</code></dt>

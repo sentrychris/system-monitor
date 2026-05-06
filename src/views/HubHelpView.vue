@@ -18,15 +18,29 @@ interface DocLink {
 // route + a component.
 const links: DocLink[] = [
   {
+    to: "/hub/help/fundamentals",
+    title: "Fundamentals",
+    eyebrow: "WHAT A COLLECTOR IS",
+    icon: "fa-solid fa-server",
+    tone: "blue",
+  },
+  {
+    to: "/hub/help/ui",
+    title: "The Vigil UI",
+    eyebrow: "STANDALONE · TWO MODES",
+    icon: "fa-solid fa-laptop",
+    tone: "purple",
+  },
+  {
     to: "/hub/help/deployment",
-    title: "Hub Deployment",
+    title: "Deployment",
     eyebrow: "REGISTER · CONFIGURE",
     icon: "fa-solid fa-circle-nodes",
     tone: "emerald",
   },
   {
     to: "/hub/help/metrics",
-    title: "Metric Catalog",
+    title: "Metrics",
     eyebrow: "WHAT COLLECTORS EMIT",
     icon: "fa-solid fa-gauge-high",
     tone: "amber",
@@ -47,7 +61,7 @@ const links: DocLink[] = [
   },
   {
     to: "/hub/help/alerts",
-    title: "Alerts",
+    title: "Alert States",
     eyebrow: "STATE MACHINE",
     icon: "fa-solid fa-heart-pulse",
     tone: "cyan",

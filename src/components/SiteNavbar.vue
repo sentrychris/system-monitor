@@ -61,14 +61,18 @@ const node = computed(() => {
             class="seg"
             active-class="is-active"
             exact-active-class="is-active"
-          >Host</RouterLink>
+          >
+            <font-awesome-icon icon="fa-solid fa-server" class="seg-icon" />
+            <span>Host</span>
+          </RouterLink>
           <span class="seg-divider" aria-hidden="true"></span>
           <RouterLink
             to="/hub"
             class="seg seg--hub"
             active-class="is-active"
           >
-            Hub
+            <font-awesome-icon icon="fa-solid fa-globe-europe" class="seg-icon" />
+            <span>Hub</span>
             <span class="seg-pro" aria-label="Vigil Pro">Pro</span>
             <span v-if="hub.firingAlerts.length" class="route-badge">
               {{ hub.firingAlerts.length }}
@@ -76,20 +80,20 @@ const node = computed(() => {
           </RouterLink>
         </div>
 
-        <!-- Docs link — sits adjacent to the view-mode segments but with its
-             own quieter styling, since docs aren't a third mode (you don't
-             "switch into" docs the way you switch between Host and Hub).
-             Active on any /hub/help/* path; collapses with the rest of the
-             navbar at the lg breakpoint. -->
-        <RouterLink
-          v-if="hub.isConfigured"
-          to="/hub/help"
-          class="nav-docs"
-          active-class="is-active"
-        >
-          <font-awesome-icon icon="fa-solid fa-circle-question" class="nav-docs-icon" />
-          <span>Docs</span>
-        </RouterLink>
+        <!-- Docs link — same chrome as the Host/Hub segment group (own
+             bordered shell, .seg styling on the link), but a separate
+             shell so it doesn't read as a third member of the view-mode
+             toggle. Active on any /hub/help/* path. -->
+        <div v-if="hub.isConfigured" class="nav-segments nav-segments--solo">
+          <RouterLink
+            to="/hub/help"
+            class="seg"
+            active-class="is-active"
+          >
+            <font-awesome-icon icon="fa-solid fa-circle-question" class="seg-icon" />
+            <span>Docs</span>
+          </RouterLink>
+        </div>
 
         <!-- Host-detail breadcrumb. Shows when we're on /hub/hosts/:id —
              clicking the chevron returns to the fleet, the chip itself
@@ -445,43 +449,22 @@ const node = computed(() => {
    segment's box already provides separation. */
 .nav-segments:has(.is-active) .seg-divider { opacity: 0; }
 
-/* Docs link — sits beside the view-mode segments but reads as secondary
-   nav. Mono caps and a dashed underline pattern keep it visually
-   distinct from the boxed Host/Hub segments without disappearing. */
-.nav-docs {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-  margin-left: 0.7rem;
-  padding: 0.36rem 0.75rem;
-  border-radius: 8px;
-  border: 1px solid transparent;
-  color: #cbd5e1;
-  font-family: "IBM Plex Mono", ui-monospace, monospace;
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  text-decoration: none;
-  transition: color 160ms ease, background 160ms ease, border-color 160ms ease;
+/* Docs lives in its own .nav-segments shell next to the view-mode toggle
+   — same chrome, same .seg styling on the link inside, just a separate
+   bordered unit so the visual grouping reads "Host/Hub | Docs" instead
+   of "Host/Hub/Docs". The --solo modifier gets a small left margin so
+   the two shells breathe; on mobile collapse it stacks below. */
+.nav-segments--solo {
+  margin-left: 0.5rem;
 }
-.nav-docs:hover {
-  color: #67e8f9;
-  background: rgba(34, 211, 238, 0.06);
-  border-color: rgba(34, 211, 238, 0.28);
+.nav-segments--solo .seg-icon {
+  font-size: 0.78rem;
+  opacity: 0.85;
 }
-.nav-docs.is-active {
-  color: #67e8f9;
-  background: rgba(34, 211, 238, 0.10);
-  border-color: rgba(34, 211, 238, 0.32);
-}
-.nav-docs-icon { font-size: 0.85rem; opacity: 0.85; }
-.nav-docs:hover .nav-docs-icon,
-.nav-docs.is-active .nav-docs-icon { opacity: 1; }
+.nav-segments--solo .seg:hover .seg-icon,
+.nav-segments--solo .seg.is-active .seg-icon { opacity: 1; }
 @media (max-width: 991.98px) {
-  /* Inside the collapsed mobile menu the link goes full-width and loses
-     the left margin so it lines up with the segment row above it. */
-  .nav-docs {
+  .nav-segments--solo {
     margin-left: 0;
     margin-top: 0.4rem;
     align-self: flex-start;

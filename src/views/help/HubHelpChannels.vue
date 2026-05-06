@@ -84,7 +84,7 @@ useDocumentTitle("Docs · Channels");
         repo, the API takes the same fields:
       </p>
 
-      <pre class="cmd"><span class="prompt">$</span> curl -sX POST https://hub.example/api/channels \
+      <pre class="cmd"><span class="prompt">$</span> curl -sX POST https://hub.vigil.edcs.app/api/channels \
     -H <span class="string">"Authorization: Bearer $HUB_ADMIN_TOKEN"</span> \
     -H <span class="string">"Content-Type: application/json"</span> \
     -d <span class="string">'{
@@ -94,7 +94,7 @@ useDocumentTitle("Docs · Channels");
     }'</span>
 <span class="comment"># → {"id": 3, "name": "ops-alerts", "type": "slack", "config": {…}}</span></pre>
 
-      <p class="example-intro">
+      <p class="example-intro mb-3">
         Edit (<code>PATCH</code>) and delete (<code>DELETE</code>) work
         the same way — the patch body accepts <code>name</code>,
         <code>type</code>, and <code>config</code>.
@@ -189,7 +189,7 @@ useDocumentTitle("Docs · Channels");
         Vigil treats fire and resolve notifications differently when
         the channel itself is broken (Slack down, webhook returning
         500, URL deleted). The
-        <RouterLink to="/hub/help/alerts" class="lede-link">Alerts</RouterLink>
+        <RouterLink to="/hub/help/alerts" class="lede-link">Alert States</RouterLink>
         page covers the state-machine details; the short version:
       </p>
 
@@ -219,7 +219,7 @@ useDocumentTitle("Docs · Channels");
         rather than duplicating the same webhook URL across channels.
       </p>
 
-      <p class="example-intro">
+      <p class="example-intro mb-3">
         Deleting a channel that's still referenced by a rule returns a
         <code>409</code>; you'll need to repoint or delete the
         offending rules first. The error message names the channel,
@@ -244,7 +244,7 @@ useDocumentTitle("Docs · Channels");
         and <code>config</code> (JSON blob with the per-type keys).
       </p>
 
-      <p class="example-intro">
+      <p class="example-intro mb-3">
         Every alert rule's <code>channel_id</code> column references
         this table. Vigil refuses to delete a channel still referenced
         by any rule (the 409 you'll see in the UI).

@@ -3,12 +3,12 @@ import { useDocumentTitle } from "@/composables/useDocumentTitle";
 import { RouterLink } from "vue-router";
 import PageHeader from "@/components/PageHeader.vue";
 
-useDocumentTitle("Docs · Alerts");
+useDocumentTitle("Docs · Alert States");
 </script>
 
 <template>
   <article class="help-page">
-    <PageHeader decor-title="Vigil Pro Hub · Docs" title="Alerts" />
+    <PageHeader decor-title="Vigil Pro Hub · Docs" title="Alert States" />
 
     <p class="lede">
       Vigil watches each host's metrics against the

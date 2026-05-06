@@ -8,8 +8,10 @@ import HubHelpView from "../views/HubHelpView.vue";
 import HubHelpAlerts from "../views/help/HubHelpAlerts.vue";
 import HubHelpChannels from "../views/help/HubHelpChannels.vue";
 import HubHelpDeployment from "../views/help/HubHelpDeployment.vue";
+import HubHelpFundamentals from "../views/help/HubHelpFundamentals.vue";
 import HubHelpMetrics from "../views/help/HubHelpMetrics.vue";
 import HubHelpRules from "../views/help/HubHelpRules.vue";
+import HubHelpUi from "../views/help/HubHelpUi.vue";
 import HubRulesView from "../views/HubRulesView.vue";
 
 const router = createRouter({
@@ -34,13 +36,23 @@ const router = createRouter({
       component: HubHostView,
     },
     // Docs section — HubHelpView is the layout (sidebar + <router-view>);
-    // each article is a child route. /hub/help redirects to the alerts
-    // article so existing deep links keep working.
+    // each article is a child route. /hub/help lands on Fundamentals so
+    // a first-time reader gets the conceptual intro before the how-to.
     {
       path: "/hub/help",
       component: HubHelpView,
       children: [
-        { path: "", redirect: { name: "hub-help-alerts" } },
+        { path: "", redirect: { name: "hub-help-fundamentals" } },
+        {
+          path: "fundamentals",
+          name: "hub-help-fundamentals",
+          component: HubHelpFundamentals,
+        },
+        {
+          path: "ui",
+          name: "hub-help-ui",
+          component: HubHelpUi,
+        },
         {
           path: "alerts",
           name: "hub-help-alerts",

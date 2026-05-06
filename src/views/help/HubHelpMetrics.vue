@@ -3,12 +3,12 @@ import { useDocumentTitle } from "@/composables/useDocumentTitle";
 import { RouterLink } from "vue-router";
 import PageHeader from "@/components/PageHeader.vue";
 
-useDocumentTitle("Docs · Metric Catalog");
+useDocumentTitle("Docs · Metrics");
 </script>
 
 <template>
   <article class="help-page">
-    <PageHeader decor-title="Vigil Pro Hub · Docs" title="Metric Catalog" />
+    <PageHeader decor-title="Vigil Pro Hub · Docs" title="Metrics" />
 
     <p class="lede">
       Every host sends a snapshot of its <strong>metrics</strong> to
@@ -320,7 +320,7 @@ useDocumentTitle("Docs · Metric Catalog");
         </li>
       </ul>
 
-      <p class="example-intro" style="margin-top: 1rem;">
+      <p class="example-intro mb-3">
         <strong>Skipped mounts.</strong> Vigil ignores three prefixes
         that produce a lot of noise without telling you anything
         useful: <code>/snap/</code> (Ubuntu snap loops),
@@ -389,7 +389,7 @@ useDocumentTitle("Docs · Metric Catalog");
           Vigil's alert engine ignores samples older than
           <strong>90&nbsp;s</strong>. A silent host stops being
           evaluated, so a stale value can't keep an old alert firing.
-          The <RouterLink to="/hub/help/deployment" class="lede-link">Hub Deployment</RouterLink>
+          The <RouterLink to="/hub/help/deployment" class="lede-link">Deployment</RouterLink>
           page has the matching host status windows.
         </dd>
         <dt>Retention</dt>
