@@ -2,6 +2,13 @@
 import { useDocumentTitle } from "@/composables/useDocumentTitle";
 import { RouterLink } from "vue-router";
 import PageHeader from "@/components/PageHeader.vue";
+import {
+  ArchDiagram,
+  ArchStage,
+  ArchNode,
+  ArchEdge,
+  ArchPill,
+} from "@/components/help-diagram";
 
 useDocumentTitle("Docs · Deployment");
 </script>
@@ -31,15 +38,33 @@ useDocumentTitle("Docs · Deployment");
         </div>
       </header>
 
-      <pre class="timeline"><span class="comment">             ┌──────────────┐    wss://hub/ingest   ┌──────────────┐</span>
-<span class="comment">             │  Collector   │ ────── push 1 Hz ───> │              │</span>
-<span class="comment">             │ web-01.dc1   │     bearer = api_key  │  Vigil Pro   │</span>
-<span class="comment">             └──────────────┘                       │     Hub      │</span>
-<span class="comment">             ┌──────────────┐    wss://hub/ingest   │              │</span>
-<span class="comment">             │  Collector   │ ────── push 1 Hz ───> │  ┌────────┐  │</span>
-<span class="comment">             │ web-02.dc1   │                       │  │ SQLite │  │</span>
-<span class="comment">             └──────────────┘                       │  └────────┘  │</span>
-<span class="comment">                       ...                          └──────────────┘</span></pre>
+      <ArchDiagram caption="— FLEET TOPOLOGY">
+        <ArchStage>
+          <ArchNode title="Collector" sub="web-01.dc1" icon="fa-microchip" tone="emerald">
+            <ArchPill icon="fa-gauge-high" label="dashboard :4500" tone="emerald" />
+          </ArchNode>
+          <ArchNode title="Collector" sub="web-02.dc1" icon="fa-microchip" tone="emerald">
+            <ArchPill icon="fa-gauge-high" label="dashboard :4500" tone="emerald" />
+          </ArchNode>
+        </ArchStage>
+        <ArchEdge
+          :count="2"
+          tone="emerald"
+          label="wss://hub/ingest"
+          sub="bearer = api_key · 1 Hz"
+        />
+        <ArchStage>
+          <ArchNode
+            title="Vigil Pro Hub"
+            sub="aggregator + alerts"
+            icon="fa-server"
+            tone="amber"
+            size="lg"
+          >
+            <ArchPill icon="fa-database" label="SQLite" tone="purple" />
+          </ArchNode>
+        </ArchStage>
+      </ArchDiagram>
     </section>
 
     <!-- ─── Admin token ─────────────────────────────────────────── -->
@@ -243,25 +268,36 @@ useDocumentTitle("Docs · Deployment");
         <span class="icon-tile tone-cyan"><font-awesome-icon icon="fa-solid fa-pen" /></span>
         <div>
           <div class="help-title">Editing a host</div>
-          <div class="help-sub">THREE FIELDS YOU CAN UPDATE</div>
+          <div class="help-sub">UI · OR PATCH /api/hosts/{id}</div>
         </div>
       </header>
 
       <p class="example-intro">
-        Three fields can be updated via
-        <code>PATCH /api/hosts/{id}</code>. Anything else in the body
-        is ignored.
+        Open any host from the
+        <RouterLink to="/hub" class="lede-link">fleet view</RouterLink>
+        — collector URL and tags are both edited inline on the detail
+        page, no form to open. Three fields are writable; anything else
+        in a <code>PATCH</code> body is ignored.
       </p>
 
       <dl class="ds-list">
         <dt><code>collector_url</code></dt>
         <dd>
           URL of the Collector's own dashboard for this host
-          (e.g. <code>https://web-01.dc1:4500</code>). When set, the
-          host page shows an <em>Open dashboard</em> link.
+          (e.g. <code>https://web-01.dc1:4500</code>). Click the pencil
+          next to the URL on the host page to set it; once saved, the
+          page shows an <em>Open dashboard</em> link.
         </dd>
         <dt><code>tags</code></dt>
-        <dd>Replaces the host's tag list. Affects alert scope matching on the next check.</dd>
+        <dd>
+          Replaces the host's tag list. The host detail page has an
+          inline editor with autocomplete from existing fleet tags —
+          click <em>+ tag</em>, type, Enter to commit; the × on each
+          chip removes one. Tags are normalized to lowercase and must
+          match <code>[a-z0-9_-]+</code> so they slot cleanly into
+          alert scopes (<code>tag:&lt;value&gt;</code>). Changes affect
+          alert scope matching on the next check.
+        </dd>
         <dt><code>enabled</code></dt>
         <dd>Set to <code>0</code> to mute alerts for the host without disconnecting the Collector. Useful for muting a noisy host mid-incident.</dd>
       </dl>
@@ -278,15 +314,31 @@ useDocumentTitle("Docs · Deployment");
       </header>
 
       <p class="example-intro">
-        <code>DELETE /api/hosts/{id}</code> removes the host and
-        everything tied to it — raw samples, all rollups, alert state
-        and history, the latest process snapshot. The Collector will
-        keep retrying until you stop it or re-register with a new key.
+        On the host detail page, the trash icon next to the collector
+        URL deletes the host. Vigil asks for confirmation before
+        removing it along with everything tied to it — raw samples,
+        all rollups, alert state and history, the latest process
+        snapshot. The Collector keeps retrying its old key in the
+        background; stop it (or re-register the host to give it a
+        fresh key) once you're done.
       </p>
 
-      <pre class="cmd mb-3"><span class="prompt">$</span> curl -sX DELETE https://hub.vigil.edcs.app/api/hosts/7 \
+      <p class="example-intro">
+        Same call from the API:
+      </p>
+
+      <pre class="cmd"><span class="prompt">$</span> curl -sX DELETE https://hub.vigil.edcs.app/api/hosts/7 \
     -H <span class="string">"Authorization: Bearer $HUB_ADMIN_TOKEN"</span>
 <span class="comment"># → {"ok": true}</span></pre>
+
+      <p class="example-intro mb-3">
+        Need it back? Run the same
+        <em>register → point Collector → start</em> steps from
+        <RouterLink to="/hub/help/deployment#deploying-a-host" class="lede-link">Deploying a host</RouterLink>
+        above. The hub treats it as a brand-new host (new id, new
+        api_key) — the previous samples and history don't come back
+        with it.
+      </p>
     </section>
 
     <!-- ─── Where it lives ──────────────────────────────────────── -->

@@ -33,4 +33,7 @@ export const config: Configuration = {
     pollInterval: 5_000,
     alertPollInterval: 5_000,
   },
+  pins: {
+    inlineLimit: Number(import.meta.env.VITE_PINS_INLINE_LIMIT) || 3,
+  },
 };

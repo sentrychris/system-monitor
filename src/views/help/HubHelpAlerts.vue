@@ -136,7 +136,7 @@ useDocumentTitle("Docs · Alert States");
         <span class="icon-tile tone-rose"><font-awesome-icon icon="fa-solid fa-exclamation-triangle" /></span>
         <div>
           <div class="help-title">Edge cases</div>
-          <div class="help-sub">WHEN A NOTIFICATION FAILS TO SEND</div>
+          <div class="help-sub">DISPATCH FAILURES · OPERATOR MUTE</div>
         </div>
       </header>
 
@@ -160,6 +160,20 @@ useDocumentTitle("Docs · Alert States");
             to send. Otherwise a deleted webhook could wedge an alert in
             <code>firing</code> forever. The recovery is still written
             to history; only the notification is lost.
+          </dd>
+        </div>
+        <div class="state-row">
+          <span class="state-pill state-ok"><span class="sp-dot"></span>RULE MUTED</span>
+          <dd>
+            Disabling a rule (eye toggle on the rules view, or
+            <code>enabled: false</code> via API) clears its live state
+            for every host immediately. Anything currently
+            <code>firing</code> gets a <code>resolved</code> event in
+            history so the dashboards stop showing it. Re-enabling
+            doesn't restore the prior state — if the metric is still
+            over threshold, the rule walks the
+            <code>ok → breaching → firing</code> cycle again on the
+            next ticks.
           </dd>
         </div>
       </dl>

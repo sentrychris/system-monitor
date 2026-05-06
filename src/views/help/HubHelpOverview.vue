@@ -2,6 +2,13 @@
 import { useDocumentTitle } from "@/composables/useDocumentTitle";
 import { RouterLink } from "vue-router";
 import PageHeader from "@/components/PageHeader.vue";
+import {
+  ArchDiagram,
+  ArchStage,
+  ArchNode,
+  ArchEdge,
+  ArchPill,
+} from "@/components/help-diagram";
 
 useDocumentTitle("Docs · Overview");
 </script>
@@ -39,7 +46,7 @@ useDocumentTitle("Docs · Overview");
           <span class="st-pill"><span class="st-dot"></span>COLLECTOR</span>
           <div class="st-rule mono">runs on each host</div>
           <div class="st-desc">
-            Small Python agent. Samples CPU, memory, disk, and network
+            Small agent built in Rust. Samples CPU, memory, disk, and network
             once a second. Serves a built-in dashboard locally and can
             push to a hub.
           </div>
@@ -65,19 +72,33 @@ useDocumentTitle("Docs · Overview");
         </div>
       </div>
 
-      <div class="example">
-        <div class="example-eyebrow">— DATA FLOW</div>
-        <pre class="timeline"><span class="comment">  ┌────────────┐    1 Hz push      ┌──────────────┐    HTTPS    ┌────────────┐</span>
-<span class="comment">  │ Collector  │ ────────────────> │              │ <─────────── │            │</span>
-<span class="comment">  │ web-01     │                   │              │              │            │</span>
-<span class="comment">  └────────────┘                   │   Vigil Pro  │              │  Vigil UI  │</span>
-<span class="comment">  ┌────────────┐                   │      Hub     │              │            │</span>
-<span class="comment">  │ Collector  │ ────────────────> │              │              │            │</span>
-<span class="comment">  │ web-02     │                   └──────────────┘              └────────────┘</span>
-<span class="comment">       ...                              ▲                                       </span>
-<span class="comment">                                        │ admin token                           </span>
-<span class="comment">                                        │                                       </span></pre>
-      </div>
+      <ArchDiagram caption="— DATA FLOW">
+        <ArchStage>
+          <ArchNode title="Collector" sub="web-01" icon="fa-microchip" tone="emerald">
+            <ArchPill icon="fa-gauge-high" label="dashboard :4500" tone="emerald" />
+          </ArchNode>
+          <ArchNode title="Collector" sub="web-02" icon="fa-microchip" tone="emerald">
+            <ArchPill icon="fa-gauge-high" label="dashboard :4500" tone="emerald" />
+          </ArchNode>
+        </ArchStage>
+        <ArchEdge :count="2" tone="emerald" label="1 Hz push" sub="WebSocket · outbound" />
+        <ArchStage>
+          <ArchNode
+            title="Vigil Pro Hub"
+            sub="aggregator + alerts"
+            icon="fa-server"
+            tone="amber"
+            size="lg"
+          >
+            <ArchPill icon="fa-database" label="SQLite" tone="purple" />
+            <ArchPill icon="fa-key" label="admin token" tone="amber" />
+          </ArchNode>
+        </ArchStage>
+        <ArchEdge dir="left" tone="cyan" label="HTTPS" sub="reads + admin" />
+        <ArchStage>
+          <ArchNode title="Vigil UI" sub="this app" icon="fa-laptop" tone="cyan" />
+        </ArchStage>
+      </ArchDiagram>
 
       <p class="example-intro mb-3">
         The UI doesn't have to be near anything else — it talks to

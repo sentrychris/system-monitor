@@ -2,6 +2,13 @@
 import { useDocumentTitle } from "@/composables/useDocumentTitle";
 import { RouterLink } from "vue-router";
 import PageHeader from "@/components/PageHeader.vue";
+import {
+  ArchDiagram,
+  ArchStage,
+  ArchNode,
+  ArchEdge,
+  ArchPill,
+} from "@/components/help-diagram";
 
 useDocumentTitle("Docs · Fundamentals");
 </script>
@@ -12,7 +19,7 @@ useDocumentTitle("Docs · Fundamentals");
 
     <p class="lede">
       Vigil is built around the <strong>Collector</strong> — a small
-      Python agent that runs on each host, takes a snapshot of the
+      agent built in Rust. It runs on each host, takes a snapshot of the
       system once a second, and either serves it locally or pushes it
       to a central <strong>Hub</strong>. This page is the Collector
       in depth. New here?
@@ -30,12 +37,9 @@ useDocumentTitle("Docs · Fundamentals");
       </header>
 
       <p class="example-intro">
-        The Collector is a single Python process that you run on each
-        machine you want to monitor. It uses
-        <code>psutil</code> to read CPU, memory, disk, and network
-        counters, and packages those into a snapshot every second. No
-        agent on the host means no data; one Collector per host gives
-        you everything Vigil knows about it.
+        The Collector is a single process that you run on each
+        machine you want to monitor. It reads CPU, memory, disk, network
+        counters and more. One Collector per host gives you everything Vigil knows about it.
       </p>
 
       <p class="example-intro mb-3">
@@ -82,7 +86,7 @@ useDocumentTitle("Docs · Fundamentals");
         </div>
       </div>
 
-      <p class="example-intro">
+      <p class="example-intro mb-3">
         These aren't exclusive — a Collector with <code>--hub</code>
         set still serves its bundled dashboard locally. The
         <RouterLink to="/hub/help/ui">Vigil UI</RouterLink> page covers
@@ -90,19 +94,32 @@ useDocumentTitle("Docs · Fundamentals");
         end.
       </p>
 
-      <div class="example">
-        <div class="example-eyebrow">— HUB MODE AT A GLANCE</div>
-        <pre class="timeline"><span class="comment">  ┌────────────┐    wss://hub/ingest   ┌──────────────┐    https   ┌────────┐</span>
-<span class="comment">  │ Collector  │ ──── push 1 Hz ─────> │              │ <───────── │        │</span>
-<span class="comment">  │ web-01     │                       │              │            │   UI   │</span>
-<span class="comment">  └────────────┘                       │   Vigil Pro  │            │        │</span>
-<span class="comment">  ┌────────────┐                       │      Hub     │            └────────┘</span>
-<span class="comment">  │ Collector  │ ──── push 1 Hz ─────> │              │</span>
-<span class="comment">  │ web-02     │                       │   ┌────────┐ │</span>
-<span class="comment">  └────────────┘                       │   │ SQLite │ │</span>
-<span class="comment">           ...                         │   └────────┘ │</span>
-<span class="comment">                                       └──────────────┘</span></pre>
-      </div>
+      <ArchDiagram caption="— HUB MODE AT A GLANCE">
+        <ArchStage>
+          <ArchNode title="Collector" sub="web-01" icon="fa-microchip" tone="emerald">
+            <ArchPill icon="fa-gauge-high" label="dashboard :4500" tone="emerald" />
+          </ArchNode>
+          <ArchNode title="Collector" sub="web-02" icon="fa-microchip" tone="emerald">
+            <ArchPill icon="fa-gauge-high" label="dashboard :4500" tone="emerald" />
+          </ArchNode>
+        </ArchStage>
+        <ArchEdge :count="2" tone="emerald" label="wss://hub/ingest" sub="push · 1 Hz" />
+        <ArchStage>
+          <ArchNode
+            title="Vigil Pro Hub"
+            sub="aggregator + alerts"
+            icon="fa-server"
+            tone="amber"
+            size="lg"
+          >
+            <ArchPill icon="fa-database" label="SQLite" tone="purple" />
+          </ArchNode>
+        </ArchStage>
+        <ArchEdge dir="left" tone="cyan" label="HTTPS" sub="reads + admin" />
+        <ArchStage>
+          <ArchNode title="Vigil UI" sub="this app" icon="fa-laptop" tone="cyan" />
+        </ArchStage>
+      </ArchDiagram>
     </section>
 
     <!-- ─── What it sends ──────────────────────────────────────── -->

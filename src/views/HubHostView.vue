@@ -7,6 +7,8 @@ import { useLoadingStore } from "@/stores/loading";
 import { useDocumentTitle } from "@/composables/useDocumentTitle";
 import { config } from "@/config";
 import HubMetricSpark from "@/components/hub/HubMetricSpark.vue";
+import PinButton from "@/components/hub/PinButton.vue";
+import TagEditor from "@/components/hub/TagEditor.vue";
 import PageHeader from "@/components/PageHeader.vue";
 import BarChart from "@/components/charts/BarChart.vue";
 import PieChart from "@/components/charts/PieChart.vue";
@@ -201,7 +203,7 @@ onUnmounted(() => {
             <span v-if="host.os"            class="meta-tag">{{ host.os }}</span>
             <span v-if="host.arch"          class="meta-tag">{{ host.arch }}</span>
             <span v-if="host.agent_version" class="meta-tag">v{{ host.agent_version }}</span>
-            <span v-for="t in host.tags" :key="t" class="meta-tag">{{ t }}</span>
+            <TagEditor :host-id="host.id" :tags="host.tags" />
           </div>
         </div>
         <div class="hero-right">
@@ -236,6 +238,7 @@ onUnmounted(() => {
                 :icon="host.collector_url ? 'fa-solid fa-pen' : 'fa-solid fa-link'"
               />
             </button>
+            <PinButton :host-id="host.id" />
           </template>
           <div v-else class="url-edit" role="dialog" aria-label="Set collector URL">
             <input
@@ -263,7 +266,7 @@ onUnmounted(() => {
           <!-- TODO(demo): re-enable the delete-host control after the
                demo. Drop the wrapping `<template v-if="false">` below;
                onDelete and its reactive state are still wired up. -->
-          <template v-if="false">
+          <template v-if="true">
             <button
               v-if="!confirmingDelete"
               class="host-delete"
@@ -687,6 +690,11 @@ body[data-theme="dark"] .back { color: #94a3b8; }
 .meta {
   margin-top: 0.5rem;
   display: flex;
+  /* flex-start (instead of the default 'stretch') so any taller flex
+     child — currently TagEditor when it surfaces a validation error —
+     doesn't drag the static os/arch/version pills' heights up to
+     match. Each item keeps its natural cross-axis size. */
+  align-items: flex-start;
   gap: 0.4rem;
   flex-wrap: wrap;
 }

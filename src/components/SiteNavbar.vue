@@ -5,6 +5,8 @@ import { config } from "@/config";
 import { useThemeStore } from "@/stores/theme";
 import { useSystemStore } from "@/stores/system";
 import { useHubStore } from "@/stores/hub";
+import HostStatusChip from "@/components/hub/HostStatusChip.vue";
+import PinnedHostsBar from "@/components/hub/PinnedHostsBar.vue";
 import PageHeader from "@/components/PageHeader.vue";
 import SiteLogo from "@/components/SiteLogo.vue";
 
@@ -95,6 +97,12 @@ const node = computed(() => {
           </RouterLink>
         </div>
 
+        <!-- Pinned-host shortcuts. Self-contained — its own store, its
+             own visibility logic; renders nothing if there are no
+             resolvable pins, so the navbar stays calm for users who
+             haven't pinned anything. -->
+        <PinnedHostsBar v-if="hub.isConfigured" />
+
         <!-- Host-detail breadcrumb. Shows when we're on /hub/hosts/:id —
              clicking the chevron returns to the fleet, the chip itself
              is a static "you are here" indicator. -->
@@ -102,11 +110,11 @@ const node = computed(() => {
           <RouterLink to="/hub" class="crumb-back" title="Back to fleet">
             <font-awesome-icon icon="fa-solid fa-chevron-right" class="crumb-chev" />
           </RouterLink>
-          <span class="crumb-chip" :class="hostCrumb.status ? `status-${hostCrumb.status}` : ''">
-            <font-awesome-icon icon="fa-solid fa-server" class="crumb-icon" />
-            <span class="crumb-name">{{ hostCrumb.name }}</span>
-            <span v-if="hostCrumb.status" class="crumb-dot" :title="hostCrumb.status.toUpperCase()"></span>
-          </span>
+          <HostStatusChip
+            :name="hostCrumb.name"
+            :status="hostCrumb.status"
+            :active="true"
+          />
         </div>
 
         <ul class="navbar-nav me-auto mb-0"></ul>
@@ -499,53 +507,9 @@ const node = computed(() => {
 }
 .crumb-chev { font-size: 0.62rem; }
 
-.crumb-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.3rem 0.7rem 0.3rem 0.55rem;
-  border-radius: 999px;
-  background: rgba(34, 211, 238, 0.08);
-  border: 1px solid rgba(34, 211, 238, 0.28);
-  color: #67e8f9;
-  font-family: "IBM Plex Mono", ui-monospace, monospace;
-  font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  font-feature-settings: "tnum";
-  font-variant-numeric: tabular-nums;
-}
-.crumb-icon {
-  font-size: 0.74rem;
-  color: #22d3ee;
-  opacity: 0.85;
-}
-.crumb-name { color: #e2e8f0; line-height: 1; }
-/* Status dot — uses the same emerald/amber/rose vocab as the host
-   pages so colour coding is consistent across the app. */
-.crumb-dot {
-  width: 7px; height: 7px;
-  border-radius: 50%;
-  background: #94a3b8;
-  box-shadow: 0 0 6px #94a3b8;
-  flex-shrink: 0;
-}
-.crumb-chip.status-live    .crumb-dot { background: #34d399; box-shadow: 0 0 8px #34d399; animation: live-pulse 1.4s ease-in-out infinite; }
-.crumb-chip.status-stale   .crumb-dot { background: #fbbf24; box-shadow: 0 0 8px #fbbf24; }
-.crumb-chip.status-offline .crumb-dot { background: #f87171; box-shadow: 0 0 8px #f87171; }
-@media (prefers-reduced-motion: reduce) {
-  .crumb-chip.status-live .crumb-dot { animation: none; }
-}
-@media (max-width: 575.98px) {
-  /* Truncate long host names on phones — keep the chip from pushing
-     the rest of the navbar off-screen. */
-  .crumb-name {
-    max-width: 14ch;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-}
+/* The host chip itself — name + status dot, with the truncation and
+   status-coloured pulse — lives in HostStatusChip.vue. The crumb here
+   only owns the wrapping back-arrow chrome. */
 
 /* "PRO" chip on the Hub segment — gold gradient (amber primary + secondary
    from BRANDING §3.5) for an unmistakable premium-tier signal without
