@@ -1,22 +1,23 @@
 <script setup lang="ts">
 import { useDocumentTitle } from "@/composables/useDocumentTitle";
+import { RouterLink } from "vue-router";
 import PageHeader from "@/components/PageHeader.vue";
 
-useDocumentTitle("Docs · Alerts");
+useDocumentTitle("Docs · Alert States");
 </script>
 
 <template>
   <article class="help-page">
-    <PageHeader decor-title="Vigil Pro Hub · Docs" title="Alerts" />
+    <PageHeader decor-title="Vigil Pro Hub · Docs" title="Alert States" />
 
     <p class="lede">
-      The hub watches every Collector's incoming samples against a list of
-      <strong>rules</strong>. When a rule's threshold is sustained for long
-      enough, the matching <strong>channel</strong> (Slack, Discord, or any
-      webhook) is dispatched. The lifecycle of every <code>(rule, host)</code>
-      pair is a small three-state machine — this page explains what each
-      state means, when transitions happen, and what they look like in the
-      data.
+      Vigil watches each host's metrics against the
+      <RouterLink to="/hub/help/rules">rules</RouterLink>
+      you set. When a metric crosses a threshold and stays there long
+      enough, you get a notification on Slack, Discord, or a webhook.
+      Every rule moves through three states for every host it
+      watches — this page walks through them. New here?
+      <RouterLink to="/hub/help/overview">Start with the Overview</RouterLink>.
     </p>
 
     <!-- ─── At-a-glance state legend ─────────────────────────────── -->
@@ -25,32 +26,31 @@ useDocumentTitle("Docs · Alerts");
         <span class="icon-tile tone-cyan"><font-awesome-icon icon="fa-solid fa-list-ul" /></span>
         <div>
           <div class="help-title">The three states</div>
-          <div class="help-sub">PER (RULE, HOST) · ALWAYS EXACTLY ONE</div>
+          <div class="help-sub">ONE STATE PER HOST PER RULE</div>
         </div>
       </header>
 
       <dl class="state-grid">
         <div class="state-row state-ok">
           <span class="state-pill"><span class="sp-dot"></span>OK</span>
-          <dd>Threshold not violated. Nothing to do.</dd>
+          <dd>The metric is within the threshold. Nothing to do.</dd>
         </div>
         <div class="state-row state-breaching">
           <span class="state-pill"><span class="sp-dot"></span>BREACHING</span>
           <dd>
-            Threshold <em>just</em> started being violated. The hub is
-            timing it but hasn't told anyone yet — if the metric recovers
-            within <code>for_seconds</code>, the breach is silently
-            forgotten. This is the spam filter: a 5-second CPU spike during
-            a deploy shouldn't page the oncall.
+            The metric just crossed the threshold. Vigil starts a timer
+            but doesn't notify anyone yet — if it recovers within
+            <code>for_seconds</code>, the breach is forgotten silently.
+            This is the noise filter: a 5-second CPU spike during a
+            deploy shouldn't page anyone.
           </dd>
         </div>
         <div class="state-row state-firing">
           <span class="state-pill"><span class="sp-dot"></span>FIRING</span>
           <dd>
-            Threshold has been violated continuously for at least
-            <code>for_seconds</code>. The hub has dispatched the configured
-            channel and recorded a <code>fired</code> event. Stays in this
-            state until the metric recovers.
+            The metric stayed across the threshold for the full
+            <code>for_seconds</code> window. Vigil has sent the alert
+            and recorded it. Stays here until the metric recovers.
           </dd>
         </div>
       </dl>
@@ -62,7 +62,7 @@ useDocumentTitle("Docs · Alerts");
         <span class="icon-tile tone-purple"><font-awesome-icon icon="fa-solid fa-code-branch" /></span>
         <div>
           <div class="help-title">Transitions</div>
-          <div class="help-sub">FROM → TO · WHEN · SIDE-EFFECTS</div>
+          <div class="help-sub">FROM → TO · WHEN · WHAT HAPPENS</div>
         </div>
       </header>
 
@@ -72,28 +72,28 @@ useDocumentTitle("Docs · Alerts");
           <span class="trans-arrow" aria-hidden="true">→</span>
           <span class="state-pill state-breaching"><span class="sp-dot"></span>BREACHING</span>
           <span class="trans-when">when the metric first crosses the threshold</span>
-          <span class="trans-fx">no dispatch</span>
+          <span class="trans-fx">no notification yet</span>
         </li>
         <li>
           <span class="state-pill state-breaching"><span class="sp-dot"></span>BREACHING</span>
           <span class="trans-arrow" aria-hidden="true">→</span>
           <span class="state-pill state-firing"><span class="sp-dot"></span>FIRING</span>
-          <span class="trans-when">when the breach has persisted for ≥ <code>for_seconds</code></span>
-          <span class="trans-fx fx-fire">dispatch <code>fired</code> + write event</span>
+          <span class="trans-when">when the metric has stayed across the threshold for ≥ <code>for_seconds</code></span>
+          <span class="trans-fx fx-fire">send <code>fired</code> notification</span>
         </li>
         <li>
           <span class="state-pill state-breaching"><span class="sp-dot"></span>BREACHING</span>
           <span class="trans-arrow" aria-hidden="true">→</span>
           <span class="state-pill state-ok"><span class="sp-dot"></span>OK</span>
           <span class="trans-when">when the metric recovers <em>before</em> <code>for_seconds</code> elapses</span>
-          <span class="trans-fx">silent — no dispatch, no event</span>
+          <span class="trans-fx">silent — no notification</span>
         </li>
         <li>
           <span class="state-pill state-firing"><span class="sp-dot"></span>FIRING</span>
           <span class="trans-arrow" aria-hidden="true">→</span>
           <span class="state-pill state-ok"><span class="sp-dot"></span>OK</span>
           <span class="trans-when">when the metric recovers</span>
-          <span class="trans-fx fx-resolve">dispatch <code>resolved</code> + write event</span>
+          <span class="trans-fx fx-resolve">send <code>resolved</code> notification</span>
         </li>
       </ol>
     </section>
@@ -136,7 +136,7 @@ useDocumentTitle("Docs · Alerts");
         <span class="icon-tile tone-rose"><font-awesome-icon icon="fa-solid fa-exclamation-triangle" /></span>
         <div>
           <div class="help-title">Edge cases</div>
-          <div class="help-sub">DISPATCH FAILURES</div>
+          <div class="help-sub">WHEN A NOTIFICATION FAILS TO SEND</div>
         </div>
       </header>
 
@@ -144,24 +144,22 @@ useDocumentTitle("Docs · Alerts");
         <div class="state-row">
           <span class="state-pill state-breaching"><span class="sp-dot"></span>STUCK BREACHING</span>
           <dd>
-            If the dispatch fails on the <code>BREACHING → FIRING</code>
-            edge (Slack down, webhook 500, etc.), the state machine stays
-            in <code>breaching</code> and retries on the next eval tick. An
-            alert that sits past <code>for_seconds</code> without
-            transitioning to <code>firing</code> usually means the channel
-            is broken — check the hub logs for
-            <code>alert.dispatch_failed</code>.
+            If sending the alert fails (Slack is down, webhook
+            returned an error), Vigil stays in <code>breaching</code>
+            and retries on the next check. If a rule has been
+            <code>breaching</code> well past its <code>for_seconds</code>
+            without ever firing, the channel is probably broken — check
+            the hub logs for <code>alert.dispatch_failed</code>.
           </dd>
         </div>
         <div class="state-row">
           <span class="state-pill state-firing"><span class="sp-dot"></span>ALWAYS RESOLVES</span>
           <dd>
-            On the <code>FIRING → OK</code> edge, the state advances even
-            if the resolved-dispatch fails. Otherwise a deleted webhook
-            would wedge an alert in <code>firing</code> forever. The
-            <code>resolved</code> event is still written to
-            <code>alert_events</code> so the history stays correct; only
-            the channel notification is lost.
+            When a metric recovers, Vigil moves from <code>firing</code>
+            to <code>ok</code> even if the resolved notification fails
+            to send. Otherwise a deleted webhook could wedge an alert in
+            <code>firing</code> forever. The recovery is still written
+            to history; only the notification is lost.
           </dd>
         </div>
       </dl>
@@ -180,17 +178,15 @@ useDocumentTitle("Docs · Alerts");
       <dl class="ds-list">
         <dt><code>alert_state</code></dt>
         <dd>
-          One row per <code>(rule_id, host_id)</code>. The current
-          <code>state</code>, <code>breach_started_at</code>,
-          <code>fired_at</code>, and last observed value. Read by the
-          Health card on each host page and by the fleet alerts list.
+          Current state per rule and host: which state it's in, when
+          the breach started, the last value seen. Drives the Health
+          card on each host page and the fleet alerts list.
         </dd>
         <dt><code>alert_events</code></dt>
         <dd>
           Append-only log of <code>fired</code> and <code>resolved</code>
-          transitions. Powers the alert-history view and is what gets
-          retained beyond the rolling
-          <code>alert_state</code> snapshot.
+          events. Powers the alert history view and persists after the
+          breach is over.
         </dd>
       </dl>
     </section>
@@ -200,11 +196,13 @@ useDocumentTitle("Docs · Alerts");
       <div class="help-cta">
         <div class="help-cta-eyebrow">— SETTING UP RULES</div>
         <p>
-          Rules are created via the admin API. See <code>ALERTS.md</code>
-          on the hub host for the full quickstart, including channel
-          setup for Slack, Discord, and generic webhooks.
+          The <RouterLink to="/hub/help/rules" class="lede-link">Alert Rules</RouterLink>
+          page walks through the seven fields, scope syntax, and the
+          API recipes. Channels (Slack, Discord, generic webhooks) are
+          managed on the
+          <RouterLink to="/hub/channels" class="lede-link">Channels</RouterLink>
+          page.
         </p>
-        <pre class="cta-cmd"><span class="prompt">$</span> cat ~/vigil-pro/ALERTS.md</pre>
       </div>
     </section>
   </article>

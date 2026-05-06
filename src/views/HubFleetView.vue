@@ -350,7 +350,7 @@ body[data-theme="dark"] .intro-card {
 .lede-card { justify-content: center; }
 .lede {
   margin: 0;
-  max-width: 72ch;
+  /*max-width: 72ch;*/
   font-family: "Lato", "Montserrat", system-ui, sans-serif;
   font-size: 0.94rem;
   line-height: 1.6;

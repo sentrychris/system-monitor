@@ -61,18 +61,37 @@ const node = computed(() => {
             class="seg"
             active-class="is-active"
             exact-active-class="is-active"
-          >Host</RouterLink>
+          >
+            <font-awesome-icon icon="fa-solid fa-server" class="seg-icon" />
+            <span>Host</span>
+          </RouterLink>
           <span class="seg-divider" aria-hidden="true"></span>
           <RouterLink
             to="/hub"
             class="seg seg--hub"
             active-class="is-active"
           >
-            Hub
+            <font-awesome-icon icon="fa-solid fa-globe-europe" class="seg-icon" />
+            <span>Hub</span>
             <span class="seg-pro" aria-label="Vigil Pro">Pro</span>
             <span v-if="hub.firingAlerts.length" class="route-badge">
               {{ hub.firingAlerts.length }}
             </span>
+          </RouterLink>
+        </div>
+
+        <!-- Docs link — same chrome as the Host/Hub segment group (own
+             bordered shell, .seg styling on the link), but a separate
+             shell so it doesn't read as a third member of the view-mode
+             toggle. Active on any /hub/help/* path. -->
+        <div v-if="hub.isConfigured" class="nav-segments nav-segments--solo">
+          <RouterLink
+            to="/hub/help"
+            class="seg"
+            active-class="is-active"
+          >
+            <font-awesome-icon icon="fa-solid fa-circle-question" class="seg-icon" />
+            <span>Docs</span>
           </RouterLink>
         </div>
 
@@ -429,6 +448,28 @@ const node = computed(() => {
 /* Hide the divider when one of the segments is active — the active
    segment's box already provides separation. */
 .nav-segments:has(.is-active) .seg-divider { opacity: 0; }
+
+/* Docs lives in its own .nav-segments shell next to the view-mode toggle
+   — same chrome, same .seg styling on the link inside, just a separate
+   bordered unit so the visual grouping reads "Host/Hub | Docs" instead
+   of "Host/Hub/Docs". The --solo modifier gets a small left margin so
+   the two shells breathe; on mobile collapse it stacks below. */
+.nav-segments--solo {
+  margin-left: 0.5rem;
+}
+.nav-segments--solo .seg-icon {
+  font-size: 0.78rem;
+  opacity: 0.85;
+}
+.nav-segments--solo .seg:hover .seg-icon,
+.nav-segments--solo .seg.is-active .seg-icon { opacity: 1; }
+@media (max-width: 991.98px) {
+  .nav-segments--solo {
+    margin-left: 0;
+    margin-top: 0.4rem;
+    align-self: flex-start;
+  }
+}
 
 /* Breadcrumb crumb — shown next to the segmented control when we're on
    a host-detail view. The chevron is a back-link to /hub; the chip

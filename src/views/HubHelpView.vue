@@ -18,19 +18,61 @@ interface DocLink {
 // route + a component.
 const links: DocLink[] = [
   {
-    to: "/hub/help/alerts",
-    title: "Alerts",
-    eyebrow: "STATE MACHINE",
-    icon: "fa-solid fa-heart-pulse",
+    to: "/hub/help/overview",
+    title: "Overview",
+    eyebrow: "30-SECOND TOUR · START HERE",
+    icon: "fa-solid fa-compass",
     tone: "cyan",
   },
   {
+    to: "/hub/help/fundamentals",
+    title: "Fundamentals",
+    eyebrow: "WHAT A COLLECTOR IS",
+    icon: "fa-solid fa-server",
+    tone: "blue",
+  },
+  {
+    to: "/hub/help/ui",
+    title: "The Vigil UI",
+    eyebrow: "STANDALONE · TWO MODES",
+    icon: "fa-solid fa-laptop",
+    tone: "purple",
+  },
+  {
     to: "/hub/help/deployment",
-    title: "Fleet Deployment",
+    title: "Deployment",
     eyebrow: "REGISTER · CONFIGURE",
     icon: "fa-solid fa-circle-nodes",
     tone: "emerald",
   },
+  {
+    to: "/hub/help/metrics",
+    title: "Metrics",
+    eyebrow: "WHAT COLLECTORS EMIT",
+    icon: "fa-solid fa-gauge-high",
+    tone: "amber",
+  },
+  {
+    to: "/hub/help/channels",
+    title: "Channels",
+    eyebrow: "SLACK · DISCORD · WEBHOOK",
+    icon: "fa-solid fa-bell",
+    tone: "rose",
+  },
+  {
+    to: "/hub/help/rules",
+    title: "Alert Rules",
+    eyebrow: "METRICS · SCOPE · API",
+    icon: "fa-solid fa-list-check",
+    tone: "purple",
+  },
+  {
+    to: "/hub/help/alerts",
+    title: "Alert States",
+    eyebrow: "STATE MACHINE",
+    icon: "fa-solid fa-heart-pulse",
+    tone: "cyan",
+  }
 ];
 
 onMounted(() => {
