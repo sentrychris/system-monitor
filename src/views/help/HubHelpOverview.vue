@@ -63,9 +63,9 @@ useDocumentTitle("Docs · Overview");
         </div>
         <div class="status-tile is-offline">
           <span class="st-pill"><span class="st-dot"></span>UI</span>
-          <div class="st-rule mono">this web app</div>
+          <div class="st-rule mono">visual interface</div>
           <div class="st-desc">
-            Standalone Vue app. Hosted anywhere, configured at build
+            Standalone static app. Hosted anywhere, configured at build
             time to point at a Collector, a Hub, or both. Pure client
             — no storage, no proxying.
           </div>
