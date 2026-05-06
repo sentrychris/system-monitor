@@ -66,7 +66,15 @@ useDocumentTitle("Docs · Alert Rules");
         <dt><code>channel_id</code></dt>
         <dd>Which channel to send the alert to. One channel per rule — to send to multiple places, set up multiple channels with the same target.</dd>
         <dt><code>enabled</code></dt>
-        <dd>Set to <code>0</code> to pause the rule without deleting it. State and history are kept — turn it back on and Vigil picks up where it left off.</dd>
+        <dd>
+          Set to <code>0</code> to pause the rule without deleting it.
+          Vigil stops evaluating and clears the rule's live alert state
+          — any host currently firing on this rule gets a
+          <code>resolved</code> event written to history, so dashboards
+          and the navbar firing badge update immediately. The rule's
+          fire/resolve log stays intact. Turn it back on and the engine
+          evaluates fresh on the next tick (~10 s).
+        </dd>
       </dl>
     </section>
 
@@ -183,8 +191,11 @@ useDocumentTitle("Docs · Alert Rules");
       <p class="example-intro">
         The <RouterLink to="/hub/rules" class="lede-link">Alert rules</RouterLink>
         view is the easiest way to author rules — every field maps
-        directly to the API. Use the API directly when bootstrapping a
-        fleet from config or committing rules to a repo.
+        directly to the API, the form catches obvious mistakes
+        (missing channel, bad scope) before save, and each row has its
+        own pencil, eye, and trash for edit, mute, and delete. Use the
+        API directly when bootstrapping a fleet from config or
+        committing rules to a repo.
       </p>
 
       <ol class="step-list">
@@ -192,9 +203,11 @@ useDocumentTitle("Docs · Alert Rules");
           <div class="step-body">
             <div class="step-title">Create a rule</div>
             <p>
-              Send the seven fields. The hub returns the new
-              <code>id</code> and <code>created_at</code>. The rule is
-              live on the next check — within 10 seconds by default.
+              Hit <em>+ New rule</em> on the
+              <RouterLink to="/hub/rules" class="lede-link">Alert rules</RouterLink>
+              page, fill the seven fields, save. The rule is live on
+              the next check — within 10 seconds by default. Same call
+              from the API:
             </p>
             <pre class="cmd"><span class="prompt">$</span> curl -sX POST https://hub.vigil.edcs.app/api/alert_rules \
     -H <span class="string">"Authorization: Bearer $HUB_ADMIN_TOKEN"</span> \
@@ -217,8 +230,9 @@ useDocumentTitle("Docs · Alert Rules");
           <div class="step-body">
             <div class="step-title">Tune an existing rule</div>
             <p>
-              You can change <code>name</code>, <code>scope</code>,
-              <code>op</code>, <code>threshold</code>,
+              Click the pencil on the row and the form opens inline
+              underneath. You can change <code>name</code>,
+              <code>scope</code>, <code>op</code>, <code>threshold</code>,
               <code>for_seconds</code>, <code>channel_id</code>, and
               <code>enabled</code>. <code>metric</code> and
               <code>dim</code> can't be changed — that would orphan the
@@ -234,9 +248,17 @@ useDocumentTitle("Docs · Alert Rules");
           <div class="step-body">
             <div class="step-title">Mute without losing history</div>
             <p>
-              Set <code>enabled</code> to <code>0</code>. Vigil skips
-              the rule but keeps its state and history. Turn it back on
-              and evaluation resumes from where it left off.
+              The
+              <RouterLink to="/hub/rules">Alert rules</RouterLink>
+              view has an eye toggle on each row — one click to mute,
+              one click to re-arm. Or via the API, set
+              <code>enabled</code> to <code>0</code>. Either way, Vigil
+              stops evaluating the rule and clears its live alert
+              state; any currently-firing alerts get a
+              <code>resolved</code> event in history so dashboards stop
+              showing them. The fire/resolve log stays intact.
+              Re-enabling doesn't restore the prior state — the engine
+              evaluates fresh on the next tick.
             </p>
             <pre class="cmd"><span class="prompt">$</span> curl -sX PATCH https://hub.vigil.edcs.app/api/alert_rules/4 \
     -H <span class="string">"Authorization: Bearer $HUB_ADMIN_TOKEN"</span> \
@@ -247,8 +269,9 @@ useDocumentTitle("Docs · Alert Rules");
           <div class="step-body">
             <div class="step-title">Delete</div>
             <p>
-              Removes the rule along with its state and history. For a
-              temporary pause, use the mute step above instead.
+              The trash icon on each row removes the rule (with a
+              confirmation strip) along with its state and history.
+              For a temporary pause, use the mute step above instead.
             </p>
             <pre class="cmd"><span class="prompt">$</span> curl -sX DELETE https://hub.vigil.edcs.app/api/alert_rules/4 \
     -H <span class="string">"Authorization: Bearer $HUB_ADMIN_TOKEN"</span>

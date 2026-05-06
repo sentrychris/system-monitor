@@ -74,10 +74,18 @@ useDocumentTitle("Docs · Channels");
 
       <p class="example-intro">
         The <RouterLink to="/hub/channels" class="lede-link">Channels</RouterLink>
-        page is the easiest way — pick a type, paste the webhook URL,
-        save. The form switches fields based on the selected type and
-        catches the obvious mistakes (missing URL, wrong scheme) before
-        save.
+        page is the easiest way. Hit <em>+ New channel</em>, pick a
+        type, paste the webhook URL, save — the form switches fields
+        based on the selected type and catches the obvious mistakes
+        (missing URL, wrong scheme) before it lets you save.
+      </p>
+
+      <p class="example-intro">
+        Each row has a pencil to edit and a trash to delete. Edit
+        opens the same form inline beneath the row; delete asks for
+        confirmation. Refusing to delete a channel that's still
+        wired to a rule is enforced server-side — see
+        <em>Reuse and deletion</em> below.
       </p>
 
       <p class="example-intro">
@@ -96,9 +104,10 @@ useDocumentTitle("Docs · Channels");
 <span class="comment"># → {"id": 3, "name": "ops-alerts", "type": "slack", "config": {…}}</span></pre>
 
       <p class="example-intro mb-3">
-        Edit (<code>PATCH</code>) and delete (<code>DELETE</code>) work
-        the same way — the patch body accepts <code>name</code>,
-        <code>type</code>, and <code>config</code>.
+        <code>PATCH /api/channels/{id}</code> edits an existing channel
+        (body accepts <code>name</code>, <code>type</code>, and
+        <code>config</code>). <code>DELETE /api/channels/{id}</code>
+        removes one — same 409 rules apply.
       </p>
     </section>
 

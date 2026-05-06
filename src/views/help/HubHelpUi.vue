@@ -2,6 +2,13 @@
 import { useDocumentTitle } from "@/composables/useDocumentTitle";
 import { RouterLink } from "vue-router";
 import PageHeader from "@/components/PageHeader.vue";
+import {
+  ArchDiagram,
+  ArchStage,
+  ArchNode,
+  ArchEdge,
+  ArchPill,
+} from "@/components/help-diagram";
 
 useDocumentTitle("Docs · The Vigil UI");
 </script>
@@ -196,6 +203,63 @@ useDocumentTitle("Docs · The Vigil UI");
       </p>
     </section>
 
+    <!-- ─── Operator shortcuts ─────────────────────────────────── -->
+    <section class="help-section">
+      <header class="help-header">
+        <span class="icon-tile tone-amber"><font-awesome-icon icon="fa-solid fa-bookmark" /></span>
+        <div>
+          <div class="help-title">Operator shortcuts</div>
+          <div class="help-sub">PINS · TAG EDITOR · QUICK MUTE</div>
+        </div>
+      </header>
+
+      <p class="example-intro">
+        A handful of small affordances that come up often when running
+        a fleet. None require setup; they're built into the UI.
+      </p>
+
+      <p class="example-intro">
+        <strong>Pinned hosts.</strong> The host detail page has a
+        bookmark button next to the dashboard link. Click it and the
+        host appears as a chip in the navbar, persistent across page
+        loads (per-browser via localStorage). The first few pins sit
+        inline; the rest collapse into a <code>+N ▾</code> dropdown.
+        The chip representing the host you're currently viewing lights
+        up cyan to match the breadcrumb — same "you are here"
+        vocabulary across the navbar.
+      </p>
+
+      <p class="example-intro">
+        <strong>Inline tag editor.</strong> Tags on the host detail
+        page are editable in place — <em>+ tag</em>, type, Enter
+        commits; × on a chip removes. Autocomplete suggests tags
+        already in use elsewhere on the fleet. The same data goes
+        through <code>PATCH /api/hosts/{id}</code> as the API path,
+        but the UI handles validation (lowercase,
+        <code>[a-z0-9_-]+</code>) and the round-trip for you.
+      </p>
+
+      <p class="example-intro">
+        <strong>Alert badges on the fleet view.</strong> Each host row
+        in the fleet list shows a small icon+count chip when a rule is
+        firing or breaching for that host — rose triangle for firing
+        (pulsing), amber stopwatch for breaching. Same vocabulary as
+        the
+        <RouterLink to="/hub/help/alerts">Alert States</RouterLink>
+        page; lets you spot trouble at a glance without opening the
+        host page.
+      </p>
+
+      <p class="example-intro mb-3">
+        <strong>Quick rule mute.</strong> The
+        <RouterLink to="/hub/rules">Alert rules</RouterLink>
+        view has an eye toggle on each row — one click flips a rule
+        between watching (eye) and muted (eye-slash). Useful for
+        silencing a noisy rule mid-incident; clears the rule's live
+        firing state immediately so dashboards stop showing it.
+      </p>
+    </section>
+
     <!-- ─── How it relates ─────────────────────────────────────── -->
     <section class="help-section">
       <header class="help-header">
@@ -212,20 +276,45 @@ useDocumentTitle("Docs · The Vigil UI");
         somewhere upstream:
       </p>
 
-      <div class="example">
-        <div class="example-eyebrow">— DATA FLOW</div>
-        <pre class="timeline"><span class="comment">  ┌────────────┐   1 Hz push      ┌──────────────┐    HTTPS     ┌────────────┐</span>
-<span class="comment">  │ Collector  │ ───────────────> │              │ <─────────── │            │</span>
-<span class="comment">  │ web-01     │                  │              │              │            │</span>
-<span class="comment">  └────────────┘                  │   Vigil Pro  │              │  Vigil UI  │</span>
-<span class="comment">  ┌────────────┐                  │      Hub     │              │            │</span>
-<span class="comment">  │ Collector  │ ───────────────> │              │              │            │</span>
-<span class="comment">  │ web-02     │                  └──────────────┘              └────────────┘</span>
-<span class="comment">  └────────────┘                       ▲                                         </span>
-<span class="comment">       ▲                               │ admin token                            </span>
-<span class="comment">       │                               │                                        </span>
-<span class="comment">       └─── (single-host) ─────────────┴───── HTTP/WS ───────────────────────── </span></pre>
-      </div>
+      <ArchDiagram caption="— FLEET MODE · UI READS FROM THE HUB">
+        <ArchStage>
+          <ArchNode title="Collector" sub="web-01" icon="fa-microchip" tone="emerald">
+            <ArchPill icon="fa-gauge-high" label="dashboard :4500" tone="emerald" />
+          </ArchNode>
+          <ArchNode title="Collector" sub="web-02" icon="fa-microchip" tone="emerald">
+            <ArchPill icon="fa-gauge-high" label="dashboard :4500" tone="emerald" />
+          </ArchNode>
+        </ArchStage>
+        <ArchEdge :count="2" tone="emerald" label="1 Hz push" sub="WebSocket" />
+        <ArchStage>
+          <ArchNode
+            title="Vigil Pro Hub"
+            sub="aggregator + alerts"
+            icon="fa-server"
+            tone="amber"
+            size="lg"
+          >
+            <ArchPill icon="fa-database" label="SQLite" tone="purple" />
+            <ArchPill icon="fa-key" label="admin token" tone="amber" />
+          </ArchNode>
+        </ArchStage>
+        <ArchEdge dir="left" tone="cyan" label="HTTPS" sub="reads + admin" />
+        <ArchStage>
+          <ArchNode title="Vigil UI" sub="this app" icon="fa-laptop" tone="cyan" />
+        </ArchStage>
+      </ArchDiagram>
+
+      <ArchDiagram caption="— SINGLE-HOST MODE · UI POINTS DIRECTLY AT A COLLECTOR">
+        <ArchStage>
+          <ArchNode title="Collector" sub="any host" icon="fa-microchip" tone="emerald">
+            <ArchPill icon="fa-gauge-high" label="dashboard :4500" tone="emerald" />
+          </ArchNode>
+        </ArchStage>
+        <ArchEdge dir="left" tone="cyan" label="HTTP + WebSocket" sub="no hub in the loop" />
+        <ArchStage>
+          <ArchNode title="Vigil UI" sub="this app" icon="fa-laptop" tone="cyan" />
+        </ArchStage>
+      </ArchDiagram>
 
       <p class="example-intro">
         <strong><RouterLink to="/hub/help/fundamentals">Vigil Collector</RouterLink></strong>
