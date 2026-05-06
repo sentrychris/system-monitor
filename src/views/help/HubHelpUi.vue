@@ -276,6 +276,18 @@ useDocumentTitle("Docs · The Vigil UI");
         somewhere upstream:
       </p>
 
+      <ArchDiagram caption="— SINGLE-HOST MODE · UI POINTS DIRECTLY AT A COLLECTOR">
+        <ArchStage>
+          <ArchNode title="Collector" sub="any host" icon="fa-microchip" tone="emerald">
+            <ArchPill icon="fa-gauge-high" label="dashboard :4500" tone="emerald" />
+          </ArchNode>
+        </ArchStage>
+        <ArchEdge dir="left" tone="cyan" label="HTTP + WebSocket" sub="no hub in the loop" />
+        <ArchStage>
+          <ArchNode title="Vigil UI" sub="visual interface" icon="fa-laptop" tone="cyan" />
+        </ArchStage>
+      </ArchDiagram>
+
       <ArchDiagram caption="— FLEET MODE · UI READS FROM THE HUB">
         <ArchStage>
           <ArchNode title="Collector" sub="web-01" icon="fa-microchip" tone="emerald">
@@ -299,18 +311,6 @@ useDocumentTitle("Docs · The Vigil UI");
           </ArchNode>
         </ArchStage>
         <ArchEdge dir="left" tone="cyan" label="HTTPS" sub="reads + admin" />
-        <ArchStage>
-          <ArchNode title="Vigil UI" sub="visual interface" icon="fa-laptop" tone="cyan" />
-        </ArchStage>
-      </ArchDiagram>
-
-      <ArchDiagram caption="— SINGLE-HOST MODE · UI POINTS DIRECTLY AT A COLLECTOR">
-        <ArchStage>
-          <ArchNode title="Collector" sub="any host" icon="fa-microchip" tone="emerald">
-            <ArchPill icon="fa-gauge-high" label="dashboard :4500" tone="emerald" />
-          </ArchNode>
-        </ArchStage>
-        <ArchEdge dir="left" tone="cyan" label="HTTP + WebSocket" sub="no hub in the loop" />
         <ArchStage>
           <ArchNode title="Vigil UI" sub="visual interface" icon="fa-laptop" tone="cyan" />
         </ArchStage>
