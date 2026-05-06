@@ -8,7 +8,7 @@
 
 <p align="center">View a <a href="https://status.edcs.app">live example here</a>.</p>
 
-![image](./docs/dashboard.png)
+![image](./docs/dashboard.webp)
 
 Vigil ships in **two modes** that share the same UI:
 
