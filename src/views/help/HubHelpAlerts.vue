@@ -12,10 +12,12 @@ useDocumentTitle("Docs · Alert States");
 
     <p class="lede">
       Vigil watches each host's metrics against the
-      <strong>rules</strong> you set. When a metric crosses a threshold
-      and stays there long enough, you get a notification on Slack,
-      Discord, or a webhook. Every rule moves through three states for
-      every host it watches — this page walks through them.
+      <RouterLink to="/hub/help/rules">rules</RouterLink>
+      you set. When a metric crosses a threshold and stays there long
+      enough, you get a notification on Slack, Discord, or a webhook.
+      Every rule moves through three states for every host it
+      watches — this page walks through them. New here?
+      <RouterLink to="/hub/help/overview">Start with the Overview</RouterLink>.
     </p>
 
     <!-- ─── At-a-glance state legend ─────────────────────────────── -->

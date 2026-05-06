@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useDocumentTitle } from "@/composables/useDocumentTitle";
+import { RouterLink } from "vue-router";
 import PageHeader from "@/components/PageHeader.vue";
 
 useDocumentTitle("Docs · Deployment");
@@ -16,6 +17,8 @@ useDocumentTitle("Docs · Deployment");
       to open on the host, nothing for the hub to install. This page
       walks through registering a host, pointing the Collector at the
       hub, and how the hub decides whether a host is still reachable.
+      New here?
+      <RouterLink to="/hub/help/overview">Start with the Overview</RouterLink>.
     </p>
 
     <!-- ─── Architecture at a glance ────────────────────────────── -->
@@ -306,13 +309,18 @@ useDocumentTitle("Docs · Deployment");
       </dl>
     </section>
 
-    <!-- ─── Pointer to ops ─────────────────────────────────────── -->
+    <!-- ─── Pointer onward ─────────────────────────────────────── -->
     <section class="help-section">
       <div class="help-cta">
-        <div class="help-cta-eyebrow">— BULK PROVISIONING / SYSTEMD UNITS</div>
+        <div class="help-cta-eyebrow">— NEXT</div>
         <p>
-          The full ops handbook — bundled systemd unit, an Ansible
-          role, batch-registration recipes — lives in the hub source.
+          Host registered and pushing? The
+          <RouterLink to="/hub/help/metrics">Metrics</RouterLink>
+          page covers what the Collector emits, and
+          <RouterLink to="/hub/help/rules">Alert Rules</RouterLink>
+          walks through writing your first threshold. Bulk
+          provisioning recipes (systemd unit, Ansible role,
+          batch-registration scripts) live in the hub source.
         </p>
         <pre class="cta-cmd"><span class="prompt">$</span> cat ~/vigil-pro/docs/DEPLOYMENT.md</pre>
       </div>

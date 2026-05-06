@@ -11,10 +11,11 @@ useDocumentTitle("Docs · The Vigil UI");
     <PageHeader decor-title="Vigil Pro Hub · Docs" title="The Vigil UI" />
 
     <p class="lede">
-      The Vigil UI is the web app you're reading this in. It's a static 
+      The Vigil UI is the web app you're reading this in. It's a static
       hostable app, separate from the basic interface each Collector
-      ships with. This page explains what the UI is, where it can run, and how it talks to the rest
-      of Vigil.
+      ships with. This page covers what the UI is, where it can run,
+      and how it talks to the rest of Vigil. New here?
+      <RouterLink to="/hub/help/overview">Start with the Overview</RouterLink>.
     </p>
 
     <!-- ─── Two dashboards, one look ───────────────────────────── -->
@@ -143,10 +144,22 @@ useDocumentTitle("Docs · The Vigil UI");
         doesn't care, it just makes HTTPS calls.
       </p>
 
-      <p class="example-intro mb-3">
+      <p class="example-intro">
         Wherever you put it, the UI only needs network reach to the
         upstream Collector or hub. The browser does all the work; no
         special server permissions required.
+      </p>
+
+      <p class="example-intro mb-3">
+        <strong>The UI doesn't have to be co-located with anything
+        else.</strong> In hub mode it never talks to a Collector
+        directly — only to the hub — so you can host the UI on a
+        machine with zero agents installed. In single-host mode the
+        Collector address is whatever you pass in
+        <code>VITE_API_URL</code> — could be localhost, could be a
+        remote box. The UI is pure client; what it can reach is
+        decided by the build config and the network, not by where
+        it's served from.
       </p>
     </section>
 

@@ -18,6 +18,13 @@ interface DocLink {
 // route + a component.
 const links: DocLink[] = [
   {
+    to: "/hub/help/overview",
+    title: "Overview",
+    eyebrow: "30-SECOND TOUR · START HERE",
+    icon: "fa-solid fa-compass",
+    tone: "cyan",
+  },
+  {
     to: "/hub/help/fundamentals",
     title: "Fundamentals",
     eyebrow: "WHAT A COLLECTOR IS",

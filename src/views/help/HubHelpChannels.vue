@@ -16,7 +16,8 @@ useDocumentTitle("Docs · Channels");
       <RouterLink to="/hub/help/rules" class="lede-link">alert rule</RouterLink>
       points at exactly one channel. Manage them on the
       <RouterLink to="/hub/channels" class="lede-link">Channels</RouterLink>
-      page.
+      page. New here?
+      <RouterLink to="/hub/help/overview">Start with the Overview</RouterLink>.
     </p>
 
     <!-- ─── The three types ─────────────────────────────────────── -->

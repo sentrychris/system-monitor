@@ -15,7 +15,8 @@ useDocumentTitle("Docs · Metrics");
       Vigil once a second. This page is the full reference: every
       metric's name, unit, and what's worth knowing before writing an
       <RouterLink to="/hub/help/rules" class="lede-link">alert rule</RouterLink>
-      against it.
+      against it. New here?
+      <RouterLink to="/hub/help/overview">Start with the Overview</RouterLink>.
     </p>
 
     <!-- ─── Wire shape ──────────────────────────────────────────── -->

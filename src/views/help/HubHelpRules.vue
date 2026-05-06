@@ -16,7 +16,8 @@ useDocumentTitle("Docs · Alert Rules");
       apply it to. The
       <RouterLink to="/hub/help/alerts" class="lede-link">Alert States</RouterLink>
       page explains what happens once a rule fires; this page explains
-      how to write one.
+      how to write one. New here?
+      <RouterLink to="/hub/help/overview">Start with the Overview</RouterLink>.
     </p>
 
     <!-- ─── Anatomy of a rule ───────────────────────────────────── -->
@@ -125,7 +126,7 @@ useDocumentTitle("Docs · Alert Rules");
         </div>
       </div>
 
-      <p class="example-intro mb-3" style="margin-top: 1rem;">
+      <p class="example-intro mb-3">
         Setting <code>enabled = 0</code> on a host silences every rule
         that targets it without touching the rules themselves. Useful
         for muting a noisy host mid-incident.

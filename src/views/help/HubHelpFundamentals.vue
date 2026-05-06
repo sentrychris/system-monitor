@@ -14,9 +14,9 @@ useDocumentTitle("Docs · Fundamentals");
       Vigil is built around the <strong>Collector</strong> — a small
       Python agent that runs on each host, takes a snapshot of the
       system once a second, and either serves it locally or pushes it
-      to a central <strong>Hub</strong>. This page explains what a
-      Collector is, what it does, and how the pieces fit together
-      before you configure anything.
+      to a central <strong>Hub</strong>. This page is the Collector
+      in depth. New here?
+      <RouterLink to="/hub/help/overview">Start with the Overview</RouterLink>.
     </p>
 
     <!-- ─── What a Collector is ────────────────────────────────── -->
@@ -56,32 +56,39 @@ useDocumentTitle("Docs · Fundamentals");
       </header>
 
       <p class="example-intro">
-        Same Collector binary, two operating modes. Pick whichever fits
-        the scale you're working at.
+        Same Collector binary, two ways it can be used. The difference
+        is where its data ends up:
       </p>
 
       <div class="status-grid">
         <div class="status-tile is-live">
-          <span class="st-pill"><span class="st-dot"></span>SINGLE-HOST</span>
-          <div class="st-rule mono">browser → Collector :4500</div>
+          <span class="st-pill"><span class="st-dot"></span>SERVES LOCALLY</span>
+          <div class="st-rule mono">HTTP + WS on :4500</div>
           <div class="st-desc">
-            Run the Collector on a host, point your browser at port
-            4500. The Collector serves its own dashboard over HTTP and
-            pushes live updates over WebSocket. Good for one-off
-            monitoring, dev boxes, and homelabs.
+            The Collector exposes its own dashboard at port 4500. Open
+            it in a browser to see live charts for that host. No hub
+            in the loop, no aggregation — just this machine.
           </div>
         </div>
         <div class="status-tile is-stale">
-          <span class="st-pill"><span class="st-dot"></span>HUB MODE</span>
-          <div class="st-rule mono">Collectors → Hub → UI</div>
+          <span class="st-pill"><span class="st-dot"></span>PUSHES TO A HUB</span>
+          <div class="st-rule mono">outbound 1 Hz WebSocket</div>
           <div class="st-desc">
-            Collectors push to a central Vigil Pro hub over an outbound
-            WebSocket; the UI talks to the hub to show every host on
-            one fleet view. Add alerts, rollups, and history. Good for
-            anything beyond a couple of hosts.
+            With <code>--hub</code> set, the Collector also opens an
+            outbound WebSocket and pushes one sample per second to a
+            Vigil Pro hub. The local dashboard keeps working — pushing
+            is additive, not exclusive.
           </div>
         </div>
       </div>
+
+      <p class="example-intro">
+        These aren't exclusive — a Collector with <code>--hub</code>
+        set still serves its bundled dashboard locally. The
+        <RouterLink to="/hub/help/ui">Vigil UI</RouterLink> page covers
+        what the standalone web app does with this data on the other
+        end.
+      </p>
 
       <div class="example">
         <div class="example-eyebrow">— HUB MODE AT A GLANCE</div>
