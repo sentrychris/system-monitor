@@ -96,7 +96,7 @@ useDocumentTitle("Docs · Overview");
         </ArchStage>
         <ArchEdge dir="left" tone="cyan" label="HTTPS" sub="reads + admin" />
         <ArchStage>
-          <ArchNode title="Vigil UI" sub="this app" icon="fa-laptop" tone="cyan" />
+          <ArchNode title="Vigil UI" sub="visual interface" icon="fa-laptop" tone="cyan" />
         </ArchStage>
       </ArchDiagram>
 
