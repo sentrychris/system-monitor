@@ -47,7 +47,9 @@ useDocumentTitle("Docs · Alert Rules");
           <code>&gt;=</code>, <code>&lt;</code>, <code>&lt;=</code>;
           <code>threshold</code> is the value to compare against the
           latest sample, in whatever unit the metric uses (percent,
-          bytes, bytes/s — no conversion).
+          bytes, bytes/s — no conversion). Inverse comparisons
+          (<code>&lt;</code>) catch absence as well as low values —
+          see <em>Inverse rules</em> below.
         </dd>
         <dt><code>for_seconds</code></dt>
         <dd>
@@ -135,9 +137,13 @@ useDocumentTitle("Docs · Alert Rules");
       </div>
 
       <p class="example-intro mb-3">
-        Setting <code>enabled = 0</code> on a host silences every rule
-        that targets it without touching the rules themselves. Useful
-        for muting a noisy host mid-incident.
+        Setting <code>enabled = 0</code> on a host (see
+        <RouterLink to="/hub/help/deployment" class="lede-link">Editing a host</RouterLink>)
+        silences every rule that targets it without touching the
+        rules themselves — different from the rule-level
+        <code>enabled</code> below, which silences one rule across
+        every host. Use the host flag for a noisy box during a
+        planned event; use the rule flag for a noisy rule.
       </p>
     </section>
 
@@ -175,6 +181,70 @@ useDocumentTitle("Docs · Alert Rules");
         restart; 5 seconds will page you every deploy. Vigil checks
         every 10 seconds by default, so multiples of 10 give the most
         predictable timing.
+      </p>
+    </section>
+
+    <!-- ─── Inverse rules ───────────────────────────────────────── -->
+    <section class="help-section">
+      <header class="help-header">
+        <span class="icon-tile tone-rose"><font-awesome-icon icon="fa-solid fa-arrow-down" /></span>
+        <div>
+          <div class="help-title">Inverse rules</div>
+          <div class="help-sub">CATCHING ABSENCE · LOW-VALUE THRESHOLDS</div>
+        </div>
+      </header>
+
+      <p class="example-intro">
+        Most rules use <code>&gt;</code> to catch high values, but
+        <code>&lt;</code> is useful for the opposite — a host that's
+        gone unresponsive will report values close to zero or stop
+        reporting entirely. A "looks dead" rule on every host:
+      </p>
+
+      <div class="example">
+        <div class="example-eyebrow">— RULE: cpu.usage &lt; 1, for_seconds = 300, scope = "all"</div>
+        <pre class="timeline"><span class="t">t=0s   </span><span class="metric">cpu = 8%</span>    <span class="state state-ok">ok</span>          <span class="comment"># normal idle</span>
+<span class="t">t=120s </span><span class="metric">cpu = 0.2%</span>  <span class="state state-breaching">breaching</span>   <span class="comment"># process wedged, host idle</span>
+<span class="t">t=420s </span><span class="metric">cpu = 0.2%</span>  <span class="state state-firing">firing</span>      <span class="comment"># 5min sustained → dispatch</span></pre>
+      </div>
+
+      <p class="example-intro mb-3">
+        <strong>What this catches and what it doesn't.</strong> An
+        inverse CPU rule fires when the host is alive but doing
+        nothing — useful for spotting wedged processes, frozen guests,
+        and runaway power-saving. It will <em>not</em> fire on a host
+        that's stopped pushing samples entirely; the
+        <RouterLink to="/hub/help/alerts" class="lede-link">Alert
+        States</RouterLink> page covers that case (the engine
+        ignores hosts past the 90s freshness window). For
+        "Collector itself died" coverage, watch the host status in the
+        fleet view, which is driven by <code>last_seen</code>.
+      </p>
+    </section>
+
+    <!-- ─── One metric per rule ─────────────────────────────────── -->
+    <section class="help-section">
+      <header class="help-header">
+        <span class="icon-tile tone-blue"><font-awesome-icon icon="fa-solid fa-bullseye" /></span>
+        <div>
+          <div class="help-title">One rule, one metric</div>
+          <div class="help-sub">NO AND/OR · NO COMPOSITES · NO QUIET HOURS</div>
+        </div>
+      </header>
+
+      <p class="example-intro">
+        Each rule watches a single metric. There's no combinator —
+        no AND/OR across metrics, no "fire when CPU is high
+        <em>and</em> memory is high" in a single row. Express that as
+        two independent rules pointed at the same channel; let the
+        receiver dedupe.
+      </p>
+
+      <p class="example-intro mb-3">
+        There's also no schedule on rules — no quiet hours, no day-of-
+        week filter, no maintenance windows. To pause alerting during
+        a planned event, mute the rule (eye toggle) or set the host
+        to <code>enabled = 0</code> for a host-scoped silence.
       </p>
     </section>
 

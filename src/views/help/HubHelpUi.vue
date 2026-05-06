@@ -106,11 +106,33 @@ useDocumentTitle("Docs · The Vigil UI");
             Set <code>VITE_HUB_URL</code> to your Vigil Pro hub. The
             <em>Hub</em> segment in the navbar appears, the
             <code>/hub/*</code> routes activate, and you get fleet
-            view, alert rules, channels, host detail, and more. 
+            view, alert rules, channels, host detail, and more.
             You can set both — the navbar lets the user toggle.
           </div>
         </div>
       </div>
+
+      <p class="example-intro">
+        Full set of build-time env vars — read at
+        <code>npm run build</code> time and baked into the static
+        bundle:
+      </p>
+
+      <dl class="ds-list">
+        <dt><code>VITE_API_URL</code></dt>
+        <dd>HTTP base URL of a single Collector (e.g. <code>http://web-01:4500</code>). Activates the per-host view.</dd>
+        <dt><code>VITE_WEBSOCKET_URL</code></dt>
+        <dd>The matching WebSocket endpoint on that Collector (<code>ws://web-01:4500/ws</code>). Live charts use this — set it whenever you set <code>VITE_API_URL</code>.</dd>
+        <dt><code>VITE_HUB_URL</code></dt>
+        <dd>Base URL of a Vigil Pro hub (<code>https://hub.example</code>). Activates the <code>/hub/*</code> routes. Leave unset for a Collector-only build.</dd>
+      </dl>
+
+      <p class="example-intro mb-3">
+        Build for production with
+        <code>VITE_HUB_URL=https://hub.example npm run build</code>;
+        the <code>dist/</code> directory is what you upload to nginx,
+        S3, or wherever you host static files.
+      </p>
     </section>
 
     <!-- ─── Where to host it ───────────────────────────────────── -->
@@ -192,7 +214,10 @@ useDocumentTitle("Docs · The Vigil UI");
         you for the hub's admin token and stores it in the browser
         (Pinia persisted state) so you don't re-enter it on every
         page load. There's no UI-side login server, no session
-        cookie, no user accounts. Auth happens at the hub.
+        cookie, no user accounts. Auth happens at the hub. When you
+        rotate the token on the hub, the UI keeps the old value in
+        localStorage until it gets a 401 and re-prompts — clear site
+        data if you'd rather not wait for the next failed call.
       </p>
 
       <p class="example-intro mb-3">

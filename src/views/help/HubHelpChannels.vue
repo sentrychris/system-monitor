@@ -138,6 +138,14 @@ useDocumentTitle("Docs · Channels");
         <pre class="timeline"><span class="state state-ok">✅  *[RESOLVED]*  cpu hot (edge)</span>
 <span class="comment">`web-01.dc1` — value `52.10` &gt; threshold `90`</span></pre>
       </div>
+
+      <p class="example-intro mb-3">
+        The op (<code>&gt;</code>) is the rule's, not the current
+        comparison — that's why a resolved message can read
+        "<code>52.10 &gt; 90</code>" even though the value is now
+        below threshold. It's reminding you which rule recovered, not
+        re-asserting the breach.
+      </p>
     </section>
 
     <!-- ─── Webhook payload ─────────────────────────────────────── -->

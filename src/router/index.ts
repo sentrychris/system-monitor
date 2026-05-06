@@ -12,6 +12,7 @@ import HubHelpFundamentals from "../views/help/HubHelpFundamentals.vue";
 import HubHelpMetrics from "../views/help/HubHelpMetrics.vue";
 import HubHelpOverview from "../views/help/HubHelpOverview.vue";
 import HubHelpRules from "../views/help/HubHelpRules.vue";
+import HubHelpTroubleshooting from "../views/help/HubHelpTroubleshooting.vue";
 import HubHelpUi from "../views/help/HubHelpUi.vue";
 import HubRulesView from "../views/HubRulesView.vue";
 
@@ -84,6 +85,11 @@ const router = createRouter({
           path: "channels",
           name: "hub-help-channels",
           component: HubHelpChannels,
+        },
+        {
+          path: "troubleshooting",
+          name: "hub-help-troubleshooting",
+          component: HubHelpTroubleshooting,
         },
       ],
     },

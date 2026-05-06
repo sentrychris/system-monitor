@@ -200,18 +200,21 @@ useDocumentTitle("Docs · Overview");
               Grab the Collector binary, run it. It listens on
               <code>:4500</code> with no config — open that port in a
               browser and you'll see live charts immediately. This
-              alone is the Single-Host pattern.
+              alone is the Single-Host pattern. Download links and a
+              systemd recipe are on the
+              <RouterLink to="/hub/help/fundamentals#install">Fundamentals</RouterLink>
+              page.
             </p>
           </div>
         </li>
         <li>
           <div class="step-body">
-            <div class="step-title">(Optional) Point it at a Hub</div>
+            <div class="step-title">(Optional) Stand up a Hub and point the Collector at it</div>
             <p>
-              For more than one host, you'll want a hub. Set the
-              <code>VIGIL_PRO_ADMIN_TOKEN</code> on the hub, register
-              the host with <code>POST /api/hosts</code>, and pass
-              the returned api_key to the Collector via
+              For more than one host, install the hub
+              (<RouterLink to="/hub/help/deployment#install-the-hub">Install the hub</RouterLink>),
+              register the host with <code>POST /api/hosts</code>, and
+              pass the returned api_key to the Collector via
               <code>--hub</code> and <code>--hub-key</code>. Full
               walkthrough on the
               <RouterLink to="/hub/help/deployment">Deployment</RouterLink>
@@ -279,6 +282,8 @@ useDocumentTitle("Docs · Overview");
         <dd>The seven fields of a rule, scope syntax, the API.</dd>
         <dt><RouterLink to="/hub/help/alerts">Alert States</RouterLink></dt>
         <dd>The three-state machine that decides when an alert actually fires.</dd>
+        <dt><RouterLink to="/hub/help/troubleshooting">Troubleshooting</RouterLink></dt>
+        <dd>The common failure modes when wiring this up — symptom on the left, what to check on the right.</dd>
       </dl>
     </section>
   </article>

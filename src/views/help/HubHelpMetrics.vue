@@ -56,10 +56,71 @@ useDocumentTitle("Docs · Metrics");
         <dt><code>t</code></dt>
         <dd>Frame type. <code>"samples"</code> here; <code>"hello"</code>, <code>"welcome"</code>, and <code>"processes"</code> are the others.</dd>
         <dt><code>ts</code></dt>
-        <dd>Unix timestamp from the host when the snapshot was taken. Vigil trusts this — clock skew shows up as gaps or overlap on charts.</dd>
+        <dd>Unix epoch seconds (UTC) from the host when the snapshot was taken. Vigil trusts this — clock skew shows up as gaps or overlap on charts.</dd>
         <dt><code>metrics</code></dt>
         <dd>Flat map of <code>{ "metric[|label]": value }</code>. Numbers only — strings, nulls, and arrays are rejected.</dd>
       </dl>
+    </section>
+
+    <!-- ─── Process snapshots ──────────────────────────────────── -->
+    <section class="help-section">
+      <header class="help-header">
+        <span class="icon-tile tone-purple"><font-awesome-icon icon="fa-solid fa-list-ol" /></span>
+        <div>
+          <div class="help-title">Process snapshots</div>
+          <div class="help-sub">SEPARATE FRAME · TOP 25 BY MEMORY</div>
+        </div>
+      </header>
+
+      <p class="example-intro">
+        Alongside the per-second <code>samples</code> frame, the
+        Collector sends a <code>processes</code> frame with the top
+        25 processes on the host, sorted by memory. The host detail
+        page reads this for its <em>Top Processes</em> panel — there's
+        no rule support for process metrics yet, so they're a
+        diagnostic feed rather than an alert target.
+      </p>
+
+      <div class="example">
+        <div class="example-eyebrow">— ON THE WIRE</div>
+        <pre class="timeline"><span class="comment">{</span>
+<span class="comment">  </span><span class="metric">"v"</span><span class="comment">: 1, </span><span class="metric">"t"</span><span class="comment">: </span><span class="state state-ok">"processes"</span><span class="comment">, </span><span class="metric">"ts"</span><span class="comment">: 1735689600,</span>
+<span class="comment">  </span><span class="metric">"metric"</span><span class="comment">: </span><span class="state state-ok">"rss"</span><span class="comment">,</span>
+<span class="comment">  </span><span class="metric">"items"</span><span class="comment">: [</span>
+<span class="comment">    { </span><span class="metric">"pid"</span><span class="comment">: 1842, </span><span class="metric">"name"</span><span class="comment">: </span><span class="state state-ok">"postgres"</span><span class="comment">, </span><span class="metric">"username"</span><span class="comment">: </span><span class="state state-ok">"postgres"</span><span class="comment">, </span><span class="metric">"mem_bytes"</span><span class="comment">: 524288000 },</span>
+<span class="comment">    { </span><span class="metric">"pid"</span><span class="comment">: 9012, </span><span class="metric">"name"</span><span class="comment">: </span><span class="state state-ok">"node"</span><span class="comment">,     </span><span class="metric">"username"</span><span class="comment">: </span><span class="state state-ok">"app"</span><span class="comment">,      </span><span class="metric">"mem_bytes"</span><span class="comment">: 314572800 }</span>
+<span class="comment">  ]</span>
+<span class="comment">}</span></pre>
+      </div>
+
+      <dl class="ds-list">
+        <dt><code>metric</code></dt>
+        <dd>
+          Which memory measure the items are sorted by.
+          <code>rss</code> on most hosts; <code>pss</code> on Linux
+          when the Collector can read
+          <code>/proc/&lt;pid&gt;/smaps_rollup</code> (gives a fairer
+          shared-memory split). The host page labels the column
+          accordingly.
+        </dd>
+        <dt><code>items[].pid</code></dt>
+        <dd>The OS process id at the moment of the snapshot. Not stable across restarts.</dd>
+        <dt><code>items[].name</code></dt>
+        <dd>Process command name (capped at 256 chars).</dd>
+        <dt><code>items[].username</code></dt>
+        <dd>Owning user, resolved from the system user table. Empty if the uid couldn't be mapped.</dd>
+        <dt><code>items[].mem_bytes</code></dt>
+        <dd>Memory in bytes per the <code>metric</code> above. Capped to fit in an i64.</dd>
+      </dl>
+
+      <p class="example-intro mb-3">
+        The Collector refreshes the process scan every ~5 seconds
+        (it's the most expensive thing the agent does — about 7 ms on
+        a typical Linux host); the frame is still sent every second so
+        the hub always has a current snapshot, just with values that
+        update every fifth tick. The hub keeps only the latest snapshot
+        per host — there's no process history.
+      </p>
     </section>
 
     <!-- ─── CPU ────────────────────────────────────────────────── -->
@@ -321,12 +382,20 @@ useDocumentTitle("Docs · Metrics");
         </li>
       </ul>
 
-      <p class="example-intro mb-3">
+      <p class="example-intro">
         <strong>Skipped mounts.</strong> Vigil ignores three prefixes
         that produce a lot of noise without telling you anything
         useful: <code>/snap/</code> (Ubuntu snap loops),
         <code>/var/lib/docker/</code>, and <code>/run/docker/</code>.
         Mounts under these aren't reported and can't be alerted on.
+      </p>
+
+      <p class="example-intro mb-3">
+        <strong>No inode metric.</strong> The Collector emits bytes
+        only — there's no <code>disk.inodes_percent</code>. On most
+        hosts the bytes-percent ceiling is hit long before the inode
+        ceiling; if you actually need inode alerting, that's the
+        usual signal it's time for a custom check.
       </p>
     </section>
 
@@ -364,6 +433,14 @@ useDocumentTitle("Docs · Metrics");
           <p class="metric-desc">Total outbound traffic across every non-loopback interface.</p>
         </li>
       </ul>
+
+      <p class="example-intro mb-3">
+        <strong>No packet rates or errors yet.</strong> Vigil currently
+        only emits byte throughput — no <code>packets_per_s</code>,
+        <code>errors</code>, or <code>drops</code>. If you've been
+        looking for them in the catalog, that's why; both are on the
+        same per-interface breakout roadmap as the dim work above.
+      </p>
     </section>
 
     <!-- ─── Cadence & freshness ─────────────────────────────────── -->
@@ -502,14 +579,17 @@ body[data-theme="dark"] .metric-names code {
 body[data-theme="dark"] .metric-desc { color: #cbd5e1; }
 .metric-desc code {
   font-family: "IBM Plex Mono", ui-monospace, monospace;
-  font-size: 0.82em;
-  padding: 0.05rem 0.4rem;
+  font-size: 0.86em;
+  padding: 0.02rem 0.36rem;
   border-radius: 4px;
-  background: rgba(96, 165, 250, 0.08);
-  border: 1px solid rgba(96, 165, 250, 0.18);
+  background: rgba(96, 165, 250, 0.10);
   color: #2563eb;
+  white-space: nowrap;
 }
-body[data-theme="dark"] .metric-desc code { color: #67e8f9; }
+body[data-theme="dark"] .metric-desc code {
+  color: #67e8f9;
+  background: rgba(34, 211, 238, 0.10);
+}
 
 /* ── Category accent — left stripe per metric family ───────────────── */
 .metric-row.is-percent  { border-left-color: rgba(52, 211, 153, 0.55); }

@@ -163,6 +163,36 @@ useDocumentTitle("Docs · Alert States");
           </dd>
         </div>
         <div class="state-row">
+          <span class="state-pill state-firing"><span class="sp-dot"></span>HOST GOES SILENT</span>
+          <dd>
+            The alert engine ignores samples older than
+            <strong>90&nbsp;s</strong>, so a host that stops pushing
+            simply stops being evaluated. A rule that was
+            <code>firing</code> on that host stays <code>firing</code>
+            in state — no automatic <code>resolved</code> event, no
+            additional <code>fired</code> events either. When the host
+            comes back: if the metric is still across the threshold,
+            the state is unchanged (no duplicate notification); if
+            it's recovered, the next check transitions to
+            <code>ok</code> and dispatches <code>resolved</code> as
+            usual. To know whether a host is silent vs. healthy, watch
+            the host status (LIVE / STALE / OFFLINE) — the
+            <RouterLink to="/hub/help/deployment" class="lede-link">Deployment</RouterLink>
+            page covers those windows.
+          </dd>
+        </div>
+        <div class="state-row">
+          <span class="state-pill state-ok"><span class="sp-dot"></span>METRIC NOT REPORTED</span>
+          <dd>
+            A scoped host that doesn't emit the metric at all
+            (e.g. <code>cpu.temp_c</code> on a VM,
+            <code>cpu.load_1m</code> on Windows) is skipped silently —
+            no sample, no evaluation, no state row. The rule will
+            quietly never fire for that host. Tag your bare-metal
+            hosts and use a tag scope to avoid this trap.
+          </dd>
+        </div>
+        <div class="state-row">
           <span class="state-pill state-ok"><span class="sp-dot"></span>RULE MUTED</span>
           <dd>
             Disabling a rule (eye toggle on the rules view, or

@@ -18,13 +18,13 @@ useDocumentTitle("Docs · Deployment");
     <PageHeader decor-title="Vigil Pro Hub · Docs" title="Deployment" />
 
     <p class="lede">
-      Vigil <span class="seg-pro" aria-label="Vigil Pro">Pro</span> pairs many <strong>Collectors</strong> with one
+      Vigil Pro pairs many <strong>Collectors</strong> with one
       <strong>Hub</strong>. Each Collector opens an outbound
       connection to the hub and pushes a sample every second — no port
-      to open on the host, nothing for the hub to install. This page
-      walks through registering a host, pointing the Collector at the
-      hub, and how the hub decides whether a host is still reachable.
-      New here?
+      to open on the host, nothing for the hub to install on the
+      monitored machine. This page walks through installing the hub,
+      registering a host, pointing the Collector at it, and how the
+      hub decides whether a host is still reachable. New here?
       <RouterLink to="/hub/help/overview">Start with the Overview</RouterLink>.
     </p>
 
@@ -67,8 +67,139 @@ useDocumentTitle("Docs · Deployment");
       </ArchDiagram>
     </section>
 
+    <!-- ─── Install the hub ─────────────────────────────────────── -->
+    <section class="help-section" id="install-the-hub">
+      <header class="help-header">
+        <span class="icon-tile tone-emerald"><font-awesome-icon icon="fa-solid fa-download" /></span>
+        <div>
+          <div class="help-title">Install the hub</div>
+          <div class="help-sub">DOWNLOAD · CONFIGURE · SYSTEMD</div>
+        </div>
+      </header>
+
+      <p class="example-intro">
+        The hub is a single Rust binary plus a SQLite file. No external
+        database, no message queue, no companion processes — the same
+        binary serves the admin API, ingests Collector pushes, runs
+        the alert engine, and dispatches notifications.
+      </p>
+
+      <div class="status-grid">
+        <div class="status-tile is-live">
+          <span class="st-pill"><span class="st-dot"></span>LINUX · X86_64</span>
+          <div class="st-rule mono"><a href="#">vigil-pro-linux-x86_64.tar.gz</a></div>
+          <div class="st-desc">glibc 2.31+. Most fleets run the hub on a small Linux VM (1 vCPU / 1 GiB is plenty for a few hundred hosts).</div>
+        </div>
+        <div class="status-tile is-stale">
+          <span class="st-pill"><span class="st-dot"></span>LINUX · AARCH64</span>
+          <div class="st-rule mono"><a href="#">vigil-pro-linux-aarch64.tar.gz</a></div>
+          <div class="st-desc">For Graviton, Ampere, or Raspberry Pi self-hosting.</div>
+        </div>
+        <div class="status-tile is-offline">
+          <span class="st-pill"><span class="st-dot"></span>DOCKER</span>
+          <div class="st-rule mono"><a href="#">ghcr.io/…/vigil-pro:latest</a></div>
+          <div class="st-desc">Same binary in a distroless image. Mount a host directory at <code>/data</code> for the SQLite file.</div>
+        </div>
+      </div>
+
+      <p class="example-intro">
+        Quick check — drop the binary, generate an admin token, point
+        it at a writable data directory, and run it in the foreground:
+      </p>
+
+      <pre class="cmd"><span class="prompt">$</span> curl -sSL <span class="string">https://…/vigil-pro-linux-x86_64.tar.gz</span> | sudo tar -xz -C /usr/local/bin
+<span class="prompt">$</span> mkdir -p ./data
+<span class="prompt">$</span> VIGIL_PRO_ADMIN_TOKEN=$(openssl rand -base64 32) \
+  VIGIL_PRO_DB=./data/hub.db \
+  vigil-pro
+<span class="comment"># INFO  listening on http://0.0.0.0:4600</span></pre>
+
+      <p class="example-intro">
+        That's enough to point a UI build at and register your first
+        host. For anything beyond a sanity check, run it as a service
+        and read the token from a protected env file:
+      </p>
+
+      <pre class="cmd"><span class="comment"># /etc/systemd/system/vigil-pro.service</span>
+<span class="metric">[Unit]</span>
+Description=Vigil Pro Hub
+After=network-online.target
+Wants=network-online.target
+
+<span class="metric">[Service]</span>
+Type=simple
+User=vigil-pro
+Group=vigil-pro
+EnvironmentFile=/etc/vigil-pro/hub.env
+ExecStart=/usr/local/bin/vigil-pro
+WorkingDirectory=/var/lib/vigil-pro
+Restart=on-failure
+RestartSec=5
+
+<span class="metric">[Install]</span>
+WantedBy=multi-user.target</pre>
+
+      <pre class="cmd"><span class="prompt">$</span> sudo useradd --system --no-create-home --shell /usr/sbin/nologin vigil-pro
+<span class="prompt">$</span> sudo install -d -m 0750 -o vigil-pro -g vigil-pro /var/lib/vigil-pro
+<span class="prompt">$</span> sudo install -d -m 0750 -o root      -g vigil-pro /etc/vigil-pro
+<span class="prompt">$</span> TOKEN=$(openssl rand -base64 32)
+<span class="prompt">$</span> sudo tee /etc/vigil-pro/hub.env >/dev/null <span class="string">&lt;&lt;EOF</span>
+<span class="string">VIGIL_PRO_ADMIN_TOKEN=$TOKEN</span>
+<span class="string">VIGIL_PRO_DB=/var/lib/vigil-pro/hub.db</span>
+<span class="string">EOF</span>
+<span class="prompt">$</span> sudo chmod 0640 /etc/vigil-pro/hub.env
+<span class="prompt">$</span> sudo chown root:vigil-pro /etc/vigil-pro/hub.env
+<span class="prompt">$</span> sudo systemctl daemon-reload
+<span class="prompt">$</span> sudo systemctl enable --now vigil-pro
+<span class="prompt">$</span> journalctl -u vigil-pro -f</pre>
+
+      <dl class="ds-list">
+        <dt><code>VIGIL_PRO_ADMIN_TOKEN</code></dt>
+        <dd>Bearer token gating every admin endpoint. Required — the hub refuses to start without one. Rotation guidance is in the next section.</dd>
+        <dt><code>VIGIL_PRO_PORT</code></dt>
+        <dd>HTTP listen port. Default <code>4600</code>. Note this is distinct from the Collector's bundled dashboard on <code>4500</code>.</dd>
+        <dt><code>VIGIL_PRO_HOST</code></dt>
+        <dd>Listen address. Default <code>0.0.0.0</code> — bind to <code>127.0.0.1</code> if you're fronting it with a reverse proxy on the same box.</dd>
+        <dt><code>VIGIL_PRO_DB</code></dt>
+        <dd>Path to the SQLite file. Default <code>data/hub.db</code> relative to the working directory. The hub creates the file on first start; back this one file up and you've backed up the hub.</dd>
+        <dt><code>VIGIL_PRO_LOG_LEVEL</code></dt>
+        <dd><code>info</code> by default. Set to <code>debug</code> to see ingest frames and dispatch attempts; <code>warn</code> for production noise floors.</dd>
+      </dl>
+
+      <p class="example-intro">
+        <strong>TLS.</strong> The hub speaks HTTP, not HTTPS. Front it
+        with nginx, Caddy, or your platform's load balancer for TLS
+        termination — the Collectors and the UI both expect
+        <code>wss://</code> / <code>https://</code> in production. A
+        minimal nginx site:
+      </p>
+
+      <pre class="cmd"><span class="metric">server</span> {
+    listen 443 ssl;
+    server_name hub.example.com;
+    ssl_certificate     /etc/ssl/hub.crt;
+    ssl_certificate_key /etc/ssl/hub.key;
+
+    location / {
+        proxy_pass         http://127.0.0.1:4600;
+        proxy_http_version 1.1;
+        proxy_set_header   Upgrade    $http_upgrade;
+        proxy_set_header   Connection $connection_upgrade;
+        proxy_read_timeout 90s;
+    }
+}</pre>
+
+      <p class="example-intro mb-3">
+        <strong>Upgrades.</strong> Replace the binary, then
+        <code>systemctl restart vigil-pro</code>. The schema migrates
+        forward automatically on start. There's no live-reload — the
+        process restart is the upgrade. Backup the SQLite file first
+        if you're upgrading across a major version.
+      </p>
+    </section>
+
     <!-- ─── Admin token ─────────────────────────────────────────── -->
-    <section class="help-section">
+    <section class="help-section" id="admin-token">
       <header class="help-header">
         <span class="icon-tile tone-amber"><font-awesome-icon icon="fa-solid fa-key" /></span>
         <div>
@@ -115,7 +246,7 @@ useDocumentTitle("Docs · Deployment");
     </section>
 
     <!-- ─── End-to-end deployment ───────────────────────────────── -->
-    <section class="help-section">
+    <section class="help-section" id="deploying-a-host">
       <header class="help-header">
         <span class="icon-tile tone-emerald"><font-awesome-icon icon="fa-solid fa-server" /></span>
         <div>
@@ -370,46 +501,12 @@ useDocumentTitle("Docs · Deployment");
           <RouterLink to="/hub/help/metrics">Metrics</RouterLink>
           page covers what the Collector emits, and
           <RouterLink to="/hub/help/rules">Alert Rules</RouterLink>
-          walks through writing your first threshold. Bulk
-          provisioning recipes (systemd unit, Ansible role,
-          batch-registration scripts) live in the hub source.
+          walks through writing your first threshold. Hitting trouble
+          getting a host to show up? The
+          <RouterLink to="/hub/help/troubleshooting">Troubleshooting</RouterLink>
+          page covers the common failure modes.
         </p>
-        <pre class="cta-cmd"><span class="prompt">$</span> cat ~/vigil-pro/docs/DEPLOYMENT.md</pre>
       </div>
     </section>
   </article>
 </template>
-
-<style scoped>
-/* "PRO" chip on the Hub segment — gold gradient (amber primary + secondary
-   from BRANDING §3.5) for an unmistakable premium-tier signal without
-   expanding the palette. Tiny, mono caps, dark text on gold for AA
-   contrast. */
-.seg-pro {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.08rem 0.4rem 0.1rem;
-  border-radius: 4px;
-  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 60%, #d97706 100%);
-  color: #422006;
-  font-family: "IBM Plex Mono", ui-monospace, monospace;
-  font-size: 0.55rem;
-  font-weight: 700;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  line-height: 1;
-  box-shadow:
-    0 0 10px -2px rgba(251, 191, 36, 0.45),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.22);
-  /* Slight upward translate to optically center against caps text. */
-  transform: translateY(-0.5px);
-}
-/* Brighten the chip subtly when its segment is active or hovered — keeps
-   the gold from looking dim against the cyan-tinted active background. */
-.seg.is-active .seg-pro,
-.seg:hover .seg-pro {
-  box-shadow:
-    0 0 14px -2px rgba(251, 191, 36, 0.6),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.32);
-}
-</style>

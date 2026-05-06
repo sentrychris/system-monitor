@@ -51,6 +51,126 @@ useDocumentTitle("Docs · Fundamentals");
       </p>
     </section>
 
+    <!-- ─── Install ────────────────────────────────────────────── -->
+    <section class="help-section" id="install">
+      <header class="help-header">
+        <span class="icon-tile tone-amber"><font-awesome-icon icon="fa-solid fa-download" /></span>
+        <div>
+          <div class="help-title">Install</div>
+          <div class="help-sub">DOWNLOAD · RUN · (OPTIONAL) SYSTEMD</div>
+        </div>
+      </header>
+
+      <p class="example-intro">
+        The Collector is a single static binary. Pick the build for your
+        platform, drop it on the host, and it runs — no shared libraries,
+        no installer.
+      </p>
+
+      <div class="status-grid">
+        <div class="status-tile is-live">
+          <span class="st-pill"><span class="st-dot"></span>LINUX · X86_64</span>
+          <div class="st-rule mono"><a href="#">vigil-collector-linux-x86_64.tar.gz</a></div>
+          <div class="st-desc">glibc 2.31+ (Ubuntu 20.04, Debian 11, RHEL 9, equivalents).</div>
+        </div>
+        <div class="status-tile is-stale">
+          <span class="st-pill"><span class="st-dot"></span>LINUX · AARCH64</span>
+          <div class="st-rule mono"><a href="#">vigil-collector-linux-aarch64.tar.gz</a></div>
+          <div class="st-desc">Raspberry Pi 4/5, Graviton, Ampere — same glibc floor.</div>
+        </div>
+        <div class="status-tile is-offline">
+          <span class="st-pill"><span class="st-dot"></span>MACOS · UNIVERSAL</span>
+          <div class="st-rule mono"><a href="#">vigil-collector-macos.tar.gz</a></div>
+          <div class="st-desc">Universal binary — Intel and Apple Silicon. macOS 12+.</div>
+        </div>
+      </div>
+
+      <p class="example-intro">
+        Drop the binary somewhere on <code>$PATH</code> and confirm it
+        runs:
+      </p>
+
+      <pre class="cmd"><span class="prompt">$</span> curl -sSL <span class="string">https://…/vigil-collector-linux-x86_64.tar.gz</span> | sudo tar -xz -C /usr/local/bin
+<span class="prompt">$</span> vigil-collector --version</pre>
+
+      <p class="example-intro">
+        With no flags, the Collector listens on <code>:4500</code> for
+        the bundled dashboard. Open
+        <code>http://localhost:4500</code> and you'll see live charts.
+        Stop it with Ctrl-C; that's the whole single-host experience.
+      </p>
+
+      <p class="example-intro">
+        For long-lived deployments — and required if you're pushing to a
+        hub — run it as a service. The systemd unit below reads its
+        config from <code>/etc/vigil-collector/collector.env</code> so
+        the api_key never appears on the command line:
+      </p>
+
+      <pre class="cmd"><span class="comment"># /etc/systemd/system/vigil-collector.service</span>
+<span class="metric">[Unit]</span>
+Description=Vigil Collector
+After=network-online.target
+Wants=network-online.target
+
+<span class="metric">[Service]</span>
+Type=simple
+User=vigil-collector
+EnvironmentFile=-/etc/vigil-collector/collector.env
+ExecStart=/usr/local/bin/vigil-collector
+Restart=on-failure
+RestartSec=5
+
+<span class="metric">[Install]</span>
+WantedBy=multi-user.target</pre>
+
+      <p class="example-intro">
+        Create an unprivileged user and the env file with the host's
+        api_key (issued by the hub — see the
+        <RouterLink to="/hub/help/deployment#deploying-a-host" class="lede-link">Deployment</RouterLink>
+        page for how to register a host and obtain one):
+      </p>
+
+      <pre class="cmd"><span class="prompt">$</span> sudo useradd --system --no-create-home --shell /usr/sbin/nologin vigil-collector
+<span class="prompt">$</span> sudo install -d -m 0750 -o root -g vigil-collector /etc/vigil-collector
+<span class="prompt">$</span> sudo tee /etc/vigil-collector/collector.env >/dev/null <span class="string">&lt;&lt;'EOF'</span>
+<span class="string">VIGIL_COLLECTOR_HUB=wss://hub.example/ingest</span>
+<span class="string">VIGIL_COLLECTOR_HUB_KEY=vh_…</span>
+<span class="string">VIGIL_COLLECTOR_HUB_NAME=web-01.dc1</span>
+<span class="string">VIGIL_COLLECTOR_HUB_TAGS=dc1,edge</span>
+<span class="string">EOF</span>
+<span class="prompt">$</span> sudo chmod 0640 /etc/vigil-collector/collector.env
+<span class="prompt">$</span> sudo chown root:vigil-collector /etc/vigil-collector/collector.env
+<span class="prompt">$</span> sudo systemctl daemon-reload
+<span class="prompt">$</span> sudo systemctl enable --now vigil-collector
+<span class="prompt">$</span> journalctl -u vigil-collector -f</pre>
+
+      <p class="example-intro">
+        Every value above also has an equivalent CLI flag — handy for
+        ad-hoc runs from a shell, but for a real service the env file
+        keeps the api_key off the process listing.
+      </p>
+
+      <dl class="ds-list">
+        <dt><code>VIGIL_COLLECTOR_HUB</code> · <code>--hub</code></dt>
+        <dd>WebSocket URL of the Vigil Pro hub. Omit for single-host mode.</dd>
+        <dt><code>VIGIL_COLLECTOR_HUB_KEY</code> · <code>--hub-key</code></dt>
+        <dd>Per-host api_key issued by the hub when you register the host.</dd>
+        <dt><code>VIGIL_COLLECTOR_HUB_NAME</code> · <code>--hub-name</code></dt>
+        <dd>The host name registered with the hub. Must match the <code>name</code> you used on <code>POST /api/hosts</code> exactly — a mismatch shows up as <code>auth_failed</code> in the Collector log. Defaults to the system hostname if unset.</dd>
+        <dt><code>VIGIL_COLLECTOR_HUB_TAGS</code> · <code>--hub-tags</code></dt>
+        <dd>Comma-separated tags merged into whatever the hub already has for the host. Used in alert rule scopes (<code>tag:edge</code>).</dd>
+        <dt><code>--address</code> · <code>--port</code></dt>
+        <dd>Override the bundled dashboard's listen address and port. Default: all interfaces, port <code>4500</code>.</dd>
+      </dl>
+
+      <p class="example-intro mb-3">
+        macOS uses <code>launchd</code> instead of systemd; a sample
+        <code>.plist</code> with the same env-file pattern lives in the
+        Collector source. Windows builds are not currently distributed.
+      </p>
+    </section>
+
     <!-- ─── Two ways to use it ─────────────────────────────────── -->
     <section class="help-section">
       <header class="help-header">

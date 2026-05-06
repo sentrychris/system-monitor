@@ -72,6 +72,13 @@ const links: DocLink[] = [
     eyebrow: "STATE MACHINE",
     icon: "fa-solid fa-heart-pulse",
     tone: "cyan",
+  },
+  {
+    to: "/hub/help/troubleshooting",
+    title: "Troubleshooting",
+    eyebrow: "COMMON FAILURES · FIRST CHECKS",
+    icon: "fa-solid fa-life-ring",
+    tone: "amber",
   }
 ];
 
