@@ -36,9 +36,7 @@ useDocumentTitle("Docs · Overview");
       </header>
 
       <p class="example-intro">
-        Three projects, one product. Each owns a clear job, and the
-        wire protocol between them is small enough to fit on one
-        page.
+        Vigil is split into three separate pieces. The Hub and the UI are completely optional.
       </p>
 
       <div class="status-grid">
@@ -113,7 +111,7 @@ useDocumentTitle("Docs · Overview");
       </ArchDiagram>
 
       <p class="example-intro mb-3">
-        The UI doesn't have to be near anything else — it talks to
+        The UI doesn't have to be near anything else. It talks to
         the Collector or the Hub over HTTP(S) from wherever you host
         it. A laptop, a CDN, a private nginx, doesn't matter.
       </p>
@@ -199,8 +197,7 @@ useDocumentTitle("Docs · Overview");
             <p>
               Grab the Collector binary, run it. It listens on
               <code>:4500</code> with no config — open that port in a
-              browser and you'll see live charts immediately. This
-              alone is the Single-Host pattern. Download links and a
+              browser and you'll see live charts immediately. Download links and a
               systemd recipe are on the
               <RouterLink to="/hub/help/fundamentals#install">Fundamentals</RouterLink>
               page.
@@ -213,9 +210,7 @@ useDocumentTitle("Docs · Overview");
             <p>
               For more than one host, install the hub
               (<RouterLink to="/hub/help/deployment#install-the-hub">Install the hub</RouterLink>),
-              register the host with <code>POST /api/hosts</code>, and
-              pass the returned api_key to the Collector via
-              <code>--hub</code> and <code>--hub-key</code>. Full
+              register the host, and pass the returned <code>api_key</code> to the Collector. Full
               walkthrough on the
               <RouterLink to="/hub/help/deployment">Deployment</RouterLink>
               page.

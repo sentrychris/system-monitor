@@ -41,11 +41,11 @@ useDocumentTitle("Docs · Fundamentals");
       <p class="example-intro">
         The Collector is a single process that you run on each
         machine you want to monitor. It reads CPU, memory, disk, network
-        counters and more. One Collector per host gives you everything Vigil knows about it.
+        counters and more.
       </p>
 
       <p class="example-intro mb-3">
-        It's intentionally small, packaged into one binary, no database, no
+        It's intentionally small, packaged into one tiny binary, no database, no
         plugins. Idle footprint is a few MB of RAM and a fraction of a
         percent of one core.
       </p>
