@@ -6,7 +6,7 @@
     <title>Vigil — Real-time system monitoring</title>
     <meta
       name="description"
-      content="Vigil is a lightweight, real-time system monitoring dashboard. Live WebSocket metrics, D3 visualizations, and a polished UI for Vigil Collector."
+      content="Vigil is a lightweight, real-time system monitoring solution. Live WebSocket metrics, D3 visualizations, and a polished UI for Vigil Collector."
     />
     <meta property="og:title" content="Vigil — Real-time system monitoring" />
     <meta
@@ -98,6 +98,24 @@
       kbd,
       pre {
         font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      }
+
+      .seg-pro {
+        display: inline-flex;
+        align-items: center;
+        padding: .08rem .4rem .1rem;
+        margin: 0 2px 0 2px;
+        border-radius: 4px;
+        background: linear-gradient(135deg, #fbbf24, #f59e0b 60%, #d97706);
+        color: #422006;
+        font-family: IBM Plex Mono, ui-monospace, monospace;
+        font-size: .55rem;
+        font-weight: 700;
+        letter-spacing: .16em;
+        text-transform: uppercase;
+        line-height: 1.5;
+        box-shadow: 0 0 10px -2px #fbbf2473, inset 0 0 0 1px #ffffff38;
+        transform: translateY(-.5px);
       }
 
       /* ───────────── Atmosphere ───────────── */
@@ -235,8 +253,25 @@
           inset 0 0 0 1px rgba(255, 255, 255, 0.25);
       }
       .btn-primary:hover {
+        background: linear-gradient(135deg, var(--blue), var(--cyan)) !important;
         box-shadow:
           0 16px 40px -12px rgba(34, 211, 238, 0.7),
+          inset 0 0 0 1px rgba(255, 255, 255, 0.35);
+      }
+      .btn-download {
+        background: linear-gradient(35deg, var(--emerald), rgba(71, 253, 180, 0.5));
+        border: 0;
+        border-color: transparent;
+        color: #0b1220;
+        box-shadow:
+          0 12px 30px -12px rgba(34, 238, 51, 0.25),
+          inset 0 0 0 1px rgba(255, 255, 255, 0.25);
+      }
+      .btn-download:hover {
+        background: linear-gradient(35deg, var(--emerald), rgba(71, 253, 180, 0.5)) !important;
+        border-color: transparent;
+        box-shadow:
+          0 16px 40px -12px rgba(34, 238, 51, 0.7),
           inset 0 0 0 1px rgba(255, 255, 255, 0.35);
       }
       /* Coffee tip-jar — amber-tinted ghost button */
@@ -1056,6 +1091,14 @@
       }
       .pricing-cta .ico { width: 18px; height: 18px; }
 
+      .bg-blue {
+        background: linear-gradient(135deg, var(--blue), var(--cyan));
+        border-color: transparent;
+        color: #0b1220;
+        box-shadow: 0 12px 30px -12px rgba(34, 211, 238, 0.55), inset 0 0 0 1px rgba(255, 255, 255, 0.25);
+      }
+      .download-cta .ico { width: 18px; height: 18px; }
+
       .pricing-secure {
         margin-top: 1rem;
         display: flex;
@@ -1357,16 +1400,25 @@
           <span class="accent">finally beautiful.</span>
         </h1>
         <p class="lede">
-          Vigil is a lightweight, real-time monitoring dashboard for your servers. Live
-          metrics streamed over WebSocket, gauges, charts, service probes — all in
+          Vigil is a free, lightweight, real-time monitoring solution. Live 
+          metrics, gauges, charts, service probes - all enhanced by
           one polished UI that drops in front of <span style="color:var(--cyan); border-bottom:1px solid transparent;" target="_blank" rel="noopener">Vigil Collector</span>.
         </p>
+        <p class="lede"><small>Vigil <span class="seg-pro">Pro</span> is available, more information below.</small></p>
         <div class="hero-cta">
           <a class="btn btn-primary" href="https://status.edcs.app" target="_blank" rel="noopener">
             <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <polygon points="5 3 19 12 5 21 5 3"></polygon>
             </svg>
             Live demo
+          </a>
+          <a class="btn btn-download" href="https://status.edcs.app" target="_blank" rel="noopener">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M12 3v12"></path>
+              <path d="M7 10l5 5 5-5"></path>
+              <path d="M5 21h14"></path>
+            </svg>
+            Download Now
           </a>
           <a class="btn btn-github" href="https://status.edcs.app/hub/help" target="_blank" rel="noopener">
             <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -1574,7 +1626,7 @@
           <h2 class="section-title">Scales down to one host. Up to a fleet.</h2>
           <p class="section-lede">
             Most installs land in one of three patterns. You can move
-            between them over time — start with one Collector, add a Hub
+            between them over time: start with one Collector, add a Hub
             when the second host shows up.
           </p>
         </div>
@@ -1627,8 +1679,7 @@
           <div class="section-eyebrow">Pricing</div>
           <h2 class="section-title">Three ways to use Vigil.</h2>
           <div class="section-lede">
-            <p>Purchase 3x Collectors + one-time supported install, unlock multi-host dashboards and alerting with Vigil Pro, or commission a bespoke probe for the system that doesn't have one yet.</p>
-            <p>Vigil UI is free for all users.</p>
+            <p>Use Vigil completely for free, unlock multi-host dashboards and alerting with Vigil Pro, or commission a bespoke solution for the system that doesn't have one yet.</p>
           </div>
         </div>
 
@@ -1637,56 +1688,53 @@
             <span class="pricing-eyebrow">Vigil Collector</span>
 
             <div class="pricing-amount">
-              <span class="pricing-currency">£</span>
-              <span class="pricing-num">99</span>
-              <span class="pricing-cadence">one-time</span>
+              <span class="pricing-currency"></span>
+              <span class="pricing-num">FREE</span>
+              <span class="pricing-cadence"></span>
             </div>
-            <p class="pricing-tagline">3x Collectors, any host, end-to-end install, supported by the author.</p>
+            <p class="pricing-tagline">Run Collectors on your hosts and view your metrics in real-time.</p>
 
             <ul class="pricing-features">
               <li>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-                <span>Vigil Collectors deployed and running as systemd services</span>
+                <span>Vigil Collectors are easy to deploy in seconds</span>
               </li>
               <li>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-                <span>Vigil dashboard built and served behind your domain</span>
+                <span>Extremely lightweight and performant</span>
               </li>
               <li>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-                <span>HTTPS / TLS termination configured</span>
+                <span>Optionally use Vigil UI for beautiful visualizations</span>
               </li>
               <li>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-                <span>30 days of direct support for follow-up issues</span>
+                <span>Or build your own and consume metrics in your preferred format</span>
               </li>
               <li>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-                <span>1-business-day turnaround once we have SSH access</span>
+                <span>Update via drop-in replacement binaries. No downtime required</span>
               </li>
             </ul>
 
             <a
-              class="btn pricing-cta"
-              href="https://buy.stripe.com/7sY8wP0rTbczccB5382Ry03"
+              class="btn pricing-cta btn-download"
+              href="https://github.com/sentrychris"
               target="_blank"
               rel="noopener"
-              aria-label="Buy Vigil install via Stripe"
+              aria-label="Download Vigil Collector"
               data-stripe-link
             >
               <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <rect x="2" y="6" width="20" height="14" rx="2" ry="2"/>
-                <line x1="2" y1="11" x2="22" y2="11"/>
+                <path d="M12 3v12"></path>
+                <path d="M7 10l5 5 5-5"></path>
+                <path d="M5 21h14"></path>
               </svg>
-              Pay with Stripe
+              Download Now
             </a>
 
             <div class="pricing-secure">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-              </svg>
-              Secure checkout via Stripe
+              View the docs <a href="https://status.edcs.app/hub/help">here.</a>
             </div>
           </div>
 
@@ -1696,7 +1744,6 @@
             <span class="pricing-eyebrow">Vigil Hub (Pro)</span>
 
             <div class="pricing-amount">
-              <span class="pricing-starts">From</span>
               <span class="pricing-currency">£</span>
               <span class="pricing-num">150</span>
               <span class="pricing-cadence">one-time</span>
@@ -1706,19 +1753,19 @@
             <ul class="pricing-features">
               <li>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-                <span><b style="font-weight: 500;">Multi-host hub</b> — Unlimited Collectors on one dashboard, fleet view + per-host detail</span>
+                <span><b style="font-weight: 500;">Multi-host hub</b> for unlimited Collectors on one dashboard, fleet view + per-host detail</span>
               </li>
               <li>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-                <span><b style="font-weight: 500;">Alerting</b> with Slack and other webhook channels — sustained-breach threshold alerts</span>
+                <span><b style="font-weight: 500;">Alerting</b> with Slack and other webhook channels to report sustained-breach threshold alerts</span>
               </li>
               <li>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-                <span><b style="font-weight: 500;">Tiered retention</b> — raw 1 Hz, 1 m, 5 m, 1 h aggregates rolled into a single SQLite file</span>
+                <span><b style="font-weight: 500;">Tiered retention</b> with raw 1 Hz, 1 m, 5 m, 1 h aggregates rolled into a single view</span>
               </li>
               <li>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-                <span><b style="font-weight: 500;">Self-hosted</b> — runs on your hardware, all data stays on your disk</span>
+                <span><b style="font-weight: 500;">Self-hosted</b> and runs on your hardware, all data stays on your disk</span>
               </li>
             </ul>
 
@@ -1753,18 +1800,18 @@
               <span class="pricing-starts">From</span>
               <span class="pricing-currency">£</span>
               <span class="pricing-num">250</span>
-              <span class="pricing-cadence">per probe</span>
+              <span class="pricing-cadence">base fee</span>
             </div>
             <p class="pricing-tagline">When you need a bespoke solution that doesn't exist yet.</p>
 
             <ul class="pricing-features">
               <li>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-                <span><b style="font-weight: 500;">Bespoke probe</b> in your stack of choice</span>
+                <span><b style="font-weight: 500;">Bespoke Collector</b> in your stack of choice</span>
               </li>
               <li>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-                <span>Plugs into the Vigil Collector probe API</span>
+                <span>Plugs into Vigil Pro Hub</span>
               </li>
               <li>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
