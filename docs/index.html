@@ -1667,9 +1667,10 @@
           <div class="section-eyebrow">Deployment patterns</div>
           <h2 class="section-title">Scales down to one host. Up to a fleet.</h2>
           <p class="section-lede">
-            Most installs land in one of three patterns. You can move
-            between them over time: start with one Collector, add a Hub
-            when the second host shows up.
+            Most installs land in one of four patterns. You can move
+            between them over time: start with one Collector, scale out
+            with more hosts on the same free stack, reach for the Pro
+            hub when you want a single view across all of them.
           </p>
         </div>
 
@@ -1685,12 +1686,22 @@
             </p>
           </div>
           <div class="pattern-card">
+            <span class="pattern-pill" style="color: var(--blue);">Multi-host · free</span>
+            <h4>Collectors + Vigil UI</h4>
+            <p>
+              Host Vigil UI somewhere stable and point it at
+              whichever Collector you want a permanent address for.
+              No Hub, still free. Good for homelabs and small fleets
+              that don't need cross-host alerts or history yet.
+            </p>
+          </div>
+          <div class="pattern-card">
             <span class="pattern-pill" style="color: var(--cyan);">Fleet</span>
             <h4>Collectors → Hub → UI</h4>
             <p>
               Run a Vigil <span class="seg-pro">Pro</span> hub somewhere reachable. Each Collector
-              pushes over an outbound WebSocket — no ports to open on
-              the hosts. Host the standalone UI anywhere and point it
+              pushes over an outbound WebSocket, no ports to open on
+              the hosts. Host Vigil UI anywhere and point it
               at the hub. Adds fleet view, alerts, channels, history.
             </p>
           </div>
