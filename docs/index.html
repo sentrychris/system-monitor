@@ -258,21 +258,26 @@
           0 16px 40px -12px rgba(34, 211, 238, 0.7),
           inset 0 0 0 1px rgba(255, 255, 255, 0.35);
       }
+      /* Download is the page's primary CTA. Uses the same cyan→blue→purple
+         spectrum as the hero accent text, with a layered cyan + purple glow
+         to set it apart from .btn-primary (blue→cyan only). */
       .btn-download {
-        background: linear-gradient(35deg, var(--emerald), rgba(71, 253, 180, 0.5));
+        background: linear-gradient(120deg, var(--cyan) 10%, var(--blue) 50%, var(--purple) 95%);
         border: 0;
         border-color: transparent;
         color: #0b1220;
         box-shadow:
-          0 12px 30px -12px rgba(34, 238, 51, 0.25),
-          inset 0 0 0 1px rgba(255, 255, 255, 0.25);
+          0 12px 30px -12px rgba(96, 165, 250, 0.55),
+          0 0 24px -8px rgba(192, 132, 252, 0.35),
+          inset 0 0 0 1px rgba(255, 255, 255, 0.28);
       }
       .btn-download:hover {
-        background: linear-gradient(35deg, var(--emerald), rgba(71, 253, 180, 0.5)) !important;
+        background: linear-gradient(120deg, var(--cyan) 10%, var(--blue) 50%, var(--purple) 95%) !important;
         border-color: transparent;
         box-shadow:
-          0 16px 40px -12px rgba(34, 238, 51, 0.7),
-          inset 0 0 0 1px rgba(255, 255, 255, 0.35);
+          0 16px 40px -12px rgba(96, 165, 250, 0.75),
+          0 0 36px -6px rgba(192, 132, 252, 0.55),
+          inset 0 0 0 1px rgba(255, 255, 255, 0.4);
       }
       /* Coffee tip-jar — amber-tinted ghost button */
       .btn-coffee {
@@ -880,6 +885,13 @@
       .term-flag { color: var(--amber); }
       .term-comment { color: var(--text-dim); font-style: italic; }
       .term-string { color: var(--emerald); }
+      .term-time { color: var(--text-dim); }
+      .term-info { color: var(--blue); font-weight: 500; }
+
+      .setup-terminal {
+        margin: 2.5rem auto 0;
+        max-width: 760px;
+      }
 
       .qs-steps {
         display: flex;
@@ -1484,6 +1496,36 @@
       </div>
     </section>
 
+    <!-- ───────────── Setup ───────────── -->
+    <section id="setup" class="section">
+      <div class="wrap">
+        <div class="reveal">
+          <div class="section-eyebrow">Get started</div>
+          <h2 class="section-title">One static binary. Drop it, run it.</h2>
+          <p class="section-lede">
+            No config file required. Put the
+            binary somewhere on your <code>$PATH</code> and start it. The dashboard
+            is served on whichever address and port you point it at.
+          </p>
+        </div>
+
+        <div class="setup-terminal reveal">
+          <div class="terminal">
+            <div class="terminal-bar">
+              <span class="browser-dot r"></span>
+              <span class="browser-dot y"></span>
+              <span class="browser-dot g"></span>
+              <span class="label">~ — vigil-collector</span>
+            </div>
+<pre><span class="term-comment"># Drop the binary in ~/.local/bin (or anywhere on $PATH)</span>
+
+<span class="term-prompt">$</span> <span class="term-cmd">vigil-collector</span> <span class="term-flag">--address=</span><span class="term-string">127.0.0.1</span> <span class="term-flag">--port=</span><span class="term-string">4500</span>
+<span class="term-time" id="term-time"></span> <span class="term-info">INFO</span> Listening on <span class="term-string"><a href="http://127.0.0.1:4500">http://127.0.0.1:4500</a></span><script>(()=>{const e=document.getElementById('term-time'),f=()=>e.textContent=`[${new Date().toLocaleString('sv-SE').replace('T',' ').slice(0,19)}]`;f();setInterval(f,1000)})()</script>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- ───────────── Features ───────────── -->
     <section id="features" class="section">
       <div class="wrap">
@@ -1491,8 +1533,8 @@
           <div class="section-eyebrow">Features</div>
           <h2 class="section-title">Built for at-a-glance clarity.</h2>
           <p class="section-lede">
-            Everything you need to know about a host, surfaced in a layout that prioritizes
-            signal over chrome. No setup wizards. No login walls.
+            Everything you need to know about a host, surfaced in a clean layout that prioritizes
+            signal over chrome.
           </p>
         </div>
 
@@ -1877,6 +1919,8 @@
     </footer>
 
     <script>
+      const ts = () => `[${new Date().toLocaleString('sv-SE').replace('T', ' ').slice(0, 19)}]`;
+
       // Lightweight scroll-reveal — opt-in via class="reveal"
       const io = new IntersectionObserver(
         (entries) => {
