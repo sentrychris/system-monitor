@@ -1445,9 +1445,9 @@
           </a>
         </div>
         <div class="hero-meta">
-          <span><b>Bundle</b> ~140 KB gzipped</span>
-          <span><b>License</b> MIT</span>
-          <span><b>Github</b> <a href="https://github.com/sentrychris/vigil" target="_blank" rel="noopener">sentrychris/vigil</a></span>
+          <span><b>Collector</b> ~5MB</span>
+          <span><b>UI</b> ~140 KB gzipped</span>
+          <span><b>Setup</b> ~10 seconds</span>
         </div>
       </div>
     </section>
@@ -1595,11 +1595,12 @@
       <div class="wrap">
         <div class="reveal">
           <div class="section-eyebrow">How it works</div>
-          <h2 class="section-title">Three pieces, one product.</h2>
+          <h2 class="section-title">The three pieces.</h2>
           <p class="section-lede">
-            A small agent on each host, an aggregator hub for the fleet,
-            and the dashboard you can view through the live demo. Each piece does
-            one job; the wire protocol between them fits on one page.
+            A small agent on each host, an <strong>optional</strong> enhanced UI that talks to it,
+            and an <strong>optional</strong> <span class="seg-pro">Pro</span> hub once you have more than one host.
+            <strong>Collector and UI are free</strong>; only the hub is
+            paid.
           </p>
         </div>
 
@@ -1609,7 +1610,7 @@
             <h4>Vigil Collector</h4>
             <ul style="color: var(--blue);">
               <li>Single Rust binary · ~5 MB</li>
-              <li>1 Hz sampler · ~8 MB RSS idle</li>
+              <li>1 Hz sampler · ~7 MB RSS idle</li>
               <li>HTTP /system, /network, /probes</li>
               <li>WebSocket /connect</li>
               <li>Linux &amp; Windows</li>
@@ -1623,7 +1624,7 @@
           </div>
           <div class="arch-node">
             <span class="arch-tag">Central</span>
-            <h4>Vigil Pro Hub</h4>
+            <h4>Vigil <span class="seg-pro">Pro</span> Hub</h4>
             <ul style="color: var(--purple);">
               <li>Rust + bundled SQLite · one file</li>
               <li>Push ingest over WebSocket</li>
@@ -1652,10 +1653,9 @@
         </div>
 
         <p class="arch-note reveal">
-          Collectors push to the hub <em>outbound</em> — your hosts don't
-          need an inbound port open. The UI is a pure client; host it
-          anywhere reachable from a browser, point it at a Collector or
-          a Hub at build time.
+          Collectors push to the hub <em>outbound</em> so your hosts don't
+          need an inbound port open. Vigil UI is a pure static client; host it
+          anywhere reachable from a browser.
         </p>
       </div>
     </section>
@@ -1688,7 +1688,7 @@
             <span class="pattern-pill" style="color: var(--cyan);">Fleet</span>
             <h4>Collectors → Hub → UI</h4>
             <p>
-              Run a Vigil Pro hub somewhere reachable. Each Collector
+              Run a Vigil <span class="seg-pro">Pro</span> hub somewhere reachable. Each Collector
               pushes over an outbound WebSocket — no ports to open on
               the hosts. Host the standalone UI anywhere and point it
               at the hub. Adds fleet view, alerts, channels, history.
@@ -1853,7 +1853,7 @@
               </li>
               <li>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-                <span>Plugs into Vigil Pro Hub</span>
+                <span>Plugs into Vigil <span class="seg-pro">Pro</span> Hub</span>
               </li>
               <li>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
