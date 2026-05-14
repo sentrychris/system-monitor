@@ -62,6 +62,26 @@ export interface HubProcessesResponse {
   items: HubProcess[];
 }
 
+/** /api/hosts/{id}/processes_cpu — latest top-N process snapshot ranked
+ *  by CPU%. Separate snapshot from the memory list; the two top-N sets
+ *  overlap partially. cpu_pct is summed per-name across same-named pids
+ *  and is averaged over the collector's sampler window (~5s), not
+ *  instantaneous. */
+export interface HubProcessCpu {
+  pid: number;
+  name: string;
+  username: string;
+  cpu_pct: number;
+}
+
+export interface HubProcessesCpuResponse {
+  host_id: number;
+  /** Unix epoch s — when the collector took the snapshot. 0 if no
+   *  snapshot has been ingested for this host yet. */
+  ts: number;
+  items: HubProcessCpu[];
+}
+
 export interface SeriesPoint {
   ts: number;
   v?: number;             // raw tier

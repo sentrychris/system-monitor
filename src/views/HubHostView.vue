@@ -13,7 +13,7 @@ import PageHeader from "@/components/PageHeader.vue";
 import BarChart from "@/components/charts/BarChart.vue";
 import PieChart from "@/components/charts/PieChart.vue";
 import DataTable from "@/components/DataTable.vue";
-import type { HubProcess } from "@/interfaces/Hub";
+import type { HubProcess, HubProcessCpu } from "@/interfaces/Hub";
 
 const hub = useHubStore();
 const route = useRoute();
@@ -107,6 +107,8 @@ const PROCESSES_LIMIT = 10;
 const processes = ref<HubProcess[]>([]);
 const processesMetric = ref<"pss" | "rss" | null>(null);
 const processesView = ref<"charts" | "table">("charts");
+const processesCpu = ref<HubProcessCpu[]>([]);
+const processesCpuView = ref<"charts" | "table">("charts");
 let processesTimer: number | null = null;
 
 // Stable color per process name. Same hash as the system store uses for
@@ -148,6 +150,31 @@ const processTableRows = computed(() =>
   })),
 );
 
+const processCpuBarSeries = computed(() =>
+  processesCpu.value.map((p) => ({
+    name: p.name,
+    color: processColor(p.name),
+    data: [Math.round(p.cpu_pct * 100) / 100],
+  })),
+);
+
+const processCpuPieSeries = computed(() =>
+  processesCpu.value.map((p) => ({
+    name: p.name,
+    color: processColor(p.name),
+    y: Math.round(p.cpu_pct * 100) / 100,
+  })),
+);
+
+const processCpuTableRows = computed(() =>
+  processesCpu.value.map((p) => ({
+    pid: p.pid,
+    username: p.username,
+    name: p.name,
+    cpu: Math.round(p.cpu_pct * 100) / 100,
+  })),
+);
+
 async function fetchProcesses(): Promise<void> {
   if (!hub.token || !host.value) return;
   try {
@@ -163,13 +190,31 @@ async function fetchProcesses(): Promise<void> {
   }
 }
 
+async function fetchProcessesCpu(): Promise<void> {
+  if (!hub.token || !host.value) return;
+  try {
+    const resp = await hubApi.getProcessesCpu(
+      { baseUrl: config.hub.url, token: hub.token },
+      host.value.id,
+      PROCESSES_LIMIT,
+    );
+    processesCpu.value = resp.items;
+  } catch {
+    // Soft-fail — leave the panel on its last-known state. Next tick retries.
+  }
+}
+
 onMounted(async () => {
   useLoadingStore().toggle(true);
   if (hub.isConfigured && hub.token && !hub.ready) await hub.connect();
   if (hub.ready) hub.startPolling();
   if (host.value) {
     fetchProcesses();
-    processesTimer = window.setInterval(fetchProcesses, PROCESSES_POLL_MS);
+    fetchProcessesCpu();
+    processesTimer = window.setInterval(() => {
+      fetchProcesses();
+      fetchProcessesCpu();
+    }, PROCESSES_POLL_MS);
   }
 });
 onUnmounted(() => {
@@ -562,7 +607,7 @@ onUnmounted(() => {
           <header class="ds-header">
             <span class="icon-tile tone-emerald"><font-awesome-icon icon="fa-solid fa-list-ul" /></span>
             <div class="ds-header-text">
-              <div class="ds-title">Top Processes</div>
+              <div class="ds-title">Top Processes by Memory</div>
               <div class="ds-sub">
                 {{ processesMetric ? `PER-PROCESS ${processesMetric.toUpperCase()} · TOP ${PROCESSES_LIMIT}` : `PER-PROCESS · TOP ${PROCESSES_LIMIT}` }}
               </div>
@@ -570,7 +615,7 @@ onUnmounted(() => {
             <div
               class="view-toggle btn-group btn-group-sm"
               role="group"
-              aria-label="Top processes view"
+              aria-label="Top processes by memory view"
             >
               <button
                 type="button"
@@ -628,6 +673,82 @@ onUnmounted(() => {
                 type="horizontal"
                 :data="processTableRows"
                 sort-key="mem"
+                sort-order="desc"
+              />
+            </template>
+          </div>
+        </section>
+
+        <section class="ds-card mt-3">
+          <header class="ds-header">
+            <span class="icon-tile tone-emerald"><font-awesome-icon icon="fa-solid fa-microchip" /></span>
+            <div class="ds-header-text">
+              <div class="ds-title">Top Processes by CPU</div>
+              <div class="ds-sub">
+                PER-PROCESS CPU% · TOP {{ PROCESSES_LIMIT }} · ~5S WINDOW
+              </div>
+            </div>
+            <div
+              class="view-toggle btn-group btn-group-sm"
+              role="group"
+              aria-label="Top processes by CPU view"
+            >
+              <button
+                type="button"
+                class="btn"
+                :class="{ active: processesCpuView === 'charts' }"
+                :aria-pressed="processesCpuView === 'charts'"
+                title="Charts view"
+                @click="processesCpuView = 'charts'"
+              >
+                <font-awesome-icon icon="fa-solid fa-chart-pie" />
+              </button>
+              <button
+                type="button"
+                class="btn"
+                :class="{ active: processesCpuView === 'table' }"
+                :aria-pressed="processesCpuView === 'table'"
+                title="Table view"
+                @click="processesCpuView = 'table'"
+              >
+                <font-awesome-icon icon="fa-solid fa-table-list" />
+              </button>
+            </div>
+          </header>
+          <div class="ds-body">
+            <div v-if="!processesCpu.length" class="processes-empty">
+              <span class="dim">No CPU snapshot yet — waiting for the collector's second sampler tick…</span>
+            </div>
+            <template v-else>
+              <div
+                v-if="processesCpuView === 'charts'"
+                class="row align-items-center g-2"
+              >
+                <div class="col-sm-12 col-md-6 col-lg-8">
+                  <BarChart
+                    metric="system"
+                    id="hub-host-processes-cpu"
+                    title=""
+                    :series="processCpuBarSeries"
+                    sort-key="data"
+                    sort-order="desc"
+                    y-axis-text="CPU %"
+                    x-axis-text="System Process"
+                  />
+                </div>
+                <div class="col-sm-12 col-md-6 col-lg-4">
+                  <PieChart
+                    id="hub-host-processes-cpu-pie"
+                    title=""
+                    :series="processCpuPieSeries"
+                  />
+                </div>
+              </div>
+              <DataTable
+                v-else
+                type="horizontal"
+                :data="processCpuTableRows"
+                sort-key="cpu"
                 sort-order="desc"
               />
             </template>

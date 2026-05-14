@@ -14,6 +14,7 @@ import type {
   HealthzResponse,
   HubHost,
   HubOverviewHost,
+  HubProcessesCpuResponse,
   HubProcessesResponse,
   SeriesResponse,
 } from "@/interfaces/Hub";
@@ -98,6 +99,11 @@ export const hubApi = {
   getProcesses: (o: CallOptions, hostId: number, limit = 10) =>
     call<HubProcessesResponse>(
       `/api/hosts/${hostId}/processes?limit=${limit}`, o,
+    ),
+
+  getProcessesCpu: (o: CallOptions, hostId: number, limit = 10) =>
+    call<HubProcessesCpuResponse>(
+      `/api/hosts/${hostId}/processes_cpu?limit=${limit}`, o,
     ),
 
   alertState: (o: CallOptions) => call<AlertState[]>("/api/alert_state", o),
