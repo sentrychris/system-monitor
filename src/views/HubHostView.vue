@@ -108,7 +108,6 @@ const processes = ref<HubProcess[]>([]);
 const processesMetric = ref<"pss" | "rss" | null>(null);
 const processesView = ref<"charts" | "table">("charts");
 const processesCpu = ref<HubProcessCpu[]>([]);
-const processesCpuView = ref<"charts" | "table">("charts");
 let processesTimer: number | null = null;
 
 // Stable color per process name. Same hash as the system store uses for
@@ -147,22 +146,6 @@ const processTableRows = computed(() =>
     username: p.username,
     name: p.name,
     mem: memMb(p.mem_bytes),
-  })),
-);
-
-const processCpuBarSeries = computed(() =>
-  processesCpu.value.map((p) => ({
-    name: p.name,
-    color: processColor(p.name),
-    data: [Math.round(p.cpu_pct * 100) / 100],
-  })),
-);
-
-const processCpuPieSeries = computed(() =>
-  processesCpu.value.map((p) => ({
-    name: p.name,
-    color: processColor(p.name),
-    y: Math.round(p.cpu_pct * 100) / 100,
   })),
 );
 
@@ -688,72 +671,18 @@ onUnmounted(() => {
                 PER-PROCESS CPU% · TOP {{ PROCESSES_LIMIT }} · ~5S WINDOW
               </div>
             </div>
-            <div
-              class="view-toggle btn-group btn-group-sm"
-              role="group"
-              aria-label="Top processes by CPU view"
-            >
-              <button
-                type="button"
-                class="btn"
-                :class="{ active: processesCpuView === 'charts' }"
-                :aria-pressed="processesCpuView === 'charts'"
-                title="Charts view"
-                @click="processesCpuView = 'charts'"
-              >
-                <font-awesome-icon icon="fa-solid fa-chart-pie" />
-              </button>
-              <button
-                type="button"
-                class="btn"
-                :class="{ active: processesCpuView === 'table' }"
-                :aria-pressed="processesCpuView === 'table'"
-                title="Table view"
-                @click="processesCpuView = 'table'"
-              >
-                <font-awesome-icon icon="fa-solid fa-table-list" />
-              </button>
-            </div>
           </header>
           <div class="ds-body">
             <div v-if="!processesCpu.length" class="processes-empty">
               <span class="dim">No CPU snapshot yet — waiting for the collector's second sampler tick…</span>
             </div>
-            <template v-else>
-              <div
-                v-if="processesCpuView === 'charts'"
-                class="row align-items-center g-2"
-              >
-                <div class="col-sm-12 col-md-6 col-lg-8">
-                  <BarChart
-                    metric="system"
-                    id="hub-host-processes-cpu"
-                    title=""
-                    :series="processCpuBarSeries"
-                    sort-key="data"
-                    sort-order="desc"
-                    y-axis-text="CPU %"
-                    x-axis-text="System Process"
-                    unit="%"
-                  />
-                </div>
-                <div class="col-sm-12 col-md-6 col-lg-4">
-                  <PieChart
-                    id="hub-host-processes-cpu-pie"
-                    title=""
-                    :series="processCpuPieSeries"
-                    unit="%"
-                  />
-                </div>
-              </div>
-              <DataTable
-                v-else
-                type="horizontal"
-                :data="processCpuTableRows"
-                sort-key="cpu"
-                sort-order="desc"
-              />
-            </template>
+            <DataTable
+              v-else
+              type="horizontal"
+              :data="processCpuTableRows"
+              sort-key="cpu"
+              sort-order="desc"
+            />
           </div>
         </section>
       </div>
