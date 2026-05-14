@@ -734,6 +734,7 @@ onUnmounted(() => {
                     sort-order="desc"
                     y-axis-text="CPU %"
                     x-axis-text="System Process"
+                    unit="%"
                   />
                 </div>
                 <div class="col-sm-12 col-md-6 col-lg-4">
@@ -741,6 +742,7 @@ onUnmounted(() => {
                     id="hub-host-processes-cpu-pie"
                     title=""
                     :series="processCpuPieSeries"
+                    unit="%"
                   />
                 </div>
               </div>
